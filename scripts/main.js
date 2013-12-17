@@ -1,4 +1,5 @@
 alert($);
+alert(require);
 
 require([
     "data/mods.js",
