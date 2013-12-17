@@ -9,4 +9,4 @@ $.getScript("http://requirejs.org/docs/release/2.1.9/minified/require.js")
 		console.log(modData);
 		ready();
 	});
-};
+});
