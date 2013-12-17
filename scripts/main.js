@@ -1,3 +1,5 @@
+alert($);
+
 require([
     "data/mods.js",
     "data/baseWeapons.js",
