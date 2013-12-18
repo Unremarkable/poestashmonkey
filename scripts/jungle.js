@@ -297,7 +297,7 @@ function createTitleCell(row, item) {
     var t = item.frameType;
     var type = t == 3 ? "unique" : t == 2 ? "rare" : t == 1 ? "magic" : "normal";
     td.className = "title " + type;
-    td.title = item.inventoryId;
+    td.title = item.inventoryId + " (" + item.x + ", " + item.y + ")";
  
  
     var title = "";
