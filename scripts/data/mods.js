@@ -1,15 +1,23 @@
 var modData = (function() {;
-	var data = {};
+	var data = new Array(19);
 
-	function add(type, name, level, affix, rolls, mask) {
-		if (typeof data[type] === "undefined") data[type] = [];
+	for (var i = 0; i < data.length; ++i)
+		data[i] = {};
 		
-		data[type].push({
+	function add(type, name, level, affix, rolls, blarg) {
+		var o = {
 			"name": name,
 			"level": level,
 			"affix": affix,
 			"rolls": rolls
-		});
+		};
+		
+		for (var i = 0; i < data.length; ++i) {
+			if (blarg.charAt(i) != '1')
+				continue;
+			if (typeof data[type] === "undefined") data[i][type] = [];	
+			data[i][type].push(o);
+		}
 	}
 
 	add("Base Min Added Cold Dmg / Base Max Added Cold Dmg","Frosted",2,"Prefix",[[1,1],[2,2]],"1100100010000000000");
