@@ -1,3 +1,5 @@
+var stashData = {};
+
 function insertStylesheet() {
     var text = [
         "body { background-color: #0F0F0F; border-collapse: collapse; color: #A38D6D; font-family: Verdana; font-size: 14px; }",
