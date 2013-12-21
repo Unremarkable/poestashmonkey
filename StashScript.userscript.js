@@ -8,6 +8,6 @@
 // @grant       none
 // ==/UserScript==
 
-var BASE_URL = "https://raw.github.com/Unremarkable/poestashmonkey/volatile"
+var BASE_URL = "https://raw.github.com/Unremarkable/poestashmonkey/master"
 
 $.getScript(BASE_URL+"/scripts/main.js");
