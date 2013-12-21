@@ -183,7 +183,7 @@ function buildTable(items, titleText, idName) {
         var gearHeaders = ["Sockets"];
         headers = headers.concat(gearHeaders);
         if (idName == "weapons") {
-            var weaponHeaders = ["DPS", "DPS-Increase", "Physical", "Fire", "Cold", "Lightning"];
+            var weaponHeaders = ["DPS", "pDPS", "eDPS", "CPS"];
             headers = headers.concat(weaponHeaders);
         }
     }
@@ -245,8 +245,17 @@ function addWeaponsDetails(row, item) {
     if (weaponInfo) {
         var dps = weaponInfo.dps.toFixed(1);
         appendNewCellWithTextAndClass(row, dps, "dps", dps);
-       
-        var pIncreaseDps = weaponInfo.pIncreaseDps.toFixed(1);
+		
+		var pdps = weaponInfo.pdps.toFixed(1);
+        appendNewCellWithTextAndClass(row, pdps, "pdps", pdps);
+		
+		var edps = weaponInfo.edps.toFixed(1);
+        appendNewCellWithTextAndClass(row, edps, "edps", edps);
+		
+		var cps = weaponInfo.cps.toFixed(1);
+        appendNewCellWithTextAndClass(row, cps, "cps", cps);
+  /*     
+		var pIncreaseDps = weaponInfo.pIncreaseDps.toFixed(1);
         appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "dps-increase", pIncreaseDps);
        
         var physical = weaponInfo.physical;
@@ -260,7 +269,7 @@ function addWeaponsDetails(row, item) {
  
         var light = weaponInfo.lightning;
         appendNewCellWithTextAndClass(row, light ? light.label : "", "lightning", light ? light.avg : 0);
- 
+ */
     } else {
         var td = newCell();
         td.colSpan = 6;
@@ -506,14 +515,14 @@ function getWeaponInfo(item) {
     console.log(weaponInfo.mods);
     weaponInfo.baseWeaponDps = ((baseWeapon["DamageMin"] + baseWeapon["DamageMax"]) / 2 * baseWeapon["AttacksPerSecond"]).toFixed(1);
  
- 
- 
     addWeaponDamages(item, weaponInfo);
  
- 
     weaponInfo.attacksPerSecond = parseFloat(getItemProperty(item, "Attacks per Second").values[0][0]);
-    weaponInfo.dps = weaponInfo.attacksPerSecond * weaponInfo.aggregateDamage.avg;
-    weaponInfo.pIncreaseDps = weaponInfo.dps / weaponInfo.baseWeaponDps * 100;
+	weaponInfo.cps  = weaponInfo.attacksPerSecond * parseFloat(getItemProperty(item, "Critical Strike Chance").values[0][0]);
+	weaponInfo.edps = weaponInfo.attacksPerSecond * weaponInfo.physical.avg;
+	weaponInfo.pdps = weaponInfo.attacksPerSecond * weaponInfo.elemental.avg;
+    weaponInfo.dps = edps + pdps;
+    weaponInfo.pIncreaseDps = ((weaponInfo.dps / weaponInfo.baseWeaponDps) - 1) * 100;
  
     return weaponInfo;
 }
@@ -521,8 +530,8 @@ function getWeaponInfo(item) {
 function addWeaponDamages(item, weaponInfo) {
     var physicalDamage = getItemProperty(item, "Physical Damage");
     weaponInfo.physical = getValueRange(physicalDamage.values[0][0]);
-    weaponInfo.aggregateDamage = getValueRange(physicalDamage.values[0][0]);
- 
+    weaponInfo.elemental = 0;//getValueRange(physicalDamage.values[0][0]);
+	
     var elementalDamages = getItemProperty(item, "Elemental Damage");
     if (elementalDamages != null) {
         for (var i in elementalDamages.values) {
@@ -532,7 +541,6 @@ function addWeaponDamages(item, weaponInfo) {
             if (elementalDamage[1] == 4) {
                 weaponInfo.fire = range;
                 weaponInfo.fire.avg = range.avg;
- 
             } else if (elementalDamage[1] == 5) {
                 weaponInfo.cold = range;
                 weaponInfo.cold.avg = range.avg;
@@ -542,9 +550,9 @@ function addWeaponDamages(item, weaponInfo) {
  
             }
  
-            weaponInfo.aggregateDamage.min += range.min;
-            weaponInfo.aggregateDamage.max += range.max;
-            weaponInfo.aggregateDamage.avg += range.avg;
+            weaponInfo.elemental.min += range.min;
+            weaponInfo.elemental.max += range.max;
+            weaponInfo.elemental.avg += range.avg;
         }
     }
 }
