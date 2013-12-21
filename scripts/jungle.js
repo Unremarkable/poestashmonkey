@@ -183,7 +183,7 @@ function buildTable(items, titleText, idName) {
         var gearHeaders = ["Sockets"];
         headers = headers.concat(gearHeaders);
         if (idName == "weapons") {
-            var weaponHeaders = ["DPS", "pDPS", "eDPS", "CPS"];
+            var weaponHeaders = ["DPS", "pDPS", "eDPS", "CPS", "DPS%"];
             headers = headers.concat(weaponHeaders);
         }
     }
@@ -254,10 +254,10 @@ function addWeaponsDetails(row, item) {
 		
 		var cps = weaponInfo.cps.toFixed(1);
         appendNewCellWithTextAndClass(row, cps, "cps", cps);
-  /*     
+       
 		var pIncreaseDps = weaponInfo.pIncreaseDps.toFixed(1);
         appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "dps-increase", pIncreaseDps);
-       
+  /*     
         var physical = weaponInfo.physical;
         appendNewCellWithTextAndClass(row, physical.label, "physical", physical.avg);
        
