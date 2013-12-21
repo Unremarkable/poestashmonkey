@@ -519,9 +519,9 @@ function getWeaponInfo(item) {
  
     weaponInfo.attacksPerSecond = parseFloat(getItemProperty(item, "Attacks per Second").values[0][0]);
 	weaponInfo.cps  = weaponInfo.attacksPerSecond * parseFloat(getItemProperty(item, "Critical Strike Chance").values[0][0]);
-	weaponInfo.edps = weaponInfo.attacksPerSecond * weaponInfo.physical.avg;
-	weaponInfo.pdps = weaponInfo.attacksPerSecond * weaponInfo.elemental.avg;
-    weaponInfo.dps = edps + pdps;
+	weaponInfo.pdps = weaponInfo.attacksPerSecond * weaponInfo.physical.avg;
+	weaponInfo.edps = weaponInfo.attacksPerSecond * weaponInfo.elemental.avg;
+    weaponInfo.dps = weaponInfo.pdps + weaponInfo.edps;
     weaponInfo.pIncreaseDps = ((weaponInfo.dps / weaponInfo.baseWeaponDps) - 1) * 100;
  
     return weaponInfo;
