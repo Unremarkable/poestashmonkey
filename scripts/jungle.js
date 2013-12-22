@@ -31,9 +31,15 @@ function insertStylesheet() {
  
         "table.stash .fire { color: #960000; }",
         "table.stash .cold { color: #366492; }",
-        "table.stash .lightning { color: #e1be00; }"
- 
- 
+        "table.stash .lightning { color: #e1be00; }",
+		
+		"#tabNames li.selected { color: #ff0000; }",
+		"#tabContents table { display: none; }",
+		"#tabContents table.selected { display: inline; }",
+		
+		"#tabNames { border-bottom: 1px solid #ffffff; padding: 0px; margin: 0px; }",
+		"#tabNames li { display: inline-block; padding: 6px; }",
+		"#tabNames li.selected { border: 1px solid #ffffff; border-bottom: 1px solid #0F0F0F; }"
     ].join('\n\n');
  
     var style = window.document.createElement("style");
@@ -126,6 +132,11 @@ function buildPage(items) {
             }
         }
     }
+	
+	var tabView = $("<div></div>").attr("id", "tabView");
+	tabView.append($("<ul></ul>").attr("id", "tabNames"));
+	tabView.append($("<div></div>").attr("id", "tabContents"));
+	$("body").append(tabView);
  
     buildTable(gems, "Gems", "gems");
     buildTable(currency, "Currency", "currency");
@@ -135,6 +146,15 @@ function buildPage(items) {
     buildTable(nonSocketGear, "Belts & Quivers", "nonSocketGear");
     buildTable(gear, "Gear", "gear");
     buildTable(weapons, "Weapons", "weapons");
+	
+	$("#tabNames li").click(function() {
+		$(".selected").removeClass("selected");
+		$(this).addClass("selected");
+		$("#tabContents table"+$(this).attr("href")).addClass("selected");
+	});
+	
+	$("#tabNames li").first().addClass("selected");
+	$("#tabContents table").first().addClass("selected");
 }
  
  var rings = { "Iron Ring" : true, "Coral Ring" : true, "Paua Ring" : true, "Gold Ring" : true, "Ruby Ring" : true, "Sapphire Ring" : true, "Topaz Ring" : true, "Diamond Ring" : true, "Moonstone Ring" : true, "Prismatic Ring" : true, "Amethyst Ring" : true, "Two-Stone Ring" : true };
@@ -201,14 +221,17 @@ function parseMods(descriptions) {
 function buildTable(items, titleText, idName) {
     if (items.length == 0) return;
  
-    var box = document.createElement("div");
  
  
-    var title = document.createElement("h2");
-    title.innerHTML = titleText;
-    box.appendChild(title);
- 
- 
+//    var title = document.createElement("h2");
+//    title.innerHTML = titleText;
+//   box.appendChild(title);
+
+	var tab = $("<li></li>");
+	tab.html(titleText);
+	tab.attr("href", "#"+idName);
+	$("#tabNames").append(tab);
+	
     var table = document.createElement("table");
     table.id = idName;
     table.className = "stash";
@@ -271,8 +294,7 @@ function buildTable(items, titleText, idName) {
     }
  
  
-    box.appendChild(table);
-    $("body")[0].appendChild(box);
+    $("#tabContents").append(table);
  
  
     attachHandlers();
