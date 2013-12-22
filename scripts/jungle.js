@@ -130,17 +130,20 @@ function buildPage(items) {
     buildTable(gems, "Gems", "gems");
     buildTable(currency, "Currency", "currency");
     buildTable(flasks, "Flasks", "flasks");
+    buildTable(amulets, "Amulets", "amulets");
     buildTable(rings, "Rings", "rings");
     buildTable(nonSocketGear, "Belts & Quivers", "nonSocketGear");
     buildTable(gear, "Gear", "gear");
     buildTable(weapons, "Weapons", "weapons");
 }
  
+ var rings = { "Iron Ring" : true, "Coral Ring" : true, "Paua Ring" : true, "Gold Ring" : true, "Ruby Ring" : true, "Sapphire Ring" : true, "Topaz Ring" : true, "Diamond Ring" : true, "Moonstone Ring" : true, "Prismatic Ring" : true, "Amethyst Ring" : true, "Two-Stone Ring" : true };
+ var amulets = { "Paua Amulet" : true, "Coral Amulet" : true, "Amber Amulet" : true, "Jade Amulet" : true, "Lapis Amulet" : true, "Gold Amulet" : true, "Onyx Amulet" : true, "Agate Amulet" : true, "Turquoise Amulet" : true, "Citrine Amulet" : true };
+ 
 function isFlask(name) { return name.match(/Flask/) != null; }
- 
-function isRing(name) { return name.match(/Ring/) != null; }
- 
-function isAmulet(name) { return name.match(/Amulet/) != null; }
+  
+function isRing(name)   { return !!getItemBaseName(name, rings); }
+function isAmulet(name) { return !!getItemBaseName(name, amulets); }
  
 function isArmour(item) { return !!(item.properties["Evasion Rating"] || item.properties["Armour"] || item.properties["Energy Shield"]); }
 function isWeapon(item) { return !!(item.properties["Physical Damage"]); }
@@ -212,7 +215,7 @@ function buildTable(items, titleText, idName) {
  
     var headers = ["", "Name", "Level", "Mods"];
  
-	if (idName == "nonSocketGear" || idName == "rings") {
+	if (idName == "nonSocketGear" || idName == "rings" || idName == "amulets") {
 		headers = headers.concat(["tResist"]);
 	} else if (idName == "gear" || idName == "weapons") {
         var gearHeaders = ["Sockets"];
@@ -242,6 +245,7 @@ function buildTable(items, titleText, idName) {
 
 		switch(idName) {
 			case "nonSocketGear":
+			case "amulets":
 			case "rings":   addMiscDetails(row, item);    break;
 			case "weapons": createSocketsCell(row, item); addWeaponsDetails(row, item); break;
 			case "gear":    createSocketsCell(row, item); addArmourDetails(row, item);  break;
@@ -549,26 +553,30 @@ function getValue(row, col) {
         - lightning
 */
  
-function getWeaponBaseName(typeLine) {
+function getItemBaseName(typeLine, itemList) {
     var name = typeLine;
  
-    if (typeof baseWeapons[name] !== "undefined") return name;
+    if (typeof itemList[name] !== "undefined") return name;
  
     // search for and remove suffix
     var end = name.indexOf(" of ");
     if (end != -1) name = name.substring(0, end);
  
-    if (typeof baseWeapons[name] !== "undefined") return name;
+    if (typeof itemList[name] !== "undefined") return name;
  
     // iteratively remove prefixes
     var start = 0;
     while ((start = name.indexOf(" ", start)) != -1) {
         name = name.substring(start + 1);
  
-        if (typeof baseWeapons[name] !== "undefined") return name;
+        if (typeof itemList[name] !== "undefined") return name;
     }
  
-    return typeLine;
+    return false;
+}
+
+function getWeaponBaseName(typeLine) {
+	return getItemBaseName(typeLine, baseWeapons);
 }
  
 function getWeaponInfo(item) {
