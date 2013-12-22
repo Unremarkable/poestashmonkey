@@ -2951,8 +2951,8 @@ var baseWeapons = {
         AttacksPerSecond: 1.2,
         Implicit: "30% increased Accuracy Rating"
     },
-    'Headmans Sword': {
-        Name: "Headmans Sword",
+    'Headman\'s Sword': {
+        Name: "Headman's Sword",
         Level: 57,
         Strength: 106,
         Dexterity: 89,
@@ -3095,8 +3095,8 @@ var baseWeapons = {
         AttacksPerSecond: 1.1,
         Implicit: "(11 to 14)% increased Spell Damage"
     },
-    'Fauns Horn': {
-        Name: "Fauns Horn",
+    'Faun\'s Horn': {
+        Name: "Faun's Horn",
         Level: 35,
         Strength: 0,
         Dexterity: 0,
@@ -3155,8 +3155,8 @@ var baseWeapons = {
         AttacksPerSecond: 1.1,
         Implicit: "(14 to 17)% increased Spell Damage"
     },
-    'Demons Horn': {
-        Name: "Demons Horn",
+    'Demon\'s Horn': {
+        Name: "Demon's Horn",
         Level: 56,
         Strength: 0,
         Dexterity: 0,
