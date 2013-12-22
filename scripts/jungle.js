@@ -215,7 +215,9 @@ function buildTable(items, titleText, idName) {
  
     var headers = ["", "Name", "Level", "Mods"];
  
-	if (idName == "nonSocketGear" || idName == "rings" || idName == "amulets") {
+	if (idName == "gems") {
+		headers = headers.concat(["Quality"]);
+	} else if (idName == "nonSocketGear" || idName == "rings" || idName == "amulets") {
 		headers = headers.concat(["tResist"]);
 	} else if (idName == "gear" || idName == "weapons") {
         var gearHeaders = ["Sockets"];
@@ -244,6 +246,7 @@ function buildTable(items, titleText, idName) {
         createModsCell(row, item);
 
 		switch(idName) {
+			case "gems":    addItemQuality(row, item); break;
 			case "nonSocketGear":
 			case "amulets":
 			case "rings":   addMiscDetails(row, item);    break;
@@ -275,7 +278,7 @@ function buildTable(items, titleText, idName) {
     attachHandlers();
 }
 
-function calcTotalResistances(item) {
+function getTotalResistances(item) {
 	var tResist = 0;
 	
 	if (item.implicitMods["+% Cold Resistance"     ]) tResist += parseInt(item.implicitMods["+% Cold Resistance"     ].values[0]);
@@ -295,9 +298,18 @@ function calcTotalResistances(item) {
 	return tResist;
 }
 
+function getItemQuality(item) {
+	return item.properties["Quality"] ? parseInt(item.properties["Quality"].values[0]) : 0;
+}
+
+function addItemQuality(row, item) {
+	var quality = getItemQuality(item);
+	appendNewCellWithTextAndClass(row, quality + "%", "quality", quality);
+}
+
 function addMiscDetails(row, item) {
-	var tResist = calcTotalResistances(item);
-	appendNewCellWithTextAndClass(row, tResist, "tresist", tResist);
+	var tResist = getTotalResistances(item);
+	appendNewCellWithTextAndClass(row, tResist + "%", "tresist", tResist);
 }
  
  function addArmourDetails(row, item) {
@@ -310,8 +322,8 @@ function addMiscDetails(row, item) {
 	var es = item.properties["Energy Shield" ] ? parseInt(item.properties["Energy Shield"  ].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, es, "es", es);
 	
-	var tResist = calcTotalResistances(item);
-	appendNewCellWithTextAndClass(row, tResist, "tresist", tResist);
+	var tResist = getTotalResistances(item);
+	appendNewCellWithTextAndClass(row, tResist + "%", "tresist", tResist);
  }
  
 function addWeaponsDetails(row, item) {
