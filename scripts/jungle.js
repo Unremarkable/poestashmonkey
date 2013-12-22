@@ -125,6 +125,7 @@ function buildPage(items) {
             } else if (isArmour(item)) {
                 gear.push(item);
             } else if (isWeapon(item)) {
+				item.weaponInfo = getWeaponInfo(item);	// HACK
 				weapons.push(item);
             } else {
 				console.log("Uncategorised Item", item);
@@ -132,20 +133,19 @@ function buildPage(items) {
             }
         }
     }
-	
 	var tabView = $("<div></div>").attr("id", "tabView");
 	tabView.append($("<ul></ul>").attr("id", "tabNames"));
 	tabView.append($("<div></div>").attr("id", "tabContents"));
 	$("body").append(tabView);
  
-    buildTable(gems, "Gems", "gems");
-    buildTable(currency, "Currency", "currency");
-    buildTable(flasks, "Flasks", "flasks");
-    buildTable(amulets, "Amulets", "amulets");
-    buildTable(rings, "Rings", "rings");
-    buildTable(nonSocketGear, "Belts & Quivers", "nonSocketGear");
-    buildTable(gear, "Gear", "gear");
-    buildTable(weapons, "Weapons", "weapons");
+    buildTable(gems, "Gems", "gems", ["Icon", "Name", "Level", "Quality", "Mods"]);
+    buildTable(currency, "Currency", "currency", ["Icon", "Name", "Mods"]);
+    buildTable(flasks, "Flasks", "flasks", ["Icon", "Name", "Level", "Quality", "Mods"]);
+    buildTable(amulets, "Amulets", "amulets", ["Icon", "Name", "Level", "Mods", "tResist"]);
+    buildTable(rings, "Rings", "rings", ["Icon", "Name", "Level", "Mods", "tResist"]);
+    buildTable(nonSocketGear, "Belts & Quivers", "nonSocketGear", ["Icon", "Name", "Level", "Mods", "tResist"]);
+    buildTable(gear, "Gear", "gear", ["Icon", "Name", "Level", "Quality", "Mods", "AR", "EV", "ES", "tResist"]);
+    buildTable(weapons, "Weapons", "weapons", ["Icon", "Name", "Level", "Quality", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]);
 	
 	$("#tabNames li").click(function() {
 		$(".selected").removeClass("selected");
@@ -218,7 +218,7 @@ function parseMods(descriptions) {
 }
  
  
-function buildTable(items, titleText, idName) {
+function buildTable(items, titleText, idName, headers) {
     if (items.length == 0) return;
  
  
@@ -236,23 +236,6 @@ function buildTable(items, titleText, idName) {
     table.id = idName;
     table.className = "stash";
  
-    var headers = ["", "Name", "Level", "Mods"];
- 
-	if (idName == "gems") {
-		headers = headers.concat(["Quality"]);
-	} else if (idName == "nonSocketGear" || idName == "rings" || idName == "amulets") {
-		headers = headers.concat(["tResist"]);
-	} else if (idName == "gear" || idName == "weapons") {
-        var gearHeaders = ["Sockets"];
-        headers = headers.concat(gearHeaders);
-        if (idName == "weapons") {
-            var weaponHeaders = ["DPS", "pDPS", "eDPS", "CPS", "Inc"];
-            headers = headers.concat(weaponHeaders);
-        } else if (idName == "gear") {
-			headers = headers.concat(["AR", "EV", "ES", "tResist"]);
-		}
-    }
- 
     createHeaders(table, headers);
  
     var rows = [];
@@ -263,18 +246,24 @@ function buildTable(items, titleText, idName) {
         var row = newRow();
         row.className = i % 2 == 0 ? 'evenRow' : 'oddRow';
  
-        createImageCell(row, item);
-        createTitleCell(row, item);
-        createLevelCell(row, item);
-        createModsCell(row, item);
-
-		switch(idName) {
-			case "gems":    addItemQuality(row, item); break;
-			case "nonSocketGear":
-			case "amulets":
-			case "rings":   addMiscDetails(row, item);    break;
-			case "weapons": createSocketsCell(row, item); addWeaponsDetails(row, item); break;
-			case "gear":    createSocketsCell(row, item); addArmourDetails(row, item);  break;
+		for (var c = 0; c < headers.length; ++c) {
+			({
+				"Icon":    createImageCell,
+				"Name":    createTitleCell,
+				"Level":   createLevelCell,
+				"Mods":    createModsCell,
+				"Quality": addItemQuality,
+				"tResist": addTotalResistances,
+				"Sockets": createSocketsCell,
+				"AR":      addArmour,
+				"EV":      addEvasion,
+				"ES":      addEnergyShield,
+				"DPS":     addDPS,
+				"pDPS":    addPDPS,
+				"eDPS":    addEDPS,
+				"CPS":     addCPS,
+				"Inc":     addpIncreaseDPS
+			})[headers[c]](row, item);
 		}
  
         rows.push({
@@ -329,63 +318,50 @@ function addItemQuality(row, item) {
 	appendNewCellWithTextAndClass(row, quality + "%", "quality", quality);
 }
 
-function addMiscDetails(row, item) {
+function addTotalResistances(row, item) {
 	var tResist = getTotalResistances(item);
 	appendNewCellWithTextAndClass(row, tResist + "%", "tresist", tResist);
 }
  
- function addArmourDetails(row, item) {
+ function addArmour(row, item) {
 	var ar  = item.properties["Armour"       ] ? parseInt(item.properties["Armour"        ].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, ar, "ar", ar);
-	
-	var ev = item.properties["Evasion Rating"] ? parseInt(item.properties["Evasion Rating"].values[0]) : 0;
-	appendNewCellWithTextAndClass(row, ev, "ev", ev);
-	
-	var es = item.properties["Energy Shield" ] ? parseInt(item.properties["Energy Shield"  ].values[0]) : 0;
-	appendNewCellWithTextAndClass(row, es, "es", es);
-	
-	var tResist = getTotalResistances(item);
-	appendNewCellWithTextAndClass(row, tResist + "%", "tresist", tResist);
  }
  
-function addWeaponsDetails(row, item) {
-    // weapon details if applicable
+ function addEvasion(row, item) {
+	var ev = item.properties["Evasion Rating"] ? parseInt(item.properties["Evasion Rating"].values[0]) : 0;
+	appendNewCellWithTextAndClass(row, ev, "ev", ev);
+ }
  
-    var weaponInfo = getWeaponInfo(item);
-    if (weaponInfo) {
-        var dps = weaponInfo.dps.toFixed(1);
-        appendNewCellWithTextAndClass(row, dps, "dps", dps);
-		
-		var pdps = weaponInfo.pdps.toFixed(1);
-        appendNewCellWithTextAndClass(row, pdps, "pdps", pdps);
-		
-		var edps = weaponInfo.edps.toFixed(1);
-        appendNewCellWithTextAndClass(row, edps, "edps", edps);
-		
-		var cps = weaponInfo.cps.toFixed(1);
-        appendNewCellWithTextAndClass(row, cps, "cps", cps);
-       
-		var pIncreaseDps = weaponInfo.pIncreaseDps.toFixed(1);
-        appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "inc", pIncreaseDps);
-  /*     
-        var physical = weaponInfo.physical;
-        appendNewCellWithTextAndClass(row, physical.label, "physical", physical.avg);
-       
-        var fire = weaponInfo.fire;
-        appendNewCellWithTextAndClass(row, fire ? fire.label : "", "fire", fire ? fire.avg : 0);
-       
-        var cold = weaponInfo.cold;
-        appendNewCellWithTextAndClass(row, cold ? cold.label : "", "cold", cold ? cold.avg : 0);
+ function addEnergyShield(row, item) {
+	var es = item.properties["Energy Shield" ] ? parseInt(item.properties["Energy Shield"  ].values[0]) : 0;
+	appendNewCellWithTextAndClass(row, es, "es", es);
+ }
  
-        var light = weaponInfo.lightning;
-        appendNewCellWithTextAndClass(row, light ? light.label : "", "lightning", light ? light.avg : 0);
- */
-    } else {
-        var td = newCell();
-        td.colSpan = 6;
-        row.appendChild(td);
-    }
-}
+ function addDPS(row, item) {
+	var dps = item.weaponInfo.dps.toFixed(1);
+	appendNewCellWithTextAndClass(row, dps, "dps", dps);
+ }
+ 
+ function addPDPS(row, item) {
+	var pdps = item.weaponInfo.pdps.toFixed(1);
+	appendNewCellWithTextAndClass(row, pdps, "pdps", pdps);
+ }
+ 
+ function addEDPS(row, item) {
+	var edps = item.weaponInfo.edps.toFixed(1);
+	appendNewCellWithTextAndClass(row, edps, "edps", edps);
+ }
+ 
+ function addCPS(row, item) {
+	var cps = item.weaponInfo.cps.toFixed(1);
+	appendNewCellWithTextAndClass(row, cps, "cps", cps);
+ }
+ 
+ function addpIncreaseDPS(row, item) {
+	var pIncreaseDps = item.weaponInfo.pIncreaseDps.toFixed(1);
+	appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "inc", pIncreaseDps);
+ }
  
 function createHeaders(table, headers) {
     var headerRow = newRow();
@@ -599,7 +575,6 @@ function getWeaponBaseName(typeLine) {
  
 function getWeaponInfo(item) {
     var baseWeapon = baseWeapons[getWeaponBaseName(item.typeLine)];
- 
  
     if (baseWeapon == null) {
         return null;
