@@ -157,6 +157,9 @@ var Mods = {
 	"\\+(\\d+)% to Lightning Resistance": "+% Lightning Resistance",
 	"\\+(\\d+)% to Fire Resistance": "+% Fire Resistance",
 	"\\+(\\d+)% to all Elemental Resistances": "+% All Resistances",
+	"\\+(\\d+)% to Cold and Lightning Resistances": "+% Cold and Lightning Resistances",
+	"\\+(\\d+)% to Fire and Cold Resistances":      "+% Fire and Cold Resistances",
+	"\\+(\\d+)% to Fire and Lightning Resistances": "+% Fire and Lightning Resistances",
 };
  
 function parseMods(descriptions) {
@@ -275,6 +278,10 @@ function calcTotalResistances(item) {
 	if (item.implicitMods["+% Lightning Resistance"]) tResist += parseInt(item.implicitMods["+% Lightning Resistance"].values[0]);
 	if (item.implicitMods["+% Fire Resistance"     ]) tResist += parseInt(item.implicitMods["+% Fire Resistance"     ].values[0]);
 	if (item.implicitMods["+% All Resistances"     ]) tResist += parseInt(item.implicitMods["+% All Resistances"     ].values[0]) * 3;
+	
+	if (item.implicitMods["+% Cold and Lightning Resistances"]) tResist += parseInt(item.implicitMods["+% Cold and Lightning Resistances"].values[0]) * 2;
+	if (item.implicitMods["+% Fire and Cold Resistances"     ]) tResist += parseInt(item.implicitMods["+% Fire and Cold Resistances"     ].values[0]) * 2;
+	if (item.implicitMods["+% Fire and Lightning Resistances"]) tResist += parseInt(item.implicitMods["+% Fire and Lightning Resistances"].values[0]) * 2;
 	
 	if (item.explicitMods["+% Cold Resistance"     ]) tResist += parseInt(item.explicitMods["+% Cold Resistance"     ].values[0]);
 	if (item.explicitMods["+% Lightning Resistance"]) tResist += parseInt(item.explicitMods["+% Lightning Resistance"].values[0]);
@@ -518,7 +525,7 @@ function getLowest(items, col) {
             lowest = current;
         }
     }
-    console.log(getValue(lowest, col));
+	
     return $(lowest);
 }
  
@@ -577,7 +584,6 @@ function getWeaponInfo(item) {
     weaponInfo.name = item.name;
     weaponInfo.baseItem = baseWeapon["Name"];
  
-    console.log(weaponInfo.mods);
     weaponInfo.baseWeaponDps = ((baseWeapon["DamageMin"] + baseWeapon["DamageMax"]) / 2 * baseWeapon["AttacksPerSecond"]).toFixed(1);
  
     addWeaponDamages(item, weaponInfo);
