@@ -290,13 +290,13 @@ function addMiscDetails(row, item) {
 }
  
  function addArmourDetails(row, item) {
-	var ar  = item.properties["Armour"       ] ? parseInt(item.properties["Armour"       ].values[0]) : 0;
+	var ar  = item.properties["Armour"       ] ? parseInt(item.properties["Armour"        ].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, ar, "ar", ar);
 	
-	var ev = item.properties["Evasion"      ] ? parseInt(item.properties["Evasion"      ].values[0]) : 0;
+	var ev = item.properties["Evasion Rating"] ? parseInt(item.properties["Evasion Rating"].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, ev, "ev", ev);
 	
-	var es = item.properties["Energy Shield"] ? parseInt(item.properties["Energy Shield"].values[0]) : 0;
+	var es = item.properties["Energy Shield" ] ? parseInt(item.properties["Energy Shield"  ].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, es, "es", es);
 	
 	var tResist = calcTotalResistances(item);
