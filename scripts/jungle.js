@@ -52,11 +52,36 @@ function ready() {
  
     $("body").html("<h2>Loading...</h2>");
  
+//	requestCharacterData();
     requestStashData("Standard");
 };
+
+function prepareItems(items) {
+	if (this.prepared)
+		return;
+	this.prepared = true;
+	
+	for (var i = 0; i < items.length; ++i) {
+		var item = items[i];
+		
+		if (item.properties) {
+			var temp = item.properties;
+			item.properties = {};
+			
+			for (var p = 0; p < temp.length; ++p) {
+				item.properties[temp[p].name] = temp[p];
+			}
+		}
+		
+        item.implicitMods = parseMods(item.implicitMods);
+        item.explicitMods = parseMods(item.explicitMods);
+	}
+}
  
  
 function buildPage(items) {
+	prepareItems(items);
+	
     $("body").html("");
     var title = document.createElement("h1");
  
@@ -91,15 +116,13 @@ function buildPage(items) {
                 amulets.push(item);
             } else if (!item.properties) {
                 nonSocketGear.push(item);
-            } else if (item.properties) {
-                name = item.properties[0]["name"];
-                if (isArmour(name)) {
-                    gear.push(item);
-                } else {
-                    weapons.push(item);
-                }
+            } else if (isArmour(item)) {
+                gear.push(item);
+            } else if (isWeapon(item)) {
+				weapons.push(item);
             } else {
-                weapons.push(item);
+				console.log("Uncategorised Item", item);
+                //weapons.push(item);
             }
         }
     }
@@ -119,8 +142,9 @@ function isRing(name) { return name.match(/Ring/) != null; }
  
 function isAmulet(name) { return name.match(/Amulet/) != null; }
  
-function isArmour(name) { return name.match(/Armour/) != null || name.match(/Evasion Rating/) != null || name.match(/Energy Shield/) != null; }
- 
+function isArmour(item) { return !!(item.properties["Evasion Rating"] || item.properties["Armour"] || item.properties["Energy Shield"]); }
+function isWeapon(item) { return !!(item.properties["Physical Damage"]); }
+
 var Mods = {
     "Adds (\\d+)-(\\d+) Physical Damage": "Physical Damage",
     "Adds (\\d+)-(\\d+) Cold Damage": "Cold Damage",
@@ -128,12 +152,18 @@ var Mods = {
     "Adds (\\d+)-(\\d+) Fire Damage": "Fire Damage",
     "(\\d+)% Increased Physical Damage": "+% Local Physical Damage",
     "(\\d+)% Increased Critical Strike Chance": "+% Local Critical Strike",
-    "(\\d+)% Increased Attack Speed": "+% Local Attack Speed"
+    "(\\d+)% Increased Attack Speed": "+% Local Attack Speed",
+	"\\+(\\d+)% to Cold Resistance": "+% Cold Resistance",
+	"\\+(\\d+)% to Lightning Resistance": "+% Lightning Resistance",
+	"\\+(\\d+)% to Fire Resistance": "+% Fire Resistance",
+	"\\+(\\d+)% to all Elemental Resistances": "+% All Resistances",
 };
  
 function parseMods(descriptions) {
     function parseMod(description) {
-        var generic = description.replace(/\d+/g, "(\\d+)");
+        var generic = description
+			.replace(/\+/g, "\\+")
+			.replace(/\d+/g, "(\\d+)");
  
         if (typeof Mods[generic] !== "undefined") {
             return {
@@ -179,13 +209,17 @@ function buildTable(items, titleText, idName) {
  
     var headers = ["", "Name", "Level", "Mods"];
  
-    if (idName == "gear" || idName == "weapons") {
+	if (idName == "nonSocketGear" || idName == "rings") {
+		headers = headers.concat(["tResist"]);
+	} else if (idName == "gear" || idName == "weapons") {
         var gearHeaders = ["Sockets"];
         headers = headers.concat(gearHeaders);
         if (idName == "weapons") {
-            var weaponHeaders = ["DPS", "pDPS", "eDPS", "CPS", "DPS%"];
+            var weaponHeaders = ["DPS", "pDPS", "eDPS", "CPS", "Inc"];
             headers = headers.concat(weaponHeaders);
-        }
+        } else if (idName == "gear") {
+			headers = headers.concat(["AR", "EV", "ES", "tResist"]);
+		}
     }
  
     createHeaders(table, headers);
@@ -195,10 +229,6 @@ function buildTable(items, titleText, idName) {
     for (var i = 0; i < items.length; i++) {
         var item = items[i];
  
-        item.implicitMods = parseMods(item.implicitMods);
-        item.explicitMods = parseMods(item.explicitMods);
- 
- 
         var row = newRow();
         row.className = i % 2 == 0 ? 'evenRow' : 'oddRow';
  
@@ -206,13 +236,13 @@ function buildTable(items, titleText, idName) {
         createTitleCell(row, item);
         createLevelCell(row, item);
         createModsCell(row, item);
- 
-        if (idName == "gear" || idName == "weapons") {
-            createSocketsCell(row, item);
-            if (idName == "weapons") {
-                addWeaponsDetails(row, item);
-            }
-        }
+
+		switch(idName) {
+			case "nonSocketGear":
+			case "rings":   addMiscDetails(row, item);    break;
+			case "weapons": createSocketsCell(row, item); addWeaponsDetails(row, item); break;
+			case "gear":    createSocketsCell(row, item); addArmourDetails(row, item);  break;
+		}
  
         rows.push({
             "item": item,
@@ -237,6 +267,41 @@ function buildTable(items, titleText, idName) {
  
     attachHandlers();
 }
+
+function calcTotalResistances(item) {
+	var tResist = 0;
+	
+	if (item.implicitMods["+% Cold Resistance"     ]) tResist += parseInt(item.implicitMods["+% Cold Resistance"     ].values[0]);
+	if (item.implicitMods["+% Lightning Resistance"]) tResist += parseInt(item.implicitMods["+% Lightning Resistance"].values[0]);
+	if (item.implicitMods["+% Fire Resistance"     ]) tResist += parseInt(item.implicitMods["+% Fire Resistance"     ].values[0]);
+	if (item.implicitMods["+% All Resistances"     ]) tResist += parseInt(item.implicitMods["+% All Resistances"     ].values[0]) * 3;
+	
+	if (item.explicitMods["+% Cold Resistance"     ]) tResist += parseInt(item.explicitMods["+% Cold Resistance"     ].values[0]);
+	if (item.explicitMods["+% Lightning Resistance"]) tResist += parseInt(item.explicitMods["+% Lightning Resistance"].values[0]);
+	if (item.explicitMods["+% Fire Resistance"     ]) tResist += parseInt(item.explicitMods["+% Fire Resistance"     ].values[0]);
+	if (item.explicitMods["+% All Resistances"     ]) tResist += parseInt(item.explicitMods["+% All Resistances"     ].values[0]) * 3;
+	
+	return tResist;
+}
+
+function addMiscDetails(row, item) {
+	var tResist = calcTotalResistances(item);
+	appendNewCellWithTextAndClass(row, tResist, "tresist", tResist);
+}
+ 
+ function addArmourDetails(row, item) {
+	var ar  = item.properties["Armour"       ] ? parseInt(item.properties["Armour"       ].values[0]) : 0;
+	appendNewCellWithTextAndClass(row, ar, "ar", ar);
+	
+	var ev = item.properties["Evasion"      ] ? parseInt(item.properties["Evasion"      ].values[0]) : 0;
+	appendNewCellWithTextAndClass(row, ev, "ev", ev);
+	
+	var es = item.properties["Energy Shield"] ? parseInt(item.properties["Energy Shield"].values[0]) : 0;
+	appendNewCellWithTextAndClass(row, es, "es", es);
+	
+	var tResist = calcTotalResistances(item);
+	appendNewCellWithTextAndClass(row, tResist, "tresist", tResist);
+ }
  
 function addWeaponsDetails(row, item) {
     // weapon details if applicable
@@ -256,7 +321,7 @@ function addWeaponsDetails(row, item) {
         appendNewCellWithTextAndClass(row, cps, "cps", cps);
        
 		var pIncreaseDps = weaponInfo.pIncreaseDps.toFixed(1);
-        appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "dps-increase", pIncreaseDps);
+        appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "inc", pIncreaseDps);
   /*     
         var physical = weaponInfo.physical;
         appendNewCellWithTextAndClass(row, physical.label, "physical", physical.avg);
@@ -445,7 +510,7 @@ function attachHandlers() {
 }
  
 function getLowest(items, col) {
-    var lowest = items[1];
+    var lowest = items[0];
  
     for (var i = 0; i < items.length; i++) {
         var current = items[i];
@@ -458,7 +523,7 @@ function getLowest(items, col) {
 }
  
 function getValue(row, col) {
-    return parseInt($(row).find("td." + col + " input[name='sortValue']").val());
+    return parseInt($(row).find("td." + col + " input[name='sortValue']").val()) || 0;
  
 }
  
