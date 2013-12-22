@@ -81,6 +81,16 @@ function prepareItems(items) {
 		
         item.implicitMods = parseMods(item.implicitMods);
         item.explicitMods = parseMods(item.explicitMods);
+		
+		if (typeof item["socketedItems"] !== "undefined") {
+			for (var j = 0; j < item["socketedItems"].length; ++j) {
+				var socketedItem = item["socketedItems"][j];
+				socketedItem.inventoryId = item.inventoryId;
+				socketedItem.x = item.x;
+				socketedItem.y = item.y;
+				items.push(socketedItem);
+			}
+		}
 	}
 }
  
