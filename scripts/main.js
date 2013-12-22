@@ -1,7 +1,6 @@
-function main(BASE_URL) {
-	if (typeof BASE_URL === "undefined")
-		BASE_URL = "https://raw.github.com/Unremarkable/poestashmonkey/master";
-
+function main(baseURL) {
+	window.BASE_URL = baseURL || "https://raw.github.com/Unremarkable/poestashmonkey/master";
+	
 	$.getScript("http://requirejs.org/docs/release/2.1.9/minified/require.js")
 	.done(function() {
 		require([

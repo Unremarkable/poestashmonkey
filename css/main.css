@@ -1,0 +1,131 @@
+body {
+background-color:#0F0F0F;
+border-collapse:collapse;
+color:#A38D6D;
+font-family:Verdana;
+font-size:14px;
+}
+
+h1,h2 {
+margin:15px;
+}
+
+.stash {
+background-color:#26231B;
+border:1px solid #1A1812;
+}
+
+#headerRow {
+backgronud-color:#332f24;
+color:#DFCF99;
+}
+
+#headerRow th {
+cursor:pointer;
+font-size:14px;
+text-align:center;
+padding:4px;
+}
+
+table.stash tr > td,#stash tr > th {
+background-color:#211F18;
+border:1px solid #1A1812;
+color:#DFCF99;
+}
+
+table.stash .oddRow {
+background-color:#26231B;
+}
+
+table.stash td {
+color:#A38D6D;
+font-size:12px;
+text-align:center;
+padding:4px;
+}
+
+table.stash .title {
+color:#F2C462;
+}
+
+table.stash img {
+height:40px;
+}
+
+table.stash .mods {
+color:#A38D6D;
+}
+
+table.stash .unidentified {
+color:#833;
+margin:4px;
+}
+
+table.stash .unparsed {
+font-style:italic;
+}
+
+table.stash .sockets .D {
+color:#719e13;
+}
+
+table.stash .sockets .I {
+color:#114181;
+}
+
+table.stash .sockets .S {
+color:#9e1328;
+}
+
+table.stash .unique {
+color:#af6025;
+}
+
+table.stash .rare {
+color:#f4f371;
+}
+
+table.stash .magic {
+color:#6b6bc8;
+}
+
+table.stash .normal {
+color:#b8b8b8;
+}
+
+table.stash .fire {
+color:#960000;
+}
+
+table.stash .cold {
+color:#366492;
+}
+
+table.stash .lightning {
+color:#e1be00;
+}
+
+#tabNames li.selected {
+color:#ff0000;
+border:1px solid #ffffff;
+border-bottom:1px solid #0F0F0F;
+}
+
+#tabContents table {
+display:none;
+}
+
+#tabContents table.selected {
+display:inline;
+}
+
+#tabNames {
+border-bottom:1px solid #ffffff;
+margin:0;
+padding:0;
+}
+
+#tabNames li {
+display:inline-block;
+padding:6px;
+}
