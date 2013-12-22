@@ -516,38 +516,22 @@ function attachHandlers() {
         var table = $(this).parents("table");
         var col = $(this).attr("id");
         var header = table.find("#headerRow");
+		header.removeClass("unsorted");
        
-        table.find("td." + col).parents("tr").addClass("unsorted");
-        header.removeClass("unsorted");
-       
-        var n = table.find("tr").length;
-       
-        var top = header;
-        for (var i = 1; i < n; i++) {
-            var list = table.find("tr.unsorted");
-            var lowest = getLowest(list, col);
-            lowest.insertAfter(top);
-            lowest.removeClass("unsorted");
-        }
-    });
+        var rows = table.find("td." + col).parents("tr");
+        
+		rows.sort(function(a, b) {
+			return getValue(a, col) - getValue(b, col);
+		});
+		
+		for (var i = 0; i < rows.length; ++i) {
+			table.prepend(rows[i]);
+		}
+	});
 }
- 
-function getLowest(items, col) {
-    var lowest = items[0];
- 
-    for (var i = 0; i < items.length; i++) {
-        var current = items[i];
-        if (getValue(current, col) < getValue(lowest, col)) {
-            lowest = current;
-        }
-    }
-	
-    return $(lowest);
-}
- 
+
 function getValue(row, col) {
-    return parseInt($(row).find("td." + col + " input[name='sortValue']").val()) || 0;
- 
+    return parseInt($(row).find("td." + col + " input[name='sortValue']").val()) || 0; 
 }
  
 /*
