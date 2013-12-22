@@ -1,14 +1,16 @@
-if (typeof BASE_URL === "undefined")
-	BASE_URL = "https://raw.github.com/Unremarkable/poestashmonkey/master";
+function main(BASE_URL) {
+	if (typeof BASE_URL === "undefined")
+		BASE_URL = "https://raw.github.com/Unremarkable/poestashmonkey/master";
 
-$.getScript("http://requirejs.org/docs/release/2.1.9/minified/require.js")
-.done(function() {
-	require([
-		BASE_URL+"/scripts/ajax.js",
-		BASE_URL+"/scripts/jungle.js",
-		BASE_URL+"/scripts/data/mods.js",
-		BASE_URL+"/scripts/data/baseWeapons.js"
-	], function() {
-		ready();
+	$.getScript("http://requirejs.org/docs/release/2.1.9/minified/require.js")
+	.done(function() {
+		require([
+			BASE_URL+"/scripts/ajax.js",
+			BASE_URL+"/scripts/jungle.js",
+			BASE_URL+"/scripts/data/mods.js",
+			BASE_URL+"/scripts/data/baseWeapons.js"
+		], function() {
+			ready();
+		});
 	});
-});
+}

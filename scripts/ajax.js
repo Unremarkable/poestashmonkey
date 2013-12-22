@@ -58,3 +58,12 @@ function requestStashData(league, tab) {
         }
     }
 }
+
+function requestCharacterData() {
+	$.ajax("http://www.pathofexile.com/character-window/get-characters")
+	.done(function(data) {
+		for (var i = 0; i < data.length; ++i) {
+			console.log(data[i].name);
+		}
+	});
+}
