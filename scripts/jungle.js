@@ -20,7 +20,7 @@ function ready() {
     $("body").html("<h2>Loading...</h2>");
  
 	buildPage();
-//	requestCharacterData();
+	requestCharacterData();
     requestStashData("Standard");
 };
 
@@ -57,7 +57,6 @@ function prepareItems(items) {
 }
 
 function createRowFor(item, table) {
-	console.log("createRowFor");
 	var row = newRow();
 
 	for (var c = 0; c < table.columns.length; ++c) {
@@ -84,7 +83,6 @@ function createRowFor(item, table) {
 }
 
 function receiveItemData(items) {
-	console.log("receiveItemData");
 	prepareItems(items);
 	
 	for (var i = 0; i < items.length; ++i) {
