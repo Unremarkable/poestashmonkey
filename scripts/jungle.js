@@ -22,6 +22,8 @@ function ready() {
 	buildPage();
 	requestCharacterData();
     requestStashData("Standard");
+    
+    tallyCurrency();
 };
 
 function prepareItems(items) {
