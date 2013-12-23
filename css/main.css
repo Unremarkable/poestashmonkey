@@ -1,199 +1,188 @@
 @font-face {
-font-family:'FontinSmallCaps';
-src:url('http://webcdn.pathofexile.com/font/fontin-smallcaps-webfont.eot');
-src:local("☺"),url('http://webcdn.pathofexile.com/font/fontin-smallcaps-webfont.woff') format("woff"),url('http://webcdn.pathofexile.com/font/fontin-smallcaps-webfont.ttf') format("truetype"),url('http://webcdn.pathofexile.com/font/fontin-smallcaps-webfont.svg#webfontSCusr8QL') format("svg");
-font-weight:normal;
-font-style:normal
+	font-family:'FontinSmallCaps';
+	src:url('http://webcdn.pathofexile.com/font/fontin-smallcaps-webfont.eot');
+	src:local("☺"),url('http://webcdn.pathofexile.com/font/fontin-smallcaps-webfont.woff') format("woff"),url('http://webcdn.pathofexile.com/font/fontin-smallcaps-webfont.ttf') format("truetype"),url('http://webcdn.pathofexile.com/font/fontin-smallcaps-webfont.svg#webfontSCusr8QL') format("svg");
+	font-weight: normal;
+	font-style: normal
 }
 
 @font-face {
-font-family:'FontinRegular';
-src:url('http://webcdn.pathofexile.com/font/fontin-regular-webfont.eot');
-src:local("☺"),url('http://webcdn.pathofexile.com/font/fontin-regular-webfont.woff') format("woff"),url('http://webcdn.pathofexile.com/font/fontin-regular-webfont.ttf') format("truetype"),url('http://webcdn.pathofexile.com/font/fontin-regular-webfont.svg#webfontOAeglf7d') format("svg");
-font-weight:normal;
-font-style:normal
+	font-family:'FontinRegular';
+	src:url('http://webcdn.pathofexile.com/font/fontin-regular-webfont.eot');
+	src:local("☺"),url('http://webcdn.pathofexile.com/font/fontin-regular-webfont.woff') format("woff"),url('http://webcdn.pathofexile.com/font/fontin-regular-webfont.ttf') format("truetype"),url('http://webcdn.pathofexile.com/font/fontin-regular-webfont.svg#webfontOAeglf7d') format("svg");
+	font-weight: normal;
+	font-style: normal
 }
 
 @font-face {
-font-family:'FontinItalic';
-src:url('http://webcdn.pathofexile.com/font/fontin-italic-webfont.eot');
-src:local("☺"),url('http://webcdn.pathofexile.com/font/fontin-italic-webfont.woff') format("woff"),url('http://webcdn.pathofexile.com/font/fontin-italic-webfont.ttf') format("truetype"),url('http://webcdn.pathofexile.com/font/fontin-italic-webfont.svg#webfontEqJqoBxP') format("svg");
-font-weight:normal;
-font-style:normal
+	font-family:'FontinItalic';
+	src:url('http://webcdn.pathofexile.com/font/fontin-italic-webfont.eot');
+	src:local("☺"),url('http://webcdn.pathofexile.com/font/fontin-italic-webfont.woff') format("woff"),url('http://webcdn.pathofexile.com/font/fontin-italic-webfont.ttf') format("truetype"),url('http://webcdn.pathofexile.com/font/fontin-italic-webfont.svg#webfontEqJqoBxP') format("svg");
+	font-weight: normal;
+	font-style: normal
 }
 
 @font-face {
-font-family:'FontinBold';
-src:url('http://webcdn.pathofexile.com/font/fontin-bold-webfont.eot');
-src:local("☺"),url('http://webcdn.pathofexile.com/font/fontin-bold-webfont.woff') format("woff"),url('http://webcdn.pathofexile.com/font/fontin-bold-webfont.ttf') format("truetype"),url('http://webcdn.pathofexile.com/font/fontin-bold-webfont.svg#webfontvK7dhkXe') format("svg");
-font-weight:normal;
-font-style:normal
+	font-family:'FontinBold';
+	src:url('http://webcdn.pathofexile.com/font/fontin-bold-webfont.eot');
+	src:local("☺"),url('http://webcdn.pathofexile.com/font/fontin-bold-webfont.woff') format("woff"),url('http://webcdn.pathofexile.com/font/fontin-bold-webfont.ttf') format("truetype"),url('http://webcdn.pathofexile.com/font/fontin-bold-webfont.svg#webfontvK7dhkXe') format("svg");
+	font-weight: normal;
+	font-style: normal;
 }
 
 
-.FontinSmallCaps, h1, h2, table.stash  .title {
-font-weight:normal;
-font-style:normal;
-line-height:normal;
-font-family:FontinSmallCaps, Verdana,Arial,Helvetica,sans-serif;
-font-size-adjust:0.54;
+.FontinSmallCaps,
+h1, h2, 
+table.stash .title {
+	font-weight: normal;
+	font-style: normal;
+	line-height: normal;
+	font-family: FontinSmallCaps, Verdana,Arial,Helvetica,sans-serif;
+	font-size-adjust: 0.54;
 }
 
-.FontinRegular, table {
-font-weight:normal;
-font-style:normal;
-line-height:normal;
-font-family:FontinRegular, Verdana,Arial,Helvetica,sans-serif;
-font-size-adjust:0.51;
+.FontinRegular,
+table {
+	font-weight: normal;
+	font-style: normal;
+	line-height: normal;
+	font-family: FontinRegular, Verdana,Arial,Helvetica,sans-serif;
+	font-size-adjust: 0.51;
 }
 
-.FontinItalic, .unparsed {
-font-weight:normal;
-font-style:normal;
-line-height:normal;
-font-family:FontinItalic, Verdana,Arial,Helvetica,sans-serif;
-font-size-adjust:0.51;
+.FontinItalic,
+.unparsed {
+	font-weight: normal;
+	font-style: normal;
+	line-height: normal;
+	font-family: FontinItalic, Verdana,Arial,Helvetica,sans-serif;
+	font-size-adjust: 0.51;
 }
 
 .FontinBold, #tabNames li, table.stash th {
-font-weight:normal;
-font-style:normal;
-line-height:normal;
-font-family:FontinBold, Verdana,Arial,Helvetica,sans-serif;
-font-size-adjust:0.52;
+	font-weight: normal;
+	font-style: normal;
+	line-height: normal;
+	font-family: FontinBold, Verdana,Arial,Helvetica,sans-serif;
+	font-size-adjust: 0.52;
 }
 
 body {
-background-color:#0F0F0F;
-border-collapse:collapse;
-color:#A38D6D;
-font-family:Verdana;
-font-size:14px;
+	background-color: #0F0F0F;
+	border-collapse: collapse;
+	color: #A38D6D;
+	font-family: Verdana;
+	font-size: 14px;
 }
 
-h1,h2 {
-margin:15px;
+h1, h2 {
+	margin: 15px;
 }
 
 .stash {
-background-color:#26231B;
-border:1px solid #1A1812;
+	background-color: #26231B;
+	border: 1px solid #1A1812;
 }
 
 #headerRow {
-backgronud-color:#332f24;
-color:#DFCF99;
+	backgronud-color: #332f24;
+	color: #DFCF99;
 }
 
 #headerRow th {
-cursor:pointer;
-font-size:14px;
-text-align:center;
-padding:4px;
+	cursor: pointer;
+	font-size: 14px;
+	text-align: center;
+	padding: 4px;
 }
 
-table.stash tr > td,#stash tr > th {
-background-color:#211F18;
-border:1px solid #1A1812;
-color:#DFCF99;
+table.stash tr > td,
+table.stash tr > th {
+	background-color: #211F18;
+	border: 1px solid #1A1812;
+	color: #DFCF99;
 }
 
-table.stash .oddRow {
-background-color:#26231B;
-}
+table.stash .oddRow { background-color: #26231B; }
 
 table.stash td {
-color:#A38D6D;
-font-size:12px;
-text-align:center;
-padding:4px;
+	color: #A38D6D;
+	font-size: 12px;
+	text-align: center;
+	padding: 4px;
 }
 
-table.stash .title {
-color:#F2C462;
+table.stash .title { color: #F2C462; }
+
+table.stash img { height: 40px; }
+
+table.stash .mods { color: #A38D6D; }
+
+table.stash .mods .divider {
+	background-color: #332F24;
+	height: 1px;
+	margin: 4px 10px;
 }
 
-table.stash img {
-height:40px;
-}
+table.stash .unidentified { color: #833; margin: 4px; }
 
-table.stash .mods {
-color:#A38D6D;
-}
+table.stash .sockets .D { color: #719e13; }
 
-table.stash .mods hr {
-color:#1A1812;
-background-color:#26231B;
-border-color:#1A1812;
-height: 1px;
-}
+table.stash .sockets .I { color: #114181; }
 
-table.stash .unidentified {
-color:#833;
-margin:4px;
-}
+table.stash .sockets .S { color: #9e1328; }
 
-table.stash .sockets .D {
-color:#719e13;
-}
 
-table.stash .sockets .I {
-color:#114181;
-}
+table.stash .unique { color: #af6025; }
 
-table.stash .sockets .S {
-color:#9e1328;
-}
+table.stash .rare { color: #f4f371; }
 
-table.stash .unique {
-color:#af6025;
-}
+table.stash .magic { color: #6b6bc8; }
 
-table.stash .rare {
-color:#f4f371;
-}
+table.stash .normal { color: #b8b8b8; }
 
-table.stash .magic {
-color:#6b6bc8;
-}
 
-table.stash .normal {
-color:#b8b8b8;
-}
+table.stash .fire { color: #960000; }
 
-table.stash .fire {
-color:#960000;
-}
+table.stash .cold { color: #366492; }
 
-table.stash .cold {
-color:#366492;
-}
+table.stash .lightning { color: #e1be00; }
 
-table.stash .lightning {
-color:#e1be00;
+
+#tabNames li {
+	color: #A38D6D;
+	background-color: #26231B;
+	border: 1px solid #1A1812;
+	border-bottom: none;
+
+	-webkit-border-top-left-radius: 6px;
+	-webkit-border-top-right-radius: 6px;
+	-moz-border-radius-topleft: 6px;
+	-moz-border-radius-topright: 6px;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
 }
 
 #tabNames li.selected {
-color:#ff0000;
-border:1px solid #ffffff;
-border-bottom:1px solid #0F0F0F;
+	color: #DFCF99;
+	background-color: #332F24;
 }
 
 #tabContents table {
-display:none;
+	display: none;
 }
 
 #tabContents table.selected {
-display:inline;
+	display: inline-block;
 }
 
 #tabNames {
-border-bottom:1px solid #ffffff;
-margin:0;
-padding:0;
+	margin: 0;
+	padding: 0;
 }
 
 #tabNames li {
-display:inline-block;
-padding:6px;
+	cursor: pointer;
+	display: inline-block;
+	padding: 6px;
 }

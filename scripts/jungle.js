@@ -412,7 +412,7 @@ function createModsCell(row, item) {
 	
 	if (explicit.length > 0 || !item.identified) {
 		if (implicit.length > 0)
-			html += "<hr />";
+			html += "<div class='divider'></div>";
 		if (explicit.length > 0)
 			html += "<div class='explicit'>"+explicit+"</div>";
 		else
