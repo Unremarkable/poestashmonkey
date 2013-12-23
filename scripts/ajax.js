@@ -1,3 +1,4 @@
+var CACHE_MAX_LIFE = 3600000; // one hour
 
 function receiveStashData(league, tab, data) {
 	stashData[league][tab] = data;
@@ -52,23 +53,47 @@ function requestStashData(league, tab) {
     }
 }
 
+function getCharacterCache(name) {
+	var str = localStorage["/character-window/get-items?character="+name];
+	if (typeof str !== "undefined" && str.length > 0) {
+		var cache = JSON.parse(str);
+		if (cache && ((Date.now() - cache.date) < CACHE_MAX_LIFE))
+			return cache.data;
+	}
+	return false;
+}
+
+function setCharacterCache(name, value) {
+	localStorage["/character-window/get-items?character="+name] = JSON.stringify({
+		date: Date.now(),
+		data: value
+	});
+}
+
 function requestCharacterData() {
 	$.ajax("http://www.pathofexile.com/character-window/get-characters")
 	.done(function(charlist) {
 		for (var i = 0; i < charlist.length; ++i) {
-			(function(name) {
-				$.ajax("http://www.pathofexile.com/character-window/get-items", {
-					"data" : {
-						"character" : name
-					}
-				})
-				.done(function(data) {
-					for (var i = 0; i < data.items.length; ++i) {
-						data.items[i].inventoryId = name + "'s " + data.items[i].inventoryId;
-					}
-					receiveItemData(data.items);
-				});
-			})(charlist[i]["name"]);
+			var name = charlist[i]["name"];
+			var cache = getCharacterCache(name);
+			if (cache) {
+				receiveItemData(cache.items);
+			} else {
+				(function(name) {
+					$.ajax("http://www.pathofexile.com/character-window/get-items", {
+						"data" : {
+							"character" : name
+						}
+					})
+					.done(function(data) {
+						for (var i = 0; i < data.items.length; ++i) {
+							data.items[i].inventoryId = name + "'s " + data.items[i].inventoryId;
+						}
+						setCharacterCache(name, data);
+						receiveItemData(data.items);
+					});
+				})(name);
+			}
 		}
 	});
 }
