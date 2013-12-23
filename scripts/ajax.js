@@ -54,16 +54,22 @@ function requestStashData(league, tab) {
 
 function requestCharacterData() {
 	$.ajax("http://www.pathofexile.com/character-window/get-characters")
-	.done(function(data) {
-		for (var i = 0; i < data.length; ++i) {
-			$.ajax("http://www.pathofexile.com/character-window/get-items", {
-				"data" : {
-					"character" : data[i]["name"]
-				}
-			})
-			.done(function(data) {
-				receiveItemData(data.items);
-			});
+	.done(function(charlist) {
+		for (var i = 0; i < charlist.length; ++i) {
+			(function(name) {
+				$.ajax("http://www.pathofexile.com/character-window/get-items", {
+					"data" : {
+						"character" : name
+					}
+				})
+				.done(function(data) {
+					for (var i = 0; i < data.items.length; ++i) {
+						console.log(name, data.items[i].inventoryId);
+						data.items[i].inventoryId = name + "'s " + data.items[i].inventoryId;
+					}
+					receiveItemData(data.items);
+				});
+			})(charlist[i]["name"]);
 		}
 	});
 }
