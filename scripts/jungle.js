@@ -12,7 +12,7 @@ var existingItems = [];
  
 function ready() {
     insertStylesheet();
- 
+	
     if ($("pre").length > 0) {
         existingItems = JSON.parse($("pre").html()).items;
     }
@@ -287,11 +287,11 @@ function getTotalResistances(item) {
 
 function getElementalDamage(item) {
 	var eDMG = [0, 0];
-	
+
 	if (item.explicitMods["Cold Damage"     ]) { eDMG[0] += parseInt(item.explicitMods["Cold Damage"     ].values[0]); eDMG[1] += parseInt(item.explicitMods["Cold Damage"     ].values[1]); }
 	if (item.explicitMods["Lightning Damage"]) { eDMG[0] += parseInt(item.explicitMods["Lightning Damage"].values[0]); eDMG[1] += parseInt(item.explicitMods["Lightning Damage"].values[1]); }
 	if (item.explicitMods["Fire Damage"     ]) { eDMG[0] += parseInt(item.explicitMods["Fire Damage"     ].values[0]); eDMG[1] += parseInt(item.explicitMods["Fire Damage"     ].values[1]); }
-	
+
 	return eDMG;
 }
 
@@ -330,27 +330,27 @@ function addTotalResistances(row, item) {
  }
  
  function addDPS(row, item) {
-	var dps = item.weaponInfo.dps.toFixed(1);
+	var dps = item.weaponInfo ? item.weaponInfo.dps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, dps, "dps", dps);
  }
  
  function addPDPS(row, item) {
-	var pdps = item.weaponInfo.pdps.toFixed(1);
+	var pdps = item.weaponInfo ? item.weaponInfo.pdps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, pdps, "pdps", pdps);
  }
  
  function addEDPS(row, item) {
-	var edps = item.weaponInfo.edps.toFixed(1);
+	var edps = item.weaponInfo ? item.weaponInfo.edps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, edps, "edps", edps);
  }
  
  function addCPS(row, item) {
-	var cps = item.weaponInfo.cps.toFixed(1);
+	var cps = item.weaponInfo ? item.weaponInfo.cps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, cps, "cps", cps);
  }
  
  function addpIncreaseDPS(row, item) {
-	var pIncreaseDps = item.weaponInfo.pIncreaseDps.toFixed(1);
+	var pIncreaseDps = item.weaponInfo ? item.weaponInfo.pIncreaseDps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "inc", pIncreaseDps);
  }
  
