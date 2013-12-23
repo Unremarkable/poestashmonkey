@@ -23,7 +23,7 @@ function ready() {
 	requestCharacterData();
     requestStashData("Standard");
     
-    tallyCurrency();
+    fetchCurrencyConversionTable();
 };
 
 function prepareItems(items) {

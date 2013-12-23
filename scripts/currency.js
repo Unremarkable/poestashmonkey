@@ -1,6 +1,6 @@
 var currencyConversionTable = {};
 
-function tallyCurrency(){
+function fetchCurrencyConversionTable(){
 	console.log("Parsing Currency");
 	
 	$.get( "http://exilestats.com/ex/", function( data ) {
