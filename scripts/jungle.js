@@ -285,19 +285,19 @@ function getTotalResistances(item) {
 	return tResist;
 }
 
-function getAverageElementalDamage(item) {
-	var eDMG = 0;
+function getElementalDamage(item) {
+	var eDMG = [0, 0];
 	
-	if (item.explicitMods["Cold Damage"     ]) eDMG += parseInt(item.explicitMods["Cold Damage"     ].values[0]) + parseInt(item.explicitMods["Cold Damage"     ].values[1]);
-	if (item.explicitMods["Lightning Damage"]) eDMG += parseInt(item.explicitMods["Lightning Damage"].values[0]) + parseInt(item.explicitMods["Lightning Damage"].values[1]);
-	if (item.explicitMods["Fire Damage"     ]) eDMG += parseInt(item.explicitMods["Fire Damage"     ].values[0]) + parseInt(item.explicitMods["Fire Damage"     ].values[1]);
+	if (item.explicitMods["Cold Damage"     ]) { eDMG[0] += parseInt(item.explicitMods["Cold Damage"     ].values[0]); eDMG[1] += parseInt(item.explicitMods["Cold Damage"     ].values[1]); }
+	if (item.explicitMods["Lightning Damage"]) { eDMG[0] += parseInt(item.explicitMods["Lightning Damage"].values[0]); eDMG[1] += parseInt(item.explicitMods["Lightning Damage"].values[1]); }
+	if (item.explicitMods["Fire Damage"     ]) { eDMG[0] += parseInt(item.explicitMods["Fire Damage"     ].values[0]); eDMG[1] += parseInt(item.explicitMods["Fire Damage"     ].values[1]); }
 	
-	return eDMG / 2;
+	return eDMG;
 }
 
 function addItemElementalDamage(row, item) {
-	var eDMG = getAverageElementalDamage(item);
-	appendNewCellWithTextAndClass(row, Math.round(eDMG), "edmg", eDMG);
+	var eDMG = getElementalDamage(item);
+	appendNewCellWithTextAndClass(row, (eDMG[0] || eDMG[1]) ? eDMG[0]+"-"+eDMG[1] : 0, "edmg", eDMG[0] + eDMG[1]);
 }
 
 function getItemQuality(item) {
