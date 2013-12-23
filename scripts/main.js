@@ -5,7 +5,7 @@ function main(baseURL) {
 	.done(function() {
 		require([
 			BASE_URL+"/scripts/ajax.js?_v=12",
-			BASE_URL+"/scripts/jungle.js",
+			BASE_URL+"/scripts/jungle.js?_v=3",
 			BASE_URL+"/scripts/data/mods.js",
 			BASE_URL+"/scripts/data/baseWeapons.js"
 		], function() {

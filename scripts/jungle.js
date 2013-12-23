@@ -4,7 +4,7 @@ function insertStylesheet() {
     var style = window.document.createElement("link");
 	style.rel = "stylesheet";
 	style.type="text/css";
-	style.href=BASE_URL+"/css/main.css";
+	style.href=BASE_URL+"/css/main.css?_v=3";
     $("head")[0].appendChild(style);
 }
  
@@ -149,12 +149,12 @@ var tables = {
 	"Armour": {
 		"name":    "Armour",
 		"idName":  "gear",
-		"columns": ["Icon", "Name", "Level", "Quality", "Mods", "AR", "EV", "ES", "tResist"]
+		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist"]
 	},
 	"Weapons": {
 		"name":    "Weapons",
 		"isName":  "weapons",
-		"columns": ["Icon", "Name", "Level", "Quality", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]
+		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]
 	}
 };
  
@@ -383,20 +383,25 @@ function createTitleCell(row, item) {
 function createModsCell(row, item) {
     var td = newCell();
     td.className = "mods";
+	
     var implicit = getModsText(item.implicitMods);
     var explicit = getModsText(item.explicitMods);
-   
-    var text = implicit;
-    if (implicit.length > 0 && explicit.length > 0) {
-        text += "<br /><br />";
-    }
-    text += explicit;
+  
+	var html = "";
+  
+	if (implicit.length > 0)
+		html += "<div class='implicit'>"+implicit+"</div>";
+	
+	if (explicit.length > 0 || !item.identified) {
+		if (implicit.length > 0)
+			html += "<hr />";
+		if (explicit.length > 0)
+			html += "<div class='explicit'>"+explicit+"</div>";
+		else
+			html += "<div class='unidentified'>UNIDENTIFIED</div>"
+	}
  
-    if (!item.identified) {
-        text += "<span class='unidentified'>UNIDENTIFIED</span>";
-    }
- 
-    td.innerHTML = text;
+    td.innerHTML = html;
     row.appendChild(td);
 }
  
@@ -422,29 +427,46 @@ function getModsText(mods) {
 }
  
 function createSocketsCell(row, item) {
-    var td = newCell();
-    td.className = "sockets";
+	var text  = "";
+	var value = 0;
  
     if (item.sockets) {
-        var groups = new Array();
-        for (var i = 0; i < item.sockets.length; i++) {
-            var socket = item.sockets[i];
-            var text = "<span class='" + socket.attr + "'>" + socket.attr + "</span>";
- 
-            if (groups[socket.group]) {
-                text = groups[socket.group] + "-" + text;
-            }
-            groups[socket.group] = text;
-        }
- 
-        var text = "";
- 
-        for (var i = 0; i < groups.length; i++) {
-            text += groups[i] + "<br />";
-        }
-        td.innerHTML = text;
+		var groups = [];
+		var total  = 0;
+		
+		for (var i = 0; i < item.sockets.length; ++i) {
+			var socket = item.sockets[i];
+			
+			if (socket.group >= groups.length)
+				groups[socket.group] = {"S":0, "D":0, "I":0, "total":0};
+				
+			groups[socket.group][socket.attr]++;
+			groups[socket.group].total++;
+		}
+		
+		var longest = 0;
+		
+		for (var i = 0; i < groups.length; ++i) {
+			var group = groups[i];
+			
+			if (group.total > longest)
+				longest = group.total;
+			
+			if (i > 0) 
+				text += "<br />";
+			text += "<span class='group'>";
+
+			if (group["S"] > 0) { text += "<span class='S'>"; for (var j = 0; j < group["S"]; ++j) text += "R"; text += "</span>"; }
+			if (group["D"] > 0) { text += "<span class='D'>"; for (var j = 0; j < group["D"]; ++j) text += "G"; text += "</span>"; }
+			if (group["I"] > 0) { text += "<span class='I'>"; for (var j = 0; j < group["I"]; ++j) text += "B"; text += "</span>"; }
+			
+			text += "</span>";
+		}
+		
+		value = longest * 10 + item.sockets.length;
     }
-    row.appendChild(td);
+	
+	appendNewCellWithTextAndClass(row, text, "sockets", value);
 }
  
 function getRequirement(item, type) {

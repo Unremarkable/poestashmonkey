@@ -121,6 +121,13 @@ table.stash .mods {
 color:#A38D6D;
 }
 
+table.stash .mods hr {
+color:#1A1812;
+background-color:#26231B;
+border-color:#1A1812;
+height: 1px;
+}
+
 table.stash .unidentified {
 color:#833;
 margin:4px;
