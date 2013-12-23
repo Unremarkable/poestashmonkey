@@ -10,4 +10,6 @@
 
 var BASE_URL = "https://raw.github.com/Unremarkable/poestashmonkey/master"
 
-$.getScript(BASE_URL+"/scripts/main.js");
+$.getScript(BASE_URL+"/scripts/main.js", function() {
+    main(BASE_URL);
+});
