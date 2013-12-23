@@ -1,17 +1,10 @@
+
 function receiveStashData(league, tab, data) {
-    console.log("receiveStashData(" + league + "," + tab + ");");
-    stashData[league][tab] = data;
+	stashData[league][tab] = data;
+	receiveItemData(data.items)
 }
 
 function receiveStashDataFinished() {
-    console.log("receiveStashDataFinished();");
-    var items = existingItems;
-    var tabs = stashData["Standard"];
-    for (var tab in Object.getOwnPropertyNames(tabs)) {
-        items = items.concat(tabs[tab].items);
-    }
-
-    buildPage(items);
 }
 
 function requestStashData(league, tab) {

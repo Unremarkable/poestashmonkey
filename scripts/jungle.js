@@ -19,17 +19,18 @@ function ready() {
  
     $("body").html("<h2>Loading...</h2>");
  
+	buildPage();
 //	requestCharacterData();
     requestStashData("Standard");
 };
 
 function prepareItems(items) {
-	if (this.prepared)
-		return;
-	this.prepared = true;
-	
 	for (var i = 0; i < items.length; ++i) {
 		var item = items[i];
+		
+		if (item.prepared)
+			return;
+		item.prepared = true;
 		
 		if (item.properties) {
 			var temp = item.properties;
@@ -40,8 +41,8 @@ function prepareItems(items) {
 			}
 		}
 		
-        item.implicitMods = parseMods(item.implicitMods);
-        item.explicitMods = parseMods(item.explicitMods);
+		item.implicitMods = parseMods(item.implicitMods);
+		item.explicitMods = parseMods(item.explicitMods);
 		
 		if (typeof item["socketedItems"] !== "undefined") {
 			for (var j = 0; j < item["socketedItems"].length; ++j) {
@@ -54,69 +55,126 @@ function prepareItems(items) {
 		}
 	}
 }
- 
- 
-function buildPage(items) {
+
+function createRowFor(item, table) {
+	console.log("createRowFor");
+	var row = newRow();
+
+	for (var c = 0; c < table.columns.length; ++c) {
+		({
+			"Icon":    createImageCell,
+			"Name":    createTitleCell,
+			"Level":   createLevelCell,
+			"Mods":    createModsCell,
+			"Quality": addItemQuality,
+			"tResist": addTotalResistances,
+			"Sockets": createSocketsCell,
+			"AR":      addArmour,
+			"EV":      addEvasion,
+			"ES":      addEnergyShield,
+			"DPS":     addDPS,
+			"pDPS":    addPDPS,
+			"eDPS":    addEDPS,
+			"CPS":     addCPS,
+			"Inc":     addpIncreaseDPS
+		})[table.columns[c]](row, item);
+	}
+	
+	table.dom.appendChild(row);
+}
+
+function receiveItemData(items) {
+	console.log("receiveItemData");
 	prepareItems(items);
 	
+	for (var i = 0; i < items.length; ++i) {
+		var item = items[i];
+		var itemType = item.frameType;
+
+		if (itemType == 5) {
+			createRowFor(item, tables["Currency"]);
+		} else if (itemType == 4) {
+			createRowFor(item, tables["Gems"]);
+		} else {
+			var name = item.typeLine;
+			if (isFlask(name)) {
+				createRowFor(item, tables["Flasks"]);
+			} else if (isRing(name)) {
+				createRowFor(item, tables["Rings"]);
+			} else if (isAmulet(name)) {
+				createRowFor(item, tables["Amulets"]);
+			} else if (!item.properties) {
+				createRowFor(item, tables["Belts & Quivers"]);
+			} else if (isArmour(item)) {
+				createRowFor(item, tables["Armour"]);
+			} else if (isWeapon(item)) {
+				item.weaponInfo = getWeaponInfo(item);	// HACK
+				createRowFor(item, tables["Weapons"]);
+			} else {
+				console.log("Uncategorised Item", item);
+			}
+		}
+	}
+}
+
+var tables = {
+	"Gems": {
+		"name":    "Gems",
+		"idName":  "gems",
+		"columns": ["Icon", "Name", "Level", "Quality", "Mods"]
+	},
+	"Currency": {
+		"name":    "Currency",
+		"idName":  "currency",
+		"columns": ["Icon", "Name", "Mods"]
+	},
+	"Flasks": {
+		"name":    "Flasks",
+		"idName":  "flasks",
+		"columns": ["Icon", "Name", "Level", "Quality", "Mods"]
+	},
+	"Amulets": {
+		"name":    "Amulets",
+		"idName":  "amulets",
+		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
+	},
+	"Rings": {
+		"name":    "Rings",
+		"idName":  "rings",
+		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
+	},
+	"Belts & Quivers": {
+		"name":    "Belts & Quivers",
+		"idName":  "nonSocket",
+		"columns": ["Icon", "Name", "Level", "Mods", "tResist"],
+	},
+	"Armour": {
+		"name":    "Armour",
+		"idName":  "gear",
+		"columns": ["Icon", "Name", "Level", "Quality", "Mods", "AR", "EV", "ES", "tResist"]
+	},
+	"Weapons": {
+		"name":    "Weapons",
+		"isName":  "weapons",
+		"columns": ["Icon", "Name", "Level", "Quality", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]
+	}
+};
+ 
+function buildPage() {
     $("body").html("");
     var title = document.createElement("h1");
  
     title.innerHTML = "Stash Inventory";
     $("body")[0].appendChild(title);
  
-    var gems = [];
-    var currency = [];
-    var flasks = [];
-    var rings = [];
-    var amulets = [];
-    var nonSocketGear = [];
-    var gear = [];
-    var weapons = [];
- 
- 
-    for (var i = 0; i < items.length; i++) {
-        var item = items[i];
-        var itemType = item.frameType;
- 
-        if (itemType == 5) {
-            currency.push(item);
-        } else if (itemType == 4) {
-            gems.push(item);
-        } else {
-            var name = item.typeLine;
-            if (isFlask(name)) {
-                flasks.push(item);
-            } else if (isRing(name)) {
-                rings.push(item);
-            } else if (isAmulet(name)) {
-                amulets.push(item);
-            } else if (!item.properties) {
-                nonSocketGear.push(item);
-            } else if (isArmour(item)) {
-                gear.push(item);
-            } else if (isWeapon(item)) {
-				item.weaponInfo = getWeaponInfo(item);	// HACK
-				weapons.push(item);
-            } else {
-				console.log("Uncategorised Item", item);
-                //weapons.push(item);
-            }
-        }
-    }
 	var tabView = $("<div></div>").attr("id", "tabView");
 	tabView.append($("<ul></ul>").attr("id", "tabNames"));
 	tabView.append($("<div></div>").attr("id", "tabContents"));
 	$("body").append(tabView);
- 
-    buildTable(gems, "Gems", "gems", ["Icon", "Name", "Level", "Quality", "Mods"]);
-    buildTable(currency, "Currency", "currency", ["Icon", "Name", "Mods"]);
-    buildTable(flasks, "Flasks", "flasks", ["Icon", "Name", "Level", "Quality", "Mods"]);
-    buildTable(amulets, "Amulets", "amulets", ["Icon", "Name", "Level", "Mods", "tResist"]);
-    buildTable(rings, "Rings", "rings", ["Icon", "Name", "Level", "Mods", "tResist"]);
-    buildTable(nonSocketGear, "Belts & Quivers", "nonSocketGear", ["Icon", "Name", "Level", "Mods", "tResist"]);
-    buildTable(gear, "Gear", "gear", ["Icon", "Name", "Level", "Quality", "Mods", "AR", "EV", "ES", "tResist"]);
-    buildTable(weapons, "Weapons", "weapons", ["Icon", "Name", "Level", "Quality", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]);
+	
+	for (var t in tables) {
+		tables[t].dom = buildTable(tables[t]["name"], tables[t]["idName"], tables[t]["columns"]);
+	}
 	
 	$("#tabNames li").click(function() {
 		$(".selected").removeClass("selected");
@@ -189,16 +247,8 @@ function parseMods(descriptions) {
 }
  
  
-function buildTable(items, titleText, idName, headers) {
-    if (items.length == 0) return;
- 
- 
- 
-//    var title = document.createElement("h2");
-//    title.innerHTML = titleText;
-//   box.appendChild(title);
-
-	var tab = $("<li></li>");
+function buildTable(titleText, idName, headers) {
+ 	var tab = $("<li></li>");
 	tab.html(titleText);
 	tab.attr("href", "#"+idName);
 	$("#tabNames").append(tab);
@@ -209,55 +259,11 @@ function buildTable(items, titleText, idName, headers) {
  
     createHeaders(table, headers);
  
-    var rows = [];
- 
-    for (var i = 0; i < items.length; i++) {
-        var item = items[i];
- 
-        var row = newRow();
-        row.className = i % 2 == 0 ? 'evenRow' : 'oddRow';
- 
-		for (var c = 0; c < headers.length; ++c) {
-			({
-				"Icon":    createImageCell,
-				"Name":    createTitleCell,
-				"Level":   createLevelCell,
-				"Mods":    createModsCell,
-				"Quality": addItemQuality,
-				"tResist": addTotalResistances,
-				"Sockets": createSocketsCell,
-				"AR":      addArmour,
-				"EV":      addEvasion,
-				"ES":      addEnergyShield,
-				"DPS":     addDPS,
-				"pDPS":    addPDPS,
-				"eDPS":    addEDPS,
-				"CPS":     addCPS,
-				"Inc":     addpIncreaseDPS
-			})[headers[c]](row, item);
-		}
- 
-        rows.push({
-            "item": item,
-            "row": row
-        });
-        //table.appendChild(row);
-    }
- 
-    rows.sort(function (a, b) {
-        //    return a.item.typeLine.localeCompare(b.item.typeLine);
-        return parseInt(getRequirement(a.item, "Level")) - parseInt(getRequirement(b.item, "Level"));
-    });
- 
-    for (var i = 0; i < rows.length; i++) {
-        table.appendChild(rows[i].row);
-    }
- 
- 
     $("#tabContents").append(table);
  
- 
     attachHandlers();
+	
+	return table;
 }
 
 function getTotalResistances(item) {
