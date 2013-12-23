@@ -64,7 +64,6 @@ function requestCharacterData() {
 				})
 				.done(function(data) {
 					for (var i = 0; i < data.items.length; ++i) {
-						console.log(name, data.items[i].inventoryId);
 						data.items[i].inventoryId = name + "'s " + data.items[i].inventoryId;
 					}
 					receiveItemData(data.items);

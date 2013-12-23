@@ -75,7 +75,8 @@ function createRowFor(item, table) {
 			"pDPS":    addPDPS,
 			"eDPS":    addEDPS,
 			"CPS":     addCPS,
-			"Inc":     addpIncreaseDPS
+			"Inc":     addpIncreaseDPS,
+			"eDMG":    addItemElementalDamage
 		})[table.columns[c]](row, item);
 	}
 	
@@ -134,22 +135,22 @@ var tables = {
 	"Amulets": {
 		"name":    "Amulets",
 		"idName":  "amulets",
-		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
+		"columns": ["Icon", "Name", "Level", "Mods", "tResist", "eDMG"]
 	},
 	"Rings": {
 		"name":    "Rings",
 		"idName":  "rings",
-		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
+		"columns": ["Icon", "Name", "Level", "Mods", "tResist", "eDMG"]
 	},
 	"Belts & Quivers": {
 		"name":    "Belts & Quivers",
 		"idName":  "nonSocket",
-		"columns": ["Icon", "Name", "Level", "Mods", "tResist"],
+		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
 	},
 	"Armour": {
 		"name":    "Armour",
 		"idName":  "gear",
-		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist"]
+		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
 	"Weapons": {
 		"name":    "Weapons",
@@ -282,6 +283,21 @@ function getTotalResistances(item) {
 	if (item.explicitMods["+% All Resistances"     ]) tResist += parseInt(item.explicitMods["+% All Resistances"     ].values[0]) * 3;
 	
 	return tResist;
+}
+
+function getAverageElementalDamage(item) {
+	var eDMG = 0;
+	
+	if (item.explicitMods["Cold Damage"     ]) eDMG += parseInt(item.explicitMods["Cold Damage"     ].values[0]) + parseInt(item.explicitMods["Cold Damage"     ].values[1]);
+	if (item.explicitMods["Lightning Damage"]) eDMG += parseInt(item.explicitMods["Lightning Damage"].values[0]) + parseInt(item.explicitMods["Lightning Damage"].values[1]);
+	if (item.explicitMods["Fire Damage"     ]) eDMG += parseInt(item.explicitMods["Fire Damage"     ].values[0]) + parseInt(item.explicitMods["Fire Damage"     ].values[1]);
+	
+	return eDMG / 2;
+}
+
+function addItemElementalDamage(row, item) {
+	var eDMG = getAverageElementalDamage(item);
+	appendNewCellWithTextAndClass(row, Math.round(eDMG), "edmg", eDMG);
 }
 
 function getItemQuality(item) {
