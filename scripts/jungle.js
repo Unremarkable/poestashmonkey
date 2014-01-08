@@ -91,7 +91,7 @@ function receiveItemData(items) {
 	for (var i = 0; i < items.length; ++i) {
 		var item = items[i];
 		var itemType = item.frameType;
-
+		
 		if (itemType == 5) {
 			createRowFor(item, tables["Currency"]);
 		} else if (itemType == 4) {
@@ -104,17 +104,33 @@ function receiveItemData(items) {
 				createRowFor(item, tables["Rings"]);
 			} else if (isAmulet(name)) {
 				createRowFor(item, tables["Amulets"]);
-			} else if (!item.properties) {
-				createRowFor(item, tables["Belts & Quivers"]);
+			} else if (isMap(item)) {
+				createRowFor(item, tables["Maps"]);
+			} else if (isBelt(name)) {
+				createRowFor(item, tables["Belts"]);
+			} else if (isQuiver(name)) {
+				createRowFor(item, tables["Quivers"]);
+			} else if (isBoots(name)) {
+				createRowFor(item, tables["Boots"]);
+			} else if (isGloves(name)) {
+				createRowFor(item, tables["Gloves"]);
+			} else if (isHelmet(name)) {
+				createRowFor(item, tables["Helmets"]);
+			} else if (isShield(item)) {
+				createRowFor(item, tables["Shields"]);
 			} else if (isArmour(item)) {
 				createRowFor(item, tables["Armour"]);
 			} else if (isWeapon(item)) {
 				item.weaponInfo = getWeaponInfo(item);	// HACK
 				createRowFor(item, tables["Weapons"]);
 			} else {
-				console.log("Uncategorised Item", item);
+				console.log("Uncategorized Item", item);
 			}
 		}
+	}
+	
+	if ($("#uncategorized").length > 1) {
+		$("li[href='#uncategorized']").show();
 	}
 }
 
@@ -144,20 +160,50 @@ var tables = {
 		"idName":  "rings",
 		"columns": ["Icon", "Name", "Level", "Mods", "tResist", "eDMG"]
 	},
-	"Belts & Quivers": {
-		"name":    "Belts & Quivers",
-		"idName":  "nonSocket",
+	"Belts": {
+		"name":    "Belts",
+		"idName":  "belts",
 		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
+	},
+	"Quivers": {
+		"name":    "Quivers",
+		"idName":  "quivers",
+		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
+	},
+	"Boots": {
+		"name":    "Boots",
+		"idName":  "boots",
+		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+	},
+	"Gloves": {
+		"name":    "Gloves",
+		"idName":  "gloves",
+		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+	},
+	"Helmets": {
+		"name":    "Helmets",
+		"idName":  "helmets",
+		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
 	"Armour": {
 		"name":    "Armour",
-		"idName":  "gear",
+		"idName":  "armour",
 		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
 	"Weapons": {
 		"name":    "Weapons",
-		"isName":  "weapons",
+		"idName":  "weapons",
 		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]
+	},
+	"Shields": {
+		"name":    "Shields",
+		"idName":  "shields",
+		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "tResist"]
+	},
+	"Maps": {
+		"name":    "Maps",
+		"idName":  "maps",
+		"columns": ["Icon", "Name", "Quality"]
 	}
 };
  
@@ -191,12 +237,24 @@ function buildPage() {
  var amulets = { "Paua Amulet" : true, "Coral Amulet" : true, "Amber Amulet" : true, "Jade Amulet" : true, "Lapis Amulet" : true, "Gold Amulet" : true, "Onyx Amulet" : true, "Agate Amulet" : true, "Turquoise Amulet" : true, "Citrine Amulet" : true };
  
 function isFlask(name) { return name.match(/Flask/) != null; }
-  
-function isRing(name)   { return !!getItemBaseName(name, rings); }
-function isAmulet(name) { return !!getItemBaseName(name, amulets); }
- 
-function isArmour(item) { return !!(item.properties["Evasion Rating"] || item.properties["Armour"] || item.properties["Energy Shield"]); }
-function isWeapon(item) { return !!(item.properties["Physical Damage"]); }
+
+function isRing(name)   { return getItemBaseName(name, rings); }
+function isAmulet(name) { return getItemBaseName(name, amulets); }
+
+function isQuiver(name) { return name.match(/Quiver/) != null; }
+function isBelt(name) { return name.match(/Belt|Sash/) != null; }
+
+function isGloves(name) { return name.match(/Mitts|Gloves|Gauntlets/) != null; }
+function isBoots(name) { return name.match(/Boots|Slippers|Shoes|Greaves/) != null; }
+function isHelmet(name) { return name.match(/Cage|Mask|Helmet|Sallet|Hood|Tricorne|Helm|Circlet|Cap|Pelt|Burgonet|Bascinet|Crown|Coif|Hat/) != null; }
+
+function isArmour(item) { return (item.properties["Evasion Rating"] || item.properties["Armour"] || item.properties["Energy Shield"]); }
+
+function isWeapon(item) { return (item.properties["Physical Damage"]); }
+
+function isShield(item) { return (item.properties["Chance to Block"]); }
+
+function isMap(item) { return (item.properties["Map Level"]); }
 
 var Mods = {
     "Adds (\\d+)-(\\d+) Physical Damage": "Physical Damage",
