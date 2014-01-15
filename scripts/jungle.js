@@ -41,6 +41,8 @@ function prepareItems(items) {
 			for (var p = 0; p < temp.length; ++p) {
 				item.properties[temp[p].name] = temp[p];
 			}
+		} else {
+			item.properties = [];
 		}
 		
 		item.implicitMods = parseMods(item.implicitMods);
@@ -65,6 +67,7 @@ function createRowFor(item, table) {
 		({
 			"Icon":    createImageCell,
 			"Name":    createTitleCell,
+			"Quantity":createQuantityCell,
 			"Level":   createLevelCell,
 			"Mods":    createModsCell,
 			"Quality": addItemQuality,
@@ -85,48 +88,59 @@ function createRowFor(item, table) {
 	table.dom.appendChild(row);
 }
 
+var currency = { };
+
 function receiveItemData(items) {
 	prepareItems(items);
 	
 	for (var i = 0; i < items.length; ++i) {
 		var item = items[i];
 		var itemType = item.frameType;
+		var name = item.typeLine
+		
+		// note, frameType 6 are green items (ie in game things like "Sewer Keys")
 		
 		if (itemType == 5) {
-			createRowFor(item, tables["Currency"]);
+			addCurrency(item);
 		} else if (itemType == 4) {
-			createRowFor(item, tables["Gems"]);
+			createRowFor(item, tables["gems"]);
 		} else {
-			var name = item.typeLine;
 			if (isFlask(name)) {
-				createRowFor(item, tables["Flasks"]);
+				createRowFor(item, tables["flasks"]);
 			} else if (isRing(name)) {
-				createRowFor(item, tables["Rings"]);
+				createRowFor(item, tables["rings"]);
 			} else if (isAmulet(name)) {
-				createRowFor(item, tables["Amulets"]);
+				createRowFor(item, tables["amulets"]);
 			} else if (isMap(item)) {
-				createRowFor(item, tables["Maps"]);
+				createRowFor(item, tables["maps"]);
 			} else if (isBelt(name)) {
-				createRowFor(item, tables["Belts"]);
+				createRowFor(item, tables["belts"]);
 			} else if (isQuiver(name)) {
-				createRowFor(item, tables["Quivers"]);
+				createRowFor(item, tables["quivers"]);
 			} else if (isBoots(name)) {
-				createRowFor(item, tables["Boots"]);
+				createRowFor(item, tables["boots"]);
 			} else if (isGloves(name)) {
-				createRowFor(item, tables["Gloves"]);
+				createRowFor(item, tables["gloves"]);
 			} else if (isHelmet(name)) {
-				createRowFor(item, tables["Helmets"]);
+				createRowFor(item, tables["helmets"]);
 			} else if (isShield(item)) {
-				createRowFor(item, tables["Shields"]);
+				createRowFor(item, tables["shields"]);
 			} else if (isArmour(item)) {
-				createRowFor(item, tables["Armour"]);
+				createRowFor(item, tables["armour"]);
 			} else if (isWeapon(item)) {
 				item.weaponInfo = getWeaponInfo(item);	// HACK
-				createRowFor(item, tables["Weapons"]);
+				createRowFor(item, tables["weapons"]);
 			} else {
+				createRowFor(item, tables["uncategorized"]);
 				console.log("Uncategorized Item", item);
 			}
 		}
+	}	
+}
+
+function receiveStashDataFinished() {	
+	for (var item in currency) {
+		createRowFor(currency[item], tables["currency"]);
 	}
 	
 	if ($("#uncategorized").length > 1) {
@@ -134,76 +148,109 @@ function receiveItemData(items) {
 	}
 }
 
+function addCurrency(item) {
+	var name = item.typeLine;
+	var existing = currency[name];
+	setItemQuantity(item);
+	
+	if (existing) {
+		// consolidate
+		existing.quantity = existing.quantity + item.quantity;
+		existing.icon = changeImageStackSize(existing.icon, existing.quantity);
+	} else {
+		currency[name] = item;
+	}
+}
+
+function setItemQuantity(item) {
+	item.quantity = parseInt(item.properties["Stack Size"].values[0][0].split("/"));
+}
+
+function changeImageStackSize(imgLink, n) {
+	var params = imgLink.split("&");
+	for (var i = 0; i < params.length; i++) {
+		if (params[i].startsWith("stackSize")) {
+			params[i] = "stackSize=" + n;
+		}
+	}
+	return params.join("&");
+}
+
 var tables = {
-	"Gems": {
+	"gems": {
 		"name":    "Gems",
 		"idName":  "gems",
 		"columns": ["Icon", "Name", "Level", "Quality", "Mods"]
 	},
-	"Currency": {
+	"currency": {
 		"name":    "Currency",
 		"idName":  "currency",
-		"columns": ["Icon", "Name", "Mods"]
+		"columns": ["Icon", "Quantity", "Name", "Mods"]
 	},
-	"Flasks": {
+	"flasks": {
 		"name":    "Flasks",
 		"idName":  "flasks",
 		"columns": ["Icon", "Name", "Level", "Quality", "Mods"]
 	},
-	"Amulets": {
+	"amulets": {
 		"name":    "Amulets",
 		"idName":  "amulets",
 		"columns": ["Icon", "Name", "Level", "Mods", "tResist", "eDMG"]
 	},
-	"Rings": {
+	"rings": {
 		"name":    "Rings",
 		"idName":  "rings",
 		"columns": ["Icon", "Name", "Level", "Mods", "tResist", "eDMG"]
 	},
-	"Belts": {
+	"belts": {
 		"name":    "Belts",
 		"idName":  "belts",
 		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
 	},
-	"Quivers": {
+	"quivers": {
 		"name":    "Quivers",
 		"idName":  "quivers",
 		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
 	},
-	"Boots": {
+	"boots": {
 		"name":    "Boots",
 		"idName":  "boots",
 		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
-	"Gloves": {
+	"gloves": {
 		"name":    "Gloves",
 		"idName":  "gloves",
 		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
-	"Helmets": {
+	"helmets": {
 		"name":    "Helmets",
 		"idName":  "helmets",
 		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
-	"Armour": {
+	"armour": {
 		"name":    "Armour",
 		"idName":  "armour",
 		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
-	"Weapons": {
+	"weapons": {
 		"name":    "Weapons",
 		"idName":  "weapons",
 		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]
 	},
-	"Shields": {
+	"shields": {
 		"name":    "Shields",
 		"idName":  "shields",
 		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "tResist"]
 	},
-	"Maps": {
+	"maps": {
 		"name":    "Maps",
 		"idName":  "maps",
-		"columns": ["Icon", "Name", "Quality"]
+		"columns": ["Icon", "Name", "Mods", "Quality"]
+	},
+	"uncategorized": {
+		"name":    "Uncategorized",
+		"idName":  "uncategorized",
+		"columns": ["Icon", "Name", "Mods"]
 	}
 };
  
@@ -222,6 +269,8 @@ function buildPage() {
 	for (var t in tables) {
 		tables[t].dom = buildTable(tables[t]["name"], tables[t]["idName"], tables[t]["columns"]);
 	}
+	
+	attachHandlers();
 	
 	$("#tabNames li").click(function() {
 		$(".selected").removeClass("selected");
@@ -319,9 +368,7 @@ function buildTable(titleText, idName, headers) {
     createHeaders(table, headers);
  
     $("#tabContents").append(table);
- 
-    attachHandlers();
-	
+    
 	return table;
 }
 
@@ -431,30 +478,33 @@ function createImageCell(row, item) {
     var td = newCell();
     var img = document.createElement("img");
     img.src = item.icon;
-    img.title = item.descrText;
+    
+    if (item.descrText) {
+	    img.title = item.descrText;
+	}
  
     td.appendChild(img);
     row.appendChild(td);
 }
  
 function createTitleCell(row, item) {
-    var td = newCell();
- 
     var t = item.frameType;
     var type = t == 3 ? "unique" : t == 2 ? "rare" : t == 1 ? "magic" : "normal";
-    td.className = "title " + type;
-    td.title = item.inventoryId + " (" + item.x + ", " + item.y + ")";
- 
- 
+    var className = "name " + type;
+    
     var title = "";
     if (item.name) {
         title += "<strong>" + item.name + "</strong><br />";
     }
-    td.innerHTML = title + item.typeLine;
- 
-    row.appendChild(td);
+    title += item.typeLine;
+    
+    var td = appendNewCellWithTextAndClass(row, title, className, title);
+    td.title = item.inventoryId + " (" + item.x + ", " + item.y + ")";
 }
- 
+
+function createQuantityCell(row, item) {
+	appendNewCellWithTextAndClass(row, item.quantity, "quantity", item.quantity);
+}
  
 function createModsCell(row, item) {
     var td = newCell();
@@ -563,15 +613,14 @@ function createLevelCell(row, item) {
 }
  
 function appendNewCellWithTextAndClass(row, text, className, sortValue) {
- 
     var td = newCell();
     td.className = className;
     if (text) {
         var sortBlurb = sortValue ? "<input type='hidden' name='sortValue' value='" + sortValue + "' />" : "";
         td.innerHTML = sortBlurb + text;
- 
     }
     row.appendChild(td);
+    return td;
 }
  
 function newRow() {
@@ -583,16 +632,34 @@ function newCell() {
 }
  
 function attachHandlers() {
-    $(".stash th").click(function () {
-        var table = $(this).parents("table");
-        var col = $(this).attr("id");
-        var header = table.find("#headerRow");
-		header.removeClass("unsorted");
-       
+    $(".stash th").click(function() {
+    	var header = $(this);
+        var table = header.parents("table");
+        var col = header.attr("id");
+        var headerRow = table.find("#headerRow");
+		headerRow.removeClass("unsorted");
+		
+		var sortDescending = header.hasClass("ascending");
+		header.toggleClass("ascending");
+		
         var rows = table.find("td." + col).parents("tr");
         
 		rows.sort(function(a, b) {
-			return getValue(a, col) - getValue(b, col);
+			var value1 = getSortValue(a, col);
+			value1 = parseInt(value1) || value1;
+			
+			var value2 = getSortValue(b, col);
+			value2 = parseInt(value2) || value2;
+			
+			if (value1 > value2) {
+				if (sortDescending) return 1;
+				return -1;
+			}
+			if (value2 > value1) {
+				if (sortDescending) return -1;
+				return 1;
+			}
+			return 0;
 		});
 		
 		for (var i = 0; i < rows.length; ++i) {
@@ -601,8 +668,8 @@ function attachHandlers() {
 	});
 }
 
-function getValue(row, col) {
-    return parseInt($(row).find("td." + col + " input[name='sortValue']").val()) || 0; 
+function getSortValue(row, col) {
+    return $(row).find("td." + col + " input[name='sortValue']").val();
 }
  
 /*

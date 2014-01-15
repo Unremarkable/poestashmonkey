@@ -5,9 +5,6 @@ function receiveStashData(league, tab, data) {
 	receiveItemData(data.items)
 }
 
-function receiveStashDataFinished() {
-}
-
 function requestStashData(league, tab) {
     if (typeof league === "undefined") league = "Standard";
     if (typeof stashData[league] === "undefined") stashData[league] = {};

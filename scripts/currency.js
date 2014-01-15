@@ -1,8 +1,6 @@
 var currencyConversionTable = {};
 
 function fetchCurrencyConversionTable(){
-	console.log("Parsing Currency");
-	
 	$.get( "http://exilestats.com/ex/", function( data ) {
 		var conversionCells = $(data).find("#newspaper-a td.cell");
 		
