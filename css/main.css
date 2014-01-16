@@ -79,20 +79,36 @@ h1, h2 {
 	margin: 15px;
 }
 
-#notification {
+#infoBox {
 	color:#8DA36D;
 	font-size: 10px;
 	height: 50px;
 	overflow:hidden;
 	position: absolute;
 	right: 10px;
-	top:10px;
+	top: 10px;
     text-align:right;
+	width: 150px;
+}
+
+#searchBox {
+	position: absolute;
+	right: 200px;
+	top: 10px;
+}
+
+#clearSearch {
+	color: #8d8d8d;
+	cursor: pointer;
+	position: absolute;
+	right: 6px;
+	top: 1px;
 }
 
 .stash {
 	background-color: #26231B;
 	border: 1px solid #1A1812;
+	margin-bottom: 10px;
 }
 
 #headerRow {
@@ -183,10 +199,6 @@ table.stash .lightning { color: #e1be00; }
 
 #tabContents table {
 	display: none;
-}
-
-#tabContents table.selected {
-	display: inline-block;
 }
 
 #tabNames {

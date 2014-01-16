@@ -158,6 +158,9 @@ function receiveStashDataFinished() {
 	if ($("#uncategorized").length > 1) {
 		$("li[href='#uncategorized']").show();
 	}
+	
+	$("#tabNames li").first().addClass("selected");
+	showTableForSelectedTab();
 
 	showAnyItemNameRepeats();
 }
@@ -170,7 +173,7 @@ function showAnyItemNameRepeats() {
 		}
 	}
 	if (duplicates.length > 0) {
-		$("#notification").html("Item name repeats: " + duplicates);
+		$("#infoBox").html("Item name repeats: " + duplicates);
 	}
 }
 
@@ -290,30 +293,6 @@ var tables = {
 	}
 };
  
-function buildPage() {
-    $("body").html("<div><h1>Stash Inventory</h1><div id='notification'></div></div>");
- 
-	var tabView = $("<div></div>").attr("id", "tabView");
-	tabView.append($("<ul></ul>").attr("id", "tabNames"));
-	tabView.append($("<div></div>").attr("id", "tabContents"));
-	$("body").append(tabView);
-	
-	for (var t in tables) {
-		tables[t].dom = buildTable(tables[t]["name"], tables[t]["idName"], tables[t]["columns"]);
-	}
-	
-	attachHandlers();
-	
-	$("#tabNames li").click(function() {
-		$(".selected").removeClass("selected");
-		$(this).addClass("selected");
-		$("#tabContents table"+$(this).attr("href")).addClass("selected");
-	});
-	
-	$("#tabNames li").first().addClass("selected");
-	$("#tabContents table").first().addClass("selected");
-}
- 
  var rings = { "Iron Ring" : true, "Coral Ring" : true, "Paua Ring" : true, "Gold Ring" : true, "Ruby Ring" : true, "Sapphire Ring" : true, "Topaz Ring" : true, "Diamond Ring" : true, "Moonstone Ring" : true, "Prismatic Ring" : true, "Amethyst Ring" : true, "Two-Stone Ring" : true };
  var amulets = { "Paua Amulet" : true, "Coral Amulet" : true, "Amber Amulet" : true, "Jade Amulet" : true, "Lapis Amulet" : true, "Gold Amulet" : true, "Onyx Amulet" : true, "Agate Amulet" : true, "Turquoise Amulet" : true, "Citrine Amulet" : true };
  
@@ -384,24 +363,6 @@ function parseMods(descriptions) {
     }
  
     return mods;
-}
- 
- 
-function buildTable(titleText, idName, headers) {
- 	var tab = $("<li></li>");
-	tab.html(titleText);
-	tab.attr("href", "#"+idName);
-	$("#tabNames").append(tab);
-	
-    var table = document.createElement("table");
-    table.id = idName;
-    table.className = "stash";
- 
-    createHeaders(table, headers);
- 
-    $("#tabContents").append(table);
-    
-	return table;
 }
 
 function getTotalResistances(item) {
@@ -662,8 +623,92 @@ function newRow() {
 function newCell() {
     return document.createElement("td");
 }
+
+function buildPage() {
+    var title = "<h1>Stash Inventory</h1>";
+    var searchBox = "<form id='searchBox'><input placeholder='Search...' /><div id='clearSearch'>x</div></form>";
+    var infoBox = "<div id='infoBox'></div>";
+    $("body").html("<div>" + title + searchBox + infoBox + "</div>");
+    
+	var tabView = $("<div></div>").attr("id", "tabView");
+	tabView.append($("<ul></ul>").attr("id", "tabNames"));
+	tabView.append($("<div></div>").attr("id", "tabContents"));
+	$("body").append(tabView);
+	
+	for (var t in tables) {
+		tables[t].dom = buildTable(tables[t]["name"], tables[t]["idName"], tables[t]["columns"]);
+	}
+	
+	attachHandlers();
+}
+
+function buildTable(titleText, idName, headers) {
+ 	var tab = $("<li></li>");
+	tab.html(titleText);
+	tab.attr("href", "#"+idName);
+	$("#tabNames").append(tab);
+	
+    var table = document.createElement("table");
+    table.id = idName;
+    table.className = "stash";
  
+    createHeaders(table, headers);
+ 
+    $("#tabContents").append(table);
+    
+	return table;
+}
+
 function attachHandlers() {
+	handleSearching();
+	handleTabSwitching();
+	handleSorting();
+}
+
+function handleTabSwitching() {	
+	$("#tabNames li").click(function() {
+		$("#tabNames .selected").removeClass("selected");
+		$(this).addClass("selected");
+		
+		var tableName = "table" + $(this).attr("href");
+		$("#tabContents .stash").hide();
+		$("#tabContents " + tableName).show();
+	});
+}
+
+function handleSearching() {
+	$("#searchBox").submit(function() {
+		search($(this).find("input").val());
+		return false;
+	});
+	
+	$("#searchBox #clearSearch").click(function() {
+		$(".stash").hide();
+		$("tr").show();
+		$("#searchBox input").val("");
+		
+		showTableForSelectedTab();
+	});
+}
+
+function showTableForSelectedTab() {
+	var tableName = $("#tabNames .selected").attr("href");
+	$("#tabContents " + tableName).show();
+}
+
+function search(searchString) {
+	$(".stash").show();
+	$("tr").hide();
+	$("tr:contains('" + searchString + "')").show();
+	$("#tabNames .selected").removeClass("selected");
+	
+	var tablesWithRowsInSearch = $("table.stash tr:visible").parents("table.stash");
+	$(".stash").hide();
+	tablesWithRowsInSearch.show();
+	tablesWithRowsInSearch.find("#headerRow").show();
+}
+
+function handleSorting() {
     $(".stash th").click(function() {
     	var header = $(this);
         var table = header.parents("table");
