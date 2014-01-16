@@ -97,12 +97,18 @@ h1, h2 {
 	top: 10px;
 }
 
+#searchBox input {
+	padding: 4px;
+	padding-right: 20px;
+	width: 220px;
+}
+
 #clearSearch {
 	color: #8d8d8d;
 	cursor: pointer;
 	position: absolute;
 	right: 6px;
-	top: 1px;
+	top: 4px;
 }
 
 .stash {
