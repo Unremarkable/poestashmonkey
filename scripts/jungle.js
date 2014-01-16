@@ -327,6 +327,7 @@ var Mods = {
 	"\\+(\\d+)% to Cold Resistance": "+% Cold Resistance",
 	"\\+(\\d+)% to Lightning Resistance": "+% Lightning Resistance",
 	"\\+(\\d+)% to Fire Resistance": "+% Fire Resistance",
+	"\\+(\\d+)% to Chaos Resistance": "+% Chaos Resistance",
 	"\\+(\\d+)% to all Elemental Resistances": "+% All Resistances",
 	"\\+(\\d+)% to Cold and Lightning Resistances": "+% Cold and Lightning Resistances",
 	"\\+(\\d+)% to Fire and Cold Resistances":      "+% Fire and Cold Resistances",
@@ -365,33 +366,50 @@ function parseMods(descriptions) {
     return mods;
 }
 
+// each type has a multiplier
+var resistTypes = {
+		"+% Cold Resistance" : 1,
+		"+% Lightning Resistance" : 1,
+		"+% Fire Resistance" : 1,
+		"+% Chaos Resistance" : 1,
+		"+% All Resistances" : 3,
+		"+% Cold and Lightning Resistance" : 2,
+		"+% Fire and Cold Resistance" : 2,
+		"+% Fire and Lightning Resistance" : 2
+};
+
 function getTotalResistances(item) {
+	return addResistFromMods(item.implicitMods) + addResistFromMods(item.explicitMods);
+}
+
+function addResistFromMods(modGroup) {
 	var tResist = 0;
-	
-	if (item.implicitMods["+% Cold Resistance"     ]) tResist += parseInt(item.implicitMods["+% Cold Resistance"     ].values[0]);
-	if (item.implicitMods["+% Lightning Resistance"]) tResist += parseInt(item.implicitMods["+% Lightning Resistance"].values[0]);
-	if (item.implicitMods["+% Fire Resistance"     ]) tResist += parseInt(item.implicitMods["+% Fire Resistance"     ].values[0]);
-	if (item.implicitMods["+% All Resistances"     ]) tResist += parseInt(item.implicitMods["+% All Resistances"     ].values[0]) * 3;
-	
-	if (item.implicitMods["+% Cold and Lightning Resistances"]) tResist += parseInt(item.implicitMods["+% Cold and Lightning Resistances"].values[0]) * 2;
-	if (item.implicitMods["+% Fire and Cold Resistances"     ]) tResist += parseInt(item.implicitMods["+% Fire and Cold Resistances"     ].values[0]) * 2;
-	if (item.implicitMods["+% Fire and Lightning Resistances"]) tResist += parseInt(item.implicitMods["+% Fire and Lightning Resistances"].values[0]) * 2;
-	
-	if (item.explicitMods["+% Cold Resistance"     ]) tResist += parseInt(item.explicitMods["+% Cold Resistance"     ].values[0]);
-	if (item.explicitMods["+% Lightning Resistance"]) tResist += parseInt(item.explicitMods["+% Lightning Resistance"].values[0]);
-	if (item.explicitMods["+% Fire Resistance"     ]) tResist += parseInt(item.explicitMods["+% Fire Resistance"     ].values[0]);
-	if (item.explicitMods["+% All Resistances"     ]) tResist += parseInt(item.explicitMods["+% All Resistances"     ].values[0]) * 3;
-	
+	for (var type in resistTypes) {
+		var mod = modGroup[type];
+		var multiplier = resistTypes[type];
+		if (mod) 
+			tResist += parseInt(mod.values[0]) * multiplier;
+	}
 	return tResist;
 }
 
+var damageTypes = [
+		"Cold Damage",
+		"Lightning Damage",
+		"Fire Damage"
+];
+
 function getElementalDamage(item) {
 	var eDMG = [0, 0];
-
-	if (item.explicitMods["Cold Damage"     ]) { eDMG[0] += parseInt(item.explicitMods["Cold Damage"     ].values[0]); eDMG[1] += parseInt(item.explicitMods["Cold Damage"     ].values[1]); }
-	if (item.explicitMods["Lightning Damage"]) { eDMG[0] += parseInt(item.explicitMods["Lightning Damage"].values[0]); eDMG[1] += parseInt(item.explicitMods["Lightning Damage"].values[1]); }
-	if (item.explicitMods["Fire Damage"     ]) { eDMG[0] += parseInt(item.explicitMods["Fire Damage"     ].values[0]); eDMG[1] += parseInt(item.explicitMods["Fire Damage"     ].values[1]); }
-
+	
+	for (var type in damageTypes) {
+		var mod = item.explicitMods[type];
+		if (mod) {
+			eDMG[0] = parseInt(mod.values[0]);
+			eDMG[1] = parseInt(mod.values[1]);
+		}
+	}
+	
 	return eDMG;
 }
 
@@ -415,7 +433,7 @@ function addTotalResistances(row, item) {
 }
  
  function addArmour(row, item) {
-	var ar  = item.properties["Armour"       ] ? parseInt(item.properties["Armour"        ].values[0]) : 0;
+	var ar  = item.properties["Armour"] ? parseInt(item.properties["Armour"].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, ar, "ar", ar);
  }
  
@@ -425,7 +443,7 @@ function addTotalResistances(row, item) {
  }
  
  function addEnergyShield(row, item) {
-	var es = item.properties["Energy Shield" ] ? parseInt(item.properties["Energy Shield"  ].values[0]) : 0;
+	var es = item.properties["Energy Shield"] ? parseInt(item.properties["Energy Shield"].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, es, "es", es);
  }
  
@@ -491,7 +509,7 @@ function createTitleCell(row, item) {
     }
     title += item.typeLine;
     
-    var td = appendNewCellWithTextAndClass(row, title, className, title);
+    var td = appendNewCellWithTextAndClass(row, title, className, item.typeLine);
     td.title = item.inventoryId + " (" + item.x + ", " + item.y + ")";
 }
 
