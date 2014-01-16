@@ -746,7 +746,7 @@ function handleSorting() {
 }
 
 function getSortValue(row, col) {
-    return $(row).find("td." + col + " input[name='sortValue']").val();
+    return $(row).find("td." + col + " input[name='sortValue']").val() || 0;
 }
  
 /*
