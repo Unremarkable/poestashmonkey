@@ -79,6 +79,17 @@ h1, h2 {
 	margin: 15px;
 }
 
+#notification {
+	color:#8DA36D;
+	font-size: 10px;
+	height: 50px;
+	overflow:hidden;
+	position: fixed;
+	right: 10px;
+	top:10px;
+    text-align:right;
+}
+
 .stash {
 	background-color: #26231B;
 	border: 1px solid #1A1812;

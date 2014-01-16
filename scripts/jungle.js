@@ -88,7 +88,8 @@ function createRowFor(item, table) {
 	table.dom.appendChild(row);
 }
 
-var currency = { };
+var currency = [];
+var itemNames = [];
 
 function receiveItemData(items) {
 	prepareItems(items);
@@ -97,7 +98,8 @@ function receiveItemData(items) {
 		var item = items[i];
 		var itemType = item.frameType;
 		var name = item.typeLine
-		
+		addNameToList(item.name);
+				
 		// note, frameType 6 are green items (ie in game things like "Sewer Keys")
 		
 		if (itemType == 5) {
@@ -138,6 +140,16 @@ function receiveItemData(items) {
 	}	
 }
 
+function addNameToList(name) {
+	if (name) {
+		var count = 1;
+		if (itemNames[name]) {
+			count += itemNames[name];
+		}
+		itemNames[name] = count;
+	}
+}
+
 function receiveStashDataFinished() {	
 	for (var item in currency) {
 		createRowFor(currency[item], tables["currency"]);
@@ -145,6 +157,20 @@ function receiveStashDataFinished() {
 	
 	if ($("#uncategorized").length > 1) {
 		$("li[href='#uncategorized']").show();
+	}
+
+	showAnyItemNameRepeats();
+}
+
+function showAnyItemNameRepeats() {
+	var duplicates = "";
+	for (var name in itemNames) {
+		if (itemNames[name] > 1) {
+			duplicates = duplicates + name + " (" + itemNames[name] + ") ";
+		}
+	}
+	if (duplicates.length > 0) {
+		$("#notification").html("Item name repeats: " + duplicates);
 	}
 }
 
@@ -265,11 +291,7 @@ var tables = {
 };
  
 function buildPage() {
-    $("body").html("");
-    var title = document.createElement("h1");
- 
-    title.innerHTML = "Stash Inventory";
-    $("body")[0].appendChild(title);
+    $("body").html("<div><h1>Stash Inventory</h1><div id='notification'></div></div>");
  
 	var tabView = $("<div></div>").attr("id", "tabView");
 	tabView.append($("<ul></ul>").attr("id", "tabNames"));
