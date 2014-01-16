@@ -156,9 +156,9 @@ function addCurrency(item) {
 	if (existing) {
 		// consolidate
 		existing.quantity = existing.quantity + item.quantity;
-		existing.icon = changeImageStackSize(existing.icon, existing.quantity);
 	} else {
 		currency[name] = item;
+		removeStackSizeFromImageLink(item);
 	}
 }
 
@@ -166,6 +166,15 @@ function setItemQuantity(item) {
 	item.quantity = parseInt(item.properties["Stack Size"].values[0][0].split("/"));
 }
 
+function removeStackSizeFromImageLink(item) {
+	var parts = item.icon.split("stackSize");
+	if (parts.length > 1) {
+		item.icon = parts[0] + parts[1].split("&").splice(1).join("&");	
+	}
+}
+
+/*
+// only quantities up to 200 will render on the image
 function changeImageStackSize(imgLink, n) {
 	var params = imgLink.split("&");
 	for (var i = 0; i < params.length; i++) {
@@ -175,6 +184,7 @@ function changeImageStackSize(imgLink, n) {
 	}
 	return params.join("&");
 }
+*/
 
 var tables = {
 	"gems": {
