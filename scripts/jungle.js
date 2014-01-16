@@ -249,7 +249,7 @@ var tables = {
 	"quivers": {
 		"name":    "Quivers",
 		"idName":  "quivers",
-		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
+		"columns": ["Icon", "Name", "Level", "Mods", "tResist", "eDMG"]
 	},
 	"boots": {
 		"name":    "Boots",
@@ -379,10 +379,10 @@ var resistTypes = {
 };
 
 function getTotalResistances(item) {
-	return addResistFromMods(item.implicitMods) + addResistFromMods(item.explicitMods);
+	return addResistsFromMods(item.implicitMods) + addResistsFromMods(item.explicitMods);
 }
 
-function addResistFromMods(modGroup) {
+function addResistsFromMods(modGroup) {
 	var tResist = 0;
 	for (var type in resistTypes) {
 		var mod = modGroup[type];
@@ -403,10 +403,10 @@ function getElementalDamage(item) {
 	var eDMG = [0, 0];
 	
 	for (var type in damageTypes) {
-		var mod = item.explicitMods[type];
+		var mod = item.explicitMods[damageTypes[type]];
 		if (mod) {
-			eDMG[0] = parseInt(mod.values[0]);
-			eDMG[1] = parseInt(mod.values[1]);
+			eDMG[0] += parseInt(mod.values[0]);
+			eDMG[1] += parseInt(mod.values[1]);
 		}
 	}
 	
