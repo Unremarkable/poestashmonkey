@@ -179,16 +179,18 @@ function showAnyItemNameRepeats() {
 
 function addCurrency(item) {
 	var name = item.typeLine;
-	var existing = currency[name];
+	
 	setItemQuantity(item);
 	
-	if (existing) {
-		// consolidate
-		existing.quantity = existing.quantity + item.quantity;
-	} else {
+	if (!currency[name]) {
 		currency[name] = item;
 		removeStackSizeFromImageLink(item);
+		currency[name].instances = [];
+		currency[name].totalQuantity = 0;
 	}
+	
+	currency[name].instances.push(item);
+	currency[name].totalQuantity += item.quantity;
 }
 
 function setItemQuantity(item) {
@@ -510,11 +512,21 @@ function createTitleCell(row, item) {
     title += item.typeLine;
     
     var td = appendNewCellWithTextAndClass(row, title, className, item.typeLine);
-    td.title = item.inventoryId + " (" + item.x + ", " + item.y + ")";
+	
+	if (typeof item.instances === "undefined") {
+		td.title = item.inventoryId + " (" + item.x + ", " + item.y + ")";
+	} else {
+		function fI(item) {
+			return "[" + item.quantity + "] " + item.inventoryId + " (" + item.x + ", " + item.y + ")";
+		}
+		td.title = fI(item.instances[0]);
+		for (var i = 1; i < item.instances.length; ++i)
+			td.title += "\n" + fI(item.instances[i]);
+	}
 }
 
 function createQuantityCell(row, item) {
-	appendNewCellWithTextAndClass(row, item.quantity, "quantity", item.quantity);
+	appendNewCellWithTextAndClass(row, item.totalQuantity, "quantity", item.quantity);
 }
  
 function createModsCell(row, item) {
