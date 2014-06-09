@@ -328,9 +328,11 @@ function parseMods(descriptions) {
     for (var i in descriptions) {
         var mod = {
 			"description": descriptions[i],
-			"name":        descriptions[i].replace(/%d+/g, "#"),
-			"values":      descriptions[i].match  (/%d+/g),
+			"name":        descriptions[i].replace(/\d+/g, "#"),
+			"values":      descriptions[i].match  (/\d+/g),
 		};
+		
+		console.log(mod);
 		
         mods[mod.name] = mod;
     }
@@ -339,14 +341,14 @@ function parseMods(descriptions) {
 }
 
 var resistTypes = {
-		"+#% Cold Resistance" : 1,
-		"+#% Lightning Resistance" : 1,
-		"+#% Fire Resistance" : 1,
-		"+#% Chaos Resistance" : 1,
-		"+#% All Resistances" : 3,
-		"+#% Cold and Lightning Resistance" : 2,
-		"+#% Fire and Cold Resistance" : 2,
-		"+#% Fire and Lightning Resistance" : 2
+		"+#% to Cold Resistance" : 1,
+		"+#% to Lightning Resistance" : 1,
+		"+#% to Fire Resistance" : 1,
+		"+#% to Chaos Resistance" : 1,
+		"+#% to All Resistances" : 3,
+		"+#% to Cold and Lightning Resistance" : 2,
+		"+#% to Fire and Cold Resistance" : 2,
+		"+#% to Fire and Lightning Resistance" : 2
 };
 
 function getTotalResistances(item) {
@@ -365,9 +367,9 @@ function addResistsFromMods(modGroup) {
 }
 
 var damageTypes = [
-		"Add #-# Cold Damage",
-		"Add #-# Lightning Damage",
-		"Add #-# Fire Damage"
+		"Adds #-# Cold Damage",
+		"Adds #-# Lightning Damage",
+		"Adds #-# Fire Damage"
 ];
 
 function getElementalDamage(item) {
