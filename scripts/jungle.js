@@ -321,7 +321,7 @@ function isWeapon(item) { return (item.properties["Physical Damage"]); }
 function isShield(item) { return (item.properties["Chance to Block"]); }
 
 function isMap(item) { return (item.properties["Map Level"]); }
- 
+
 function parseMods(descriptions) {
     var mods = {};
  
@@ -331,8 +331,6 @@ function parseMods(descriptions) {
 			"name":        descriptions[i].replace(/\d+/g, "#"),
 			"values":      descriptions[i].match  (/\d+/g),
 		};
-		
-		console.log(mod);
 		
         mods[mod.name] = mod;
     }
@@ -562,13 +560,10 @@ function createSocketsCell(row, item) {
 			groups[socket.group].total++;
 		}
 		
-		var longest = 0;
-		
 		for (var i = 0; i < groups.length; ++i) {
 			var group = groups[i];
 			
-			if (group.total > longest)
-				longest = group.total;
+			value += [0,1,7,22,45,53,55][group.total];
 			
 			if (i > 0) 
 				text += "<br />";
@@ -580,8 +575,6 @@ function createSocketsCell(row, item) {
 			
 			text += "</span>";
 		}
-		
-		value = longest * 10 + item.sockets.length;
     }
 	
 	appendNewCellWithTextAndClass(row, text, "sockets", value);
