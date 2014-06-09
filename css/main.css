@@ -207,6 +207,10 @@ table.stash .lightning { color: #e1be00; }
 	display: none;
 }
 
+.searchFilter {
+	display: none;
+}
+
 #tabNames {
 	margin: 0;
 	padding: 0;

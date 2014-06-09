@@ -1,5 +1,9 @@
 var stashData = {};
 
+$.expr[':'].containsIgnoreCase = function (n, i, m) {
+    return jQuery(n).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+};
+	
 function insertStylesheet() {
     var style = window.document.createElement("link");
 	style.rel = "stylesheet";
@@ -61,7 +65,7 @@ function prepareItems(items) {
 }
 
 function createRowFor(item, table) {
-	var row = newRow();
+	var row = newItemRow();
 
 	for (var c = 0; c < table.columns.length; ++c) {
 		({
@@ -317,67 +321,32 @@ function isWeapon(item) { return (item.properties["Physical Damage"]); }
 function isShield(item) { return (item.properties["Chance to Block"]); }
 
 function isMap(item) { return (item.properties["Map Level"]); }
-
-var Mods = {
-    "Adds (\\d+)-(\\d+) Physical Damage": "Physical Damage",
-    "Adds (\\d+)-(\\d+) Cold Damage": "Cold Damage",
-    "Adds (\\d+)-(\\d+) Lightning Damage": "Lightning Damage",
-    "Adds (\\d+)-(\\d+) Fire Damage": "Fire Damage",
-    "(\\d+)% Increased Physical Damage": "+% Local Physical Damage",
-    "(\\d+)% Increased Critical Strike Chance": "+% Local Critical Strike",
-    "(\\d+)% Increased Attack Speed": "+% Local Attack Speed",
-	"\\+(\\d+)% to Cold Resistance": "+% Cold Resistance",
-	"\\+(\\d+)% to Lightning Resistance": "+% Lightning Resistance",
-	"\\+(\\d+)% to Fire Resistance": "+% Fire Resistance",
-	"\\+(\\d+)% to Chaos Resistance": "+% Chaos Resistance",
-	"\\+(\\d+)% to all Elemental Resistances": "+% All Resistances",
-	"\\+(\\d+)% to Cold and Lightning Resistances": "+% Cold and Lightning Resistances",
-	"\\+(\\d+)% to Fire and Cold Resistances":      "+% Fire and Cold Resistances",
-	"\\+(\\d+)% to Fire and Lightning Resistances": "+% Fire and Lightning Resistances",
-};
  
 function parseMods(descriptions) {
-    function parseMod(description) {
-        var generic = description
-			.replace(/\+/g, "\\+")
-			.replace(/\d+/g, "(\\d+)");
- 
-        if (typeof Mods[generic] !== "undefined") {
-            return {
-                "name": Mods[generic],
-                "description": description,
-                "values": description.match(generic).slice(1),
-                "parsed": true
-            }
-        }
- 
-        return {
-            "name": description,
-            "description": description,
-            "parsed": false
-        };
-    }
- 
     var mods = {};
  
     for (var i in descriptions) {
-        var mod = parseMod(descriptions[i]);
+        var mod = {
+			"description": descriptions[i],
+			"name":        descriptions[i].replace(/%d+/g, "#"),
+			"values":      descriptions[i].match  (/%d+/g),
+		};
+		
         mods[mod.name] = mod;
     }
  
     return mods;
 }
 
-// each type has a multiplier
 var resistTypes = {
-		"+% Cold Resistance" : 1,
-		"+% Lightning Resistance" : 1,
-		"+% Fire Resistance" : 1,
-		"+% Chaos Resistance" : 1,
-		"+% All Resistances" : 3,
-		"+% Cold and Lightning Resistance" : 2,
-		"+% Fire and Cold Resistance" : 2,
-		"+% Fire and Lightning Resistance" : 2
+		"+#% Cold Resistance" : 1,
+		"+#% Lightning Resistance" : 1,
+		"+#% Fire Resistance" : 1,
+		"+#% Chaos Resistance" : 1,
+		"+#% All Resistances" : 3,
+		"+#% Cold and Lightning Resistance" : 2,
+		"+#% Fire and Cold Resistance" : 2,
+		"+#% Fire and Lightning Resistance" : 2
 };
 
 function getTotalResistances(item) {
@@ -396,9 +365,9 @@ function addResistsFromMods(modGroup) {
 }
 
 var damageTypes = [
-		"Cold Damage",
-		"Lightning Damage",
-		"Fire Damage"
+		"Add #-# Cold Damage",
+		"Add #-# Lightning Damage",
+		"Add #-# Fire Damage"
 ];
 
 function getElementalDamage(item) {
@@ -555,8 +524,6 @@ function createModsCell(row, item) {
 }
  
 function getModFormat(mod) {
-    if (!mod.parsed)
-        return "<span class='unparsed'>" + mod.description + "</span>";
     return "<span>" + mod.description + "</span>";
  
 }
@@ -645,9 +612,16 @@ function appendNewCellWithTextAndClass(row, text, className, sortValue) {
     row.appendChild(td);
     return td;
 }
- 
+
 function newRow() {
-    return document.createElement("tr");
+    var row = document.createElement("tr");
+	return row;
+}
+ 
+function newItemRow() {
+    var row = document.createElement("tr");
+	$(row).addClass("itemRow");
+	return row;
 }
  
 function newCell() {
@@ -656,7 +630,7 @@ function newCell() {
 
 function buildPage() {
     var title = "<h1>Stash Inventory</h1>";
-    var searchBox = "<form id='searchBox'><input placeholder='Search...' /><div id='clearSearch'>x</div></form>";
+    var searchBox = "<form onSubmit='return false;' id='searchBox'><input type='text' placeholder='Search...' /><div id='clearSearch'>x</div></form>";
     var infoBox = "<div id='infoBox'></div>";
     $("body").html("<div>" + title + searchBox + infoBox + "</div>");
     
@@ -707,35 +681,20 @@ function handleTabSwitching() {
 }
 
 function handleSearching() {
-	$("#searchBox").submit(function() {
-		search($(this).find("input").val());
-		return false;
+	$("#searchBox").keyup(function() {
+		$("tr.itemRow").removeClass("searchFilter");
+		$("tr.itemRow:not(:containsIgnoreCase('" + $(this).find("input").val() +"'))").addClass("searchFilter");
 	});
 	
 	$("#searchBox #clearSearch").click(function() {
-		$(".stash").hide();
-		$("tr").show();
 		$("#searchBox input").val("");
-		
-		showTableForSelectedTab();
+		$("tr.itemRow").removeClass("searchFilter");
 	});
 }
 
 function showTableForSelectedTab() {
 	var tableName = $("#tabNames .selected").attr("href");
 	$("#tabContents " + tableName).show();
-}
-
-function search(searchString) {
-	$(".stash").show();
-	$("tr").hide();
-	$("tr:contains('" + searchString + "')").show();
-	$("#tabNames .selected").removeClass("selected");
-	
-	var tablesWithRowsInSearch = $("table.stash tr:visible").parents("table.stash");
-	$(".stash").hide();
-	tablesWithRowsInSearch.show();
-	tablesWithRowsInSearch.find("#headerRow").show();
 }
 
 function handleSorting() {
