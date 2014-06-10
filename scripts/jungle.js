@@ -677,14 +677,32 @@ function handleTabSwitching() {
 
 function handleSearching() {
 	$("#searchBox").keyup(function() {
-		$("tr.itemRow").removeClass("searchFilter");
-		$("tr.itemRow:not(:containsIgnoreCase('" + $(this).find("input").val() +"'))").addClass("searchFilter");
+//		$("tr.itemRow").removeClass("searchFilter");
+//		$("tr.itemRow:not(:containsIgnoreCase('" + $(this).find("input").val() +"'))").addClass("searchFilter");
+		search($(this).find("input").val());
 	});
 	
 	$("#searchBox #clearSearch").click(function() {
+		$(".stash").hide();
+		$("tr").show();
 		$("#searchBox input").val("");
-		$("tr.itemRow").removeClass("searchFilter");
+		
+		showTableForSelectedTab();
+//		$("#searchBox input").val("");
+//		$("tr.itemRow").removeClass("searchFilter");
 	});
+}
+
+function search(searchString) {
+	$(".stash").show();
+	$("tr").hide();
+	$("tr:contains('" + searchString + "')").show();
+	$("#tabNames .selected").removeClass("selected");
+	
+	var tablesWithRowsInSearch = $("table.stash tr:visible").parents("table.stash");
+	$(".stash").hide();
+	tablesWithRowsInSearch.show();
+	tablesWithRowsInSearch.find("#headerRow").show();
 }
 
 function showTableForSelectedTab() {
