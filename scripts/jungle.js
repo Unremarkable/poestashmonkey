@@ -13,7 +13,11 @@ function insertStylesheet() {
 }
  
 var existingItems = [];
- 
+
+function getParameterByName(name) {
+	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+}
+
 function ready() {
     insertStylesheet();
 	
@@ -23,9 +27,11 @@ function ready() {
  
     $("body").html("<h2>Loading...</h2>");
  
+	var league = getParameterByName("league") || "Standard";
+ 
 	buildPage();
 	requestCharacterData();
-    requestStashData("Standard");
+    requestStashData(getParameterByName("league"));
     
     fetchCurrencyConversionTable();
 };

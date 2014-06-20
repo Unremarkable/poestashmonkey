@@ -6,7 +6,7 @@ function receiveStashData(league, tab, data) {
 }
 
 function requestStashData(league, tab) {
-    if (typeof league === "undefined") league = "Standard";
+    if (typeof league === "undefined" || league == null) league = "Standard";
     if (typeof stashData[league] === "undefined") stashData[league] = {};
 
     function ajax(league, tab) {
@@ -67,10 +67,12 @@ function setCharacterCache(name, value) {
 	});
 }
 
-function requestCharacterData() {
+function requestCharacterData(league) {
 	$.ajax("http://www.pathofexile.com/character-window/get-characters")
 	.done(function(charlist) {
 		for (var i = 0; i < charlist.length; ++i) {
+			if (charlist[i]["league"] != league)
+				continue;
 			var name = charlist[i]["name"];
 			var cache = getCharacterCache(name);
 			if (cache) {
