@@ -349,7 +349,7 @@ var resistTypes = {
 		"+#% to Lightning Resistance" : 1,
 		"+#% to Fire Resistance" : 1,
 		"+#% to Chaos Resistance" : 1,
-		"+#% to All Resistances" : 3,
+		"+#% to all Elemental Resistances" : 3,
 		"+#% to Cold and Lightning Resistances" : 2,
 		"+#% to Fire and Cold Resistances" : 2,
 		"+#% to Fire and Lightning Resistances" : 2
