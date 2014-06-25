@@ -30,8 +30,8 @@ function ready() {
 	var league = getParameterByName("league") || "Standard";
  
 	buildPage();
-	requestCharacterData();
-    requestStashData(getParameterByName("league"));
+	requestCharacterData(league);
+    requestStashData(league);
     
     fetchCurrencyConversionTable();
 };
