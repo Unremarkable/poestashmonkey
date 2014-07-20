@@ -88,12 +88,12 @@ h1, h2 {
 	right: 10px;
 	top: 10px;
     text-align:right;
-	width: 250px;
+	width: 150px;
 }
 
 #searchBox {
 	position: absolute;
-	right: 270px;
+	right: 200px;
 	top: 10px;
 }
 

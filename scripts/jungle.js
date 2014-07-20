@@ -33,7 +33,7 @@ function ready() {
 	requestCharacterData(league);
     requestStashData(league);
     
-    //fetchCurrencyConversionTable();
+    fetchCurrencyConversionTable();
 };
 
 function prepareItems(items) {
@@ -160,7 +160,7 @@ function addNameToList(name) {
 	}
 }
 
-function receiveStashDataFinished() {
+function receiveStashDataFinished() {	
 	for (var item in currency) {
 		createRowFor(currency[item], tables["currency"]);
 	}
@@ -191,6 +191,7 @@ function addCurrency(item) {
 	var name = item.typeLine;
 	
 	setItemQuantity(item);
+	
 	if (!currency[name]) {
 		currency[name] = item;
 		removeStackSizeFromImageLink(item);
@@ -304,8 +305,8 @@ var tables = {
 	}
 };
  
- var rings = ["Iron Ring", "Coral Ring", "Paua Ring", "Gold Ring", "Ruby Ring", "Sapphire Ring", "Topaz Ring", "Diamond Ring", "Moonstone Ring", "Prismatic Ring", "Amethyst Ring", "Two-Stone Ring", "Unset Ring"];
- var amulets = ["Paua Amulet", "Coral Amulet", "Amber Amulet", "Jade Amulet", "Lapis Amulet", "Gold Amulet", "Onyx Amulet", "Agate Amulet", "Turquoise Amulet", "Citrine Amulet"];
+ var rings = { "Iron Ring" : true, "Coral Ring" : true, "Paua Ring" : true, "Gold Ring" : true, "Ruby Ring" : true, "Sapphire Ring" : true, "Topaz Ring" : true, "Diamond Ring" : true, "Moonstone Ring" : true, "Prismatic Ring" : true, "Amethyst Ring" : true, "Two-Stone Ring" : true, "Unset Ring" : true};
+ var amulets = { "Paua Amulet" : true, "Coral Amulet" : true, "Amber Amulet" : true, "Jade Amulet" : true, "Lapis Amulet" : true, "Gold Amulet" : true, "Onyx Amulet" : true, "Agate Amulet" : true, "Turquoise Amulet" : true, "Citrine Amulet" : true };
  
 function isFlask(name) { return name.match(/Flask/) != null; }
 
@@ -774,27 +775,23 @@ function getSortValue(row, col) {
 function getItemBaseName(typeLine, itemList) {
     var name = typeLine;
  
-    if (itemExistsInListOrSet(name, itemList)) return name;
+    if (typeof itemList[name] !== "undefined") return name;
  
     // search for and remove suffix
     var end = name.indexOf(" of ");
     if (end != -1) name = name.substring(0, end);
  
-    if (itemExistsInListOrSet(name, itemList)) return name;
+    if (typeof itemList[name] !== "undefined") return name;
  
     // iteratively remove prefixes
     var start = 0;
     while ((start = name.indexOf(" ", start)) != -1) {
         name = name.substring(start + 1);
  
-        if (itemExistsInListOrSet(name, itemList)) return name;
+        if (typeof itemList[name] !== "undefined") return name;
     }
  
     return false;
-}
-
-function itemExistsInListOrSet(item, list) {
-    return (typeof list[item] !== "undefined" || list.indexOf(item) >= 0);
 }
 
 function getWeaponBaseName(typeLine) {
