@@ -33,7 +33,8 @@ function ready() {
 	requestCharacterData(league);
     requestStashData(league);
     
-    fetchCurrencyConversionTable();
+    // does not work yet
+    // fetchCurrencyConversionTable();
 };
 
 function prepareItems(items) {
