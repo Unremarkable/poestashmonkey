@@ -249,11 +249,17 @@ function changeImageStackSize(imgLink, n) {
 }
 */
 
+var basicColumns = ["Icon", "Name", "Level"];
+var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist"]);
+var accesoriesColumnsWithDamage = accesoriesColumns.concat(["eDMG"]);
+var advancedColumns = basicColumns.concat(["Str", "Int", "Dex", "Quality", "Sockets", "Mods"]);
+var gearColumns =  advancedColumns.concat(["AR", "EV", "ES", "tResist", "eDMG"]);
+
 var tables = {
 	"gems": {
 		"name":    "Gems",
 		"idName":  "gems",
-		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Mods"]
+		"columns": basicColumns.concat(["Str", "Int", "Dex", "Quality", "Mods"])
 	},
 	"currency": {
 		"name":    "Currency",
@@ -263,57 +269,57 @@ var tables = {
 	"flasks": {
 		"name":    "Flasks",
 		"idName":  "flasks",
-		"columns": ["Icon", "Name", "Level", "Quality", "Mods"]
+		"columns": basicColumns.concat(["Quality", "Mods"])
 	},
 	"amulets": {
 		"name":    "Amulets",
 		"idName":  "amulets",
-		"columns": ["Icon", "Name", "Level", "Mods", "tResist", "eDMG"]
+		"columns": accesoriesColumnsWithDamage
 	},
 	"rings": {
 		"name":    "Rings",
 		"idName":  "rings",
-		"columns": ["Icon", "Name", "Level", "Mods", "tResist", "eDMG"]
+		"columns": accesoriesColumnsWithDamage
 	},
 	"belts": {
 		"name":    "Belts",
 		"idName":  "belts",
-		"columns": ["Icon", "Name", "Level", "Mods", "tResist"]
+		"columns": accesoriesColumns
 	},
 	"quivers": {
 		"name":    "Quivers",
 		"idName":  "quivers",
-		"columns": ["Icon", "Name", "Level", "Mods", "tResist", "eDMG"]
+		"columns": accesoriesColumnsWithDamage
 	},
 	"boots": {
 		"name":    "Boots",
 		"idName":  "boots",
-		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+		"columns": gearColumns
 	},
 	"gloves": {
 		"name":    "Gloves",
 		"idName":  "gloves",
-		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+		"columns": gearColumns
 	},
 	"helmets": {
 		"name":    "Helmets",
 		"idName":  "helmets",
-		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+		"columns": gearColumns
 	},
 	"armour": {
 		"name":    "Armour",
 		"idName":  "armour",
-		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+		"columns": gearColumns
 	},
 	"weapons": {
 		"name":    "Weapons",
 		"idName":  "weapons",
-		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]
+		"columns": advancedColumns.concat(["DPS", "pDPS", "eDPS", "CPS", "Inc"])
 	},
 	"shields": {
 		"name":    "Shields",
 		"idName":  "shields",
-		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "tResist"]
+		"columns": advancedColumns.concat(["tResist"])
 	},
 	"maps": {
 		"name":    "Maps",
