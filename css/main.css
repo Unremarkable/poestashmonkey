@@ -162,10 +162,13 @@ table.stash .mods .divider {
 
 table.stash .unidentified { color: #833; margin: 4px; }
 
+table.stash .dex,
 table.stash .sockets .D { color: #719e13; }
 
+table.stash .int,
 table.stash .sockets .I { color: #114181; }
 
+table.stash .str,
 table.stash .sockets .S { color: #9e1328; }
 
 

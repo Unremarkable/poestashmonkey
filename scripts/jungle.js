@@ -80,6 +80,9 @@ function createRowFor(item, table) {
 			"Name":    createTitleCell,
 			"Quantity":createQuantityCell,
 			"Level":   createLevelCell,
+			"Str":     createStrCell,
+			"Int":     createIntCell,
+			"Dex":     createDexCell,
 			"Mods":    createModsCell,
 			"Quality": addItemQuality,
 			"tResist": addTotalResistances,
@@ -267,32 +270,32 @@ var tables = {
 	"boots": {
 		"name":    "Boots",
 		"idName":  "boots",
-		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
 	"gloves": {
 		"name":    "Gloves",
 		"idName":  "gloves",
-		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
 	"helmets": {
 		"name":    "Helmets",
 		"idName":  "helmets",
-		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
 	"armour": {
 		"name":    "Armour",
 		"idName":  "armour",
-		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
+		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AR", "EV", "ES", "tResist", "eDMG"]
 	},
 	"weapons": {
 		"name":    "Weapons",
 		"idName":  "weapons",
-		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]
+		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "DPS", "pDPS", "eDPS", "CPS", "Inc"]
 	},
 	"shields": {
 		"name":    "Shields",
 		"idName":  "shields",
-		"columns": ["Icon", "Name", "Level", "Quality", "Sockets", "Mods", "tResist"]
+		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Sockets", "Mods", "tResist"]
 	},
 	"maps": {
 		"name":    "Maps",
@@ -598,12 +601,17 @@ function getRequirement(item, type) {
     }
     return 0;
 }
- 
-function createLevelCell(row, item) {
-    var level = getRequirement(item, "Level");
-    appendNewCellWithTextAndClass(row, level, "level", level);
+
+function createDexCell(row, item) { createRequirementCell(row, item, "Dex"); }
+function createIntCell(row, item) { createRequirementCell(row, item, "Int"); }
+function createStrCell(row, item) { createRequirementCell(row, item, "Str"); }
+function createLevelCell(row, item) { createRequirementCell(row, item, "Level"); }
+
+function createRequirementCell(row, item, reqName) {
+    var req = getRequirement(item, reqName);
+    appendNewCellWithTextAndClass(row, req, reqName.toLowerCase(), req);
 }
- 
+
 function appendNewCellWithTextAndClass(row, text, className, sortValue) {
     var td = newCell();
     td.className = className;
