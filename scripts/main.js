@@ -9,6 +9,7 @@ function main(baseURL) {
 			BASE_URL+"/scripts/jungle.js?_v="+timestamp,
 			BASE_URL+"/scripts/currency.js?_v="+timestamp,
 			BASE_URL+"/scripts/tableInteractions.js?_v="+timestamp,
+			BASE_URL+"/scripts/weaponInfo.js?_v="+timestamp,
 			BASE_URL+"/scripts/data/affixes.js?_v="+timestamp,
 			BASE_URL+"/scripts/data/baseWeapons.js?_v="+timestamp
 		], function() {
