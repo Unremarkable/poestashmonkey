@@ -235,7 +235,7 @@ var tables = {
 	"gems": {
 		"name":    "Gems",
 		"idName":  "gems",
-		"columns": ["Icon", "Name", "Level", "Quality", "Mods"]
+		"columns": ["Icon", "Name", "Level", "Str", "Int", "Dex", "Quality", "Mods"]
 	},
 	"currency": {
 		"name":    "Currency",
