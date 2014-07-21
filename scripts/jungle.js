@@ -105,6 +105,8 @@ function createRowFor(item, table) {
 var currency = [];
 var itemNames = [];
 
+var capacityUsed = 0;
+
 function receiveItemData(items) {
 	prepareItems(items);
 	
@@ -113,6 +115,7 @@ function receiveItemData(items) {
 		var itemType = item.frameType;
 		var name = item.typeLine
 		addNameToList(item.name);
+		addToCapacityUsed(item);
 				
 		// note, frameType 6 are green items (ie in game things like "Sewer Keys")
 		
@@ -176,7 +179,16 @@ function receiveStashDataFinished() {
 	$("#tabNames li").first().addClass("selected");
 	showTableForSelectedTab();
 
+	var capacityUtilized = Math.round(capacityUsed / (numberOfTabs * 144) * 100);
+	$("#infoBox").append("<div id='capacityUsed'>Capacity Utilized: " + capacityUtilized + "% (across " + numberOfTabs + " tabs)</div>");
+
 	showAnyItemNameRepeats();
+}
+
+function addToCapacityUsed(item) {
+    if (item.inventoryId.startsWith("Stash")) {
+        capacityUsed += item.w * item.h;
+    }
 }
 
 function showAnyItemNameRepeats() {
@@ -187,7 +199,7 @@ function showAnyItemNameRepeats() {
 		}
 	}
 	if (duplicates.length > 0) {
-		$("#infoBox").html("Item name repeats: " + duplicates);
+		$("#infoBox").append("<div id='duplicates'>Item name repeats: " + duplicates + "</div>");
 	}
 }
 

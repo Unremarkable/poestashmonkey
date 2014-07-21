@@ -1,4 +1,5 @@
 var CACHE_MAX_LIFE = 3600000; // one hour
+var numberOfTabs = 0;
 
 function receiveStashData(league, tab, data) {
 	stashData[league][tab] = data;
@@ -34,6 +35,7 @@ function requestStashData(league, tab) {
         var requestTabs = [];
 
         var numTabs = stashData[league][tabsLoaded[0]].numTabs;
+        numberOfTabs = numTabs;
         for (var i = 0; i < numTabs; ++i) {
             if (typeof stashData[league][i] === "undefined") {
                 requests.push(ajax(league, i));
