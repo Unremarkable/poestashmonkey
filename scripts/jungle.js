@@ -3,6 +3,12 @@ var stashData = {};
 $.expr[':'].containsIgnoreCase = function (n, i, m) {
     return jQuery(n).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
 };
+
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str) {
+    return this.substring(0, str.length) === str;
+  };
+}
 	
 function insertStylesheet() {
     var style = window.document.createElement("link");
