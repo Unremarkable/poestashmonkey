@@ -233,8 +233,8 @@ function getBaseItem(item) {
 
 			function li_property(property) {
 				if (property.range.length == 2)
-					return $("<li class='property'>"+property.name+" ["+property.range[0].min+"-"+property.range[0].max+"]-["+property.range[1].min+"-"+property.range[1].max+"]</li>");
-				return $("<li class='property'>"+property.name+" ["+property.range[0].min+"-"+property.range[0].max+"]</li>");
+					return $("<li class='property'>"+property.name.replace("#-#","["+property.range[0].min+"-"+property.range[0].max+"]-["+property.range[1].min+"-"+property.range[1].max+"]")+"</li>");
+				return $("<li class='property'>"+property.name.replace("#","["+property.range[0].min+"-"+property.range[0].max+"]")+"</li>");
 			}
 
 			function draw_affix(affix) {
