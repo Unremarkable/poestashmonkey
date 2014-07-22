@@ -1,7 +1,11 @@
 var CACHE_MAX_LIFE = 3600000; // one hour
 var numberOfTabs = 0;
+var stashMetaData = {};
 
 function receiveStashData(league, tab, data) {
+	for (var i = 0; i < data.items.length; ++i)
+		data.items[i].inventoryId = stashMetaData[league][tab].n;
+
 	stashData[league][tab] = data;
 	receiveItemData(data.items)
 }
@@ -10,11 +14,11 @@ function requestStashData(league, tab) {
     if (typeof league === "undefined" || league == null) league = "Standard";
     if (typeof stashData[league] === "undefined") stashData[league] = {};
 
-    function ajax(league, tab) {
+    function ajax(league, tab, metadata) {
         return $.ajax("http://www.pathofexile.com/character-window/get-stash-items", {
             data: {
                 "league": league,
-                "tabs": 0,
+                "tabs": metadata ? 1 : 0,
                 "tabIndex": (tab || 0)
             },
         })
@@ -25,8 +29,9 @@ function requestStashData(league, tab) {
     if (typeof tab !== "undefined") {
         ajax(league, tab);
     } else if (tabsLoaded.length == 0) {
-        ajax(league, 0)
+        ajax(league, 0, true)
             .done(function (data) {
+            	stashMetaData[league] = data.tabs;
                 receiveStashData(league, 0, data);
                 requestStashData(league);
             });

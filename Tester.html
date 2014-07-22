@@ -279,12 +279,17 @@ function getBaseItem(item) {
 			}
 
 			function draw_mods(mod) {
-				return [
+				var mods = [
 					$("<dt class='mods'>" + mod.description + "</dt>"),
 					$("<dd class='mods'></dd>").append(
 						$("<ul class='mods'></ul>").append($.map(affixes[mod.name].Affixes, draw_group))
 					)
 				];
+
+				if (affixes[mod.name].Compound || (affixes[mod.name].Prefix && affixes[mod.name].Suffix))
+					mods[1].addClass("Compound");
+
+				return mods;
 			}
 
 			function draw_item(item) {
