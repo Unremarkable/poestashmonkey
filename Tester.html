@@ -254,7 +254,7 @@ function getBaseItem(item) {
 
 			function draw_mods(mod) {
 				return [
-					$("<dt class='mods'>" + mod.name + "</dt>"),
+					$("<dt class='mods'>" + mod.description + "</dt>"),
 					$("<dd class='mods'></dd>").append(
 						$("<ul class='mods'></ul>").append($.map(affixes[mod.name].Affixes, draw_group))
 					)
