@@ -13,631 +13,712 @@ var baseEquipment = (function() {
 			"subtype" : subtype
 		};
 	}
+
+// ALSO IN affixes.js
+// ANY CHANGES MUST BE MIRRORED IN BOTH DOCUMENTS
+	var	NONE    = 0x00,
+		ANY     = 0xFF,
+		STR     = 0x01,
+		DEX     = 0x02,
+		INT     = 0x04,
+		STR_DEX = 0x08,
+		STR_INT = 0x10,
+		DEX_INT = 0x20;
+
+// Index into affix.js typemask
+	var	AMULET           =  1,
+		BELT             =  2,
+		RING             =  0,
+
+		BOOT             =  5,
+		CHEST            =  6,
+		GLOVE            =  4,
+		HELM             =  3,
+
+		SHIELD           =  7,
+		QUIVER           =  8,
+
+		BOW              = 14,
+		CLAW             = 11,
+		DAGGER           = 10,
+		ONE_HANDED_AXE   = 15,
+		ONE_HANDED_MACE  = 17,
+		ONE_HANDED_SWORD = 15,
+		SCEPTRE          = 12,
+		STAFF            = 13,
+		TWO_HANDED_AXE   = 16,
+		TWO_HANDED_MACE  = 18,
+		TWO_HANDED_SWORD = 16,
+		WAND             =  9;
 	
-	addItem("Rusted Hatchet",0,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Jade Hatchet",6,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Boarding Axe",11,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Cleaver",16,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Broad Axe",21,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Arming Axe",25,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Decorative Axe",29,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Spectral Axe",33,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Jasper Axe",36,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Tomahawk",39,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Wrist Chopper",42,"WEAPON","ONE_HANDED_AXE"),
-	addItem("War Axe",45,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Chest Splitter",48,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Ceremonial Axe",51,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Wraith Axe",54,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Karui Axe",57,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Siege Axe",59,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Reaver Axe",61,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Butcher Axe",63,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Vaal Hatchet",65,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Royal Axe",67,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Infernal Axe",69,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Stone Axe",0,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Jade Chopper",9,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Woodsplitter",13,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Poleaxe",18,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Double Axe",23,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Gilded Axe",28,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Shadow Axe",33,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Jasper Chopper",37,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Timber Axe",41,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Headsman Axe",45,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Labrys",49,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Noble Axe",52,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Abyssal Axe",55,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Karui Chopper",58,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Sundering Axe",60,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Ezomyte Axe",62,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Vaal Axe",64,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Despot Axe",66,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Void Axe",68,"WEAPON","ONE_HANDED_AXE"),
-	addItem("Crude Bow",0,"WEAPON","BOW"),
-	addItem("Short Bow",5,"WEAPON","BOW"),
-	addItem("Long Bow",10,"WEAPON","BOW"),
-	addItem("Composite Bow",15,"WEAPON","BOW"),
-	addItem("Recurve Bow",20,"WEAPON","BOW"),
-	addItem("Bone Bow",24,"WEAPON","BOW"),
-	addItem("Royal Bow",28,"WEAPON","BOW"),
-	addItem("Death Bow",32,"WEAPON","BOW"),
-	addItem("Grove Bow",35,"WEAPON","BOW"),
-	addItem("Decurve Bow",38,"WEAPON","BOW"),
-	addItem("Compound Bow",41,"WEAPON","BOW"),
-	addItem("Sniper Bow",44,"WEAPON","BOW"),
-	addItem("Ivory Bow",47,"WEAPON","BOW"),
-	addItem("Highborn Bow",50,"WEAPON","BOW"),
-	addItem("Decimation Bow",53,"WEAPON","BOW"),
-	addItem("Thicket Bow",56,"WEAPON","BOW"),
-	addItem("Citadel Bow",58,"WEAPON","BOW"),
-	addItem("Ranger Bow",60,"WEAPON","BOW"),
-	addItem("Maraketh Bow",62,"WEAPON","BOW"),
-	addItem("Spine Bow",64,"WEAPON","BOW"),
-	addItem("Imperial Bow",66,"WEAPON","BOW"),
-	addItem("Harbinger Bow",68,"WEAPON","BOW"),
-	addItem("Nailed Fist",0,"WEAPON","CLAW"),
-	addItem("Sharktooth Claw",7,"WEAPON","CLAW"),
-	addItem("Awl",12,"WEAPON","CLAW"),
-	addItem("Cat's Paw",17,"WEAPON","CLAW"),
-	addItem("Blinder",22,"WEAPON","CLAW"),
-	addItem("Timeworn Claw",26,"WEAPON","CLAW"),
-	addItem("Sparkling Claw",30,"WEAPON","CLAW"),
-	addItem("Fright Claw",34,"WEAPON","CLAW"),
-	addItem("Thresher Claw",37,"WEAPON","CLAW"),
-	addItem("Gouger",40,"WEAPON","CLAW"),
-	addItem("Tiger's Paw",43,"WEAPON","CLAW"),
-	addItem("Gut Ripper",46,"WEAPON","CLAW"),
-	addItem("Prehistoric Claw",49,"WEAPON","CLAW"),
-	addItem("Noble Claw",52,"WEAPON","CLAW"),
-	addItem("Eagle Claw",55,"WEAPON","CLAW"),
-	addItem("Great White Claw",58,"WEAPON","CLAW"),
-	addItem("Throat Stabber",60,"WEAPON","CLAW"),
-	addItem("Hellion's Paw",62,"WEAPON","CLAW"),
-	addItem("Eye Gouger",64,"WEAPON","CLAW"),
-	addItem("Vaal Claw",66,"WEAPON","CLAW"),
-	addItem("Imperial Claw",68,"WEAPON","CLAW"),
-	addItem("Terror Claw",70,"WEAPON","CLAW"),
-	addItem("Glass Shank",0,"WEAPON","DAGGER"),
-	addItem("Skinning Knife",5,"WEAPON","DAGGER"),
-	addItem("Carving Knife",10,"WEAPON","DAGGER"),
-	addItem("Stiletto",15,"WEAPON","DAGGER"),
-	addItem("Boot Knife",20,"WEAPON","DAGGER"),
-	addItem("Copper Kris",24,"WEAPON","DAGGER"),
-	addItem("Skean",28,"WEAPON","DAGGER"),
-	addItem("Imp Dagger",32,"WEAPON","DAGGER"),
-	addItem("Flaying Knife",35,"WEAPON","DAGGER"),
-	addItem("Butcher Knife",38,"WEAPON","DAGGER"),
-	addItem("Poignard",41,"WEAPON","DAGGER"),
-	addItem("Boot Blade",44,"WEAPON","DAGGER"),
-	addItem("Golden Kris",47,"WEAPON","DAGGER"),
-	addItem("Royal Skean",50,"WEAPON","DAGGER"),
-	addItem("Fiend Dagger",53,"WEAPON","DAGGER"),
-	addItem("Gutting Knife",56,"WEAPON","DAGGER"),
-	addItem("Slaughter Knife",58,"WEAPON","DAGGER"),
-	addItem("Ambusher",60,"WEAPON","DAGGER"),
-	addItem("Ezomyte Dagger",62,"WEAPON","DAGGER"),
-	addItem("Platinum Kris",64,"WEAPON","DAGGER"),
-	addItem("Imperial Skean",66,"WEAPON","DAGGER"),
-	addItem("Demon Dagger",68,"WEAPON","DAGGER"),
-	addItem("Driftwood Club",0,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Tribal Club",5,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Spiked Club",10,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Stone Hammer",15,"WEAPON","ONE_HANDED_MACE"),
-	addItem("War Hammer",20,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Bladed Mace",24,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Ceremonial Mace",28,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Dream Mace",28,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Petrified Club",35,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Barbed Club",38,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Rock Breaker",41,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Battle Hammer",44,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Flanged Mace",47,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Ornate Mace",50,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Phantom Mace",53,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Ancestral Club",56,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Tenderizer",58,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Gavel",60,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Legion Hammer",62,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Pernarch",64,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Auric Mace",66,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Nightmare Mace",68,"WEAPON","ONE_HANDED_MACE"),
-	addItem("Driftwood Sceptre",0,"WEAPON","SCEPTRE"),
-	addItem("Darkwood Sceptre",5,"WEAPON","SCEPTRE"),
-	addItem("Bronze Sceptre",10,"WEAPON","SCEPTRE"),
-	addItem("Quartz Sceptre",15,"WEAPON","SCEPTRE"),
-	addItem("Iron Sceptre",20,"WEAPON","SCEPTRE"),
-	addItem("Ochre Sceptre",24,"WEAPON","SCEPTRE"),
-	addItem("Ritual Sceptre",28,"WEAPON","SCEPTRE"),
-	addItem("Shadow Sceptre",32,"WEAPON","SCEPTRE"),
-	addItem("Grinning Fetish",35,"WEAPON","SCEPTRE"),
-	addItem("Sekhem",38,"WEAPON","SCEPTRE"),
-	addItem("Crystal Sceptre",41,"WEAPON","SCEPTRE"),
-	addItem("Lead Sceptre",44,"WEAPON","SCEPTRE"),
-	addItem("Blood Sceptre",47,"WEAPON","SCEPTRE"),
-	addItem("Royal Sceptre",50,"WEAPON","SCEPTRE"),
-	addItem("Abyssal Sceptre",53,"WEAPON","SCEPTRE"),
-	addItem("Karui Sceptre",56,"WEAPON","SCEPTRE"),
-	addItem("Tyrant's Sekhem",58,"WEAPON","SCEPTRE"),
-	addItem("Opal Sceptre",60,"WEAPON","SCEPTRE"),
-	addItem("Platinum Sceptre",62,"WEAPON","SCEPTRE"),
-	addItem("Carnal Sceptre",64,"WEAPON","SCEPTRE"),
-	addItem("Vaal Sceptre",66,"WEAPON","SCEPTRE"),
-	addItem("Void Sceptre",68,"WEAPON","SCEPTRE"),
-	addItem("Driftwood Maul",0,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Tribal Maul",8,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Mallet",12,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Sledgehammer",17,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Spiked Maul",22,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Brass Maul",27,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Fright Maul",32,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Totemic Maul",36,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Great Mallet",40,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Steelhead",44,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Spiny Maul",48,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Plated Maul",51,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Dread Maul",54,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Karui Maul",57,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Colossus Mallet",59,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Piledriver",61,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Meatgrinder",63,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Imperial Maul",65,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Terror Maul",67,"WEAPON","TWO_HANDED_MACE"),
-	addItem("Gnarled Branch",0,"WEAPON","STAFF"),
-	addItem("Primitive Staff",9,"WEAPON","STAFF"),
-	addItem("Long Staff",13,"WEAPON","STAFF"),
-	addItem("Iron Staff",18,"WEAPON","STAFF"),
-	addItem("Coiled Staff",23,"WEAPON","STAFF"),
-	addItem("Royal Staff",28,"WEAPON","STAFF"),
-	addItem("Vile Staff",33,"WEAPON","STAFF"),
-	addItem("Woodful Staff",37,"WEAPON","STAFF"),
-	addItem("Quarterstaff",41,"WEAPON","STAFF"),
-	addItem("Military Staff",45,"WEAPON","STAFF"),
-	addItem("Serpentine Staff",49,"WEAPON","STAFF"),
-	addItem("Highborn Staff",52,"WEAPON","STAFF"),
-	addItem("Foul Staff",55,"WEAPON","STAFF"),
-	addItem("Primordial Staff",58,"WEAPON","STAFF"),
-	addItem("Lathi",60,"WEAPON","STAFF"),
-	addItem("Ezomyte Staff",62,"WEAPON","STAFF"),
-	addItem("Maelstr?m Staff",64,"WEAPON","STAFF"),
-	addItem("Imperial Staff",66,"WEAPON","STAFF"),
-	addItem("Judgement Staff",68,"WEAPON","STAFF"),
-	addItem("Rusted Sword",0,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Copper Sword",5,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Sabre",10,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Broad Sword",15,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("War Sword",20,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Ancient Sword",24,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Elegant Sword",28,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Dusk Blade",32,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Variscite Blade",35,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Cutlass",38,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Baselard",41,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Battle Sword",44,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Elder Sword",47,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Graceful Sword",50,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Twilight Blade",53,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Gemstone Sword",56,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Corsair Sword",58,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Gladius",60,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Legion Sword",62,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Vaal Blade",64,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Eternal Sword",66,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Midnight Blade",68,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Rusted Spike",0,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Whalebone Rapier",7,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Battered Foil",12,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Basket Rapier",17,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Jagged Foil",22,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Antique Rapier",26,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Elegant Foil",30,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Thorn Rapier",34,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Wyrmbone Rapier",37,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Burnished Foil",40,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Estoc",43,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Serrated Foil",46,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Primeval Rapier",49,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Fancy Foil",52,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Apex Rapier",55,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Dragonbone Rapier",58,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Tempered Foil",60,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Pecoraro",62,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Spiraled Foil",64,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Vaal Rapier",66,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Jeweled Foil",68,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Harpy Rapier",70,"WEAPON","ONE_HANDED_SWORD"),
-	addItem("Corroded Blade",0,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Longsword",8,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Bastard Sword",12,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Two-Handed Sword",17,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Etched Greatsword",22,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Ornate Sword",27,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Spectral Sword",32,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Butcher Sword",36,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Footman Sword",40,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Highland Blade",44,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Engraved Greatsword",48,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Tiger Sword",51,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Wraith Sword",54,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Headman's Sword",57,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Reaver Sword",59,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Ezomyte Blade",61,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Vaal Greatsword",63,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Lion Sword",65,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Infernal Sword",67,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Driftwood Wand",0,"WEAPON","TWO_HANDED_SWORD"),
-	addItem("Goat's Horn",6,"WEAPON","WAND"),
-	addItem("Carved Wand",12,"WEAPON","WAND"),
-	addItem("Quartz Wand",18,"WEAPON","WAND"),
-	addItem("Spiraled Wand",24,"WEAPON","WAND"),
-	addItem("Sage Wand",30,"WEAPON","WAND"),
-	addItem("Faun's Horn",35,"WEAPON","WAND"),
-	addItem("Engraved Wand",40,"WEAPON","WAND"),
-	addItem("Crystal Wand",45,"WEAPON","WAND"),
-	addItem("Serpent Wand",49,"WEAPON","WAND"),
-	addItem("Omen Wand",53,"WEAPON","WAND"),
-	addItem("Demon's Horn",56,"WEAPON","WAND"),
-	addItem("Imbued Wand",59,"WEAPON","WAND"),
-	addItem("Opal Wand",62,"WEAPON","WAND"),
-	addItem("Tornado Wand",65,"WEAPON","WAND"),
-	addItem("Prophecy Wand",68,"WEAPON","WAND"),
-	addItem("Plate Vest",0,"CHEST","AR"),
-	addItem("Chestplate",6,"CHEST","AR"),
-	addItem("Copper Plate",17,"CHEST","AR"),
-	addItem("War Plate",21,"CHEST","AR"),
-	addItem("Full Plate",28,"CHEST","AR"),
-	addItem("Arena Plate",32,"CHEST","AR"),
-	addItem("Lordly Plate",35,"CHEST","AR"),
-	addItem("Bronze Plate",37,"CHEST","AR"),
-	addItem("Battle Plate",41,"CHEST","AR"),
-	addItem("Sun Plate",45,"CHEST","AR"),
-	addItem("Colosseum Plate",49,"CHEST","AR"),
-	addItem("Majestic Plate",53,"CHEST","AR"),
-	addItem("Golden Plate",56,"CHEST","AR"),
-	addItem("Crusader Plate",59,"CHEST","AR"),
-	addItem("Astral Plate",62,"CHEST","AR"),
-	addItem("Gladiator Plate",65,"CHEST","AR"),
-	addItem("Glorious Plate",68,"CHEST","AR"),
-	addItem("Shabby Jerkin",0,"CHEST","EV"),
-	addItem("Strapped Leather",9,"CHEST","EV"),
-	addItem("Buckskin Tunic",17,"CHEST","EV"),
-	addItem("Wild Leather",25,"CHEST","EV"),
-	addItem("Full Leather",28,"CHEST","EV"),
-	addItem("Sun Leather",32,"CHEST","EV"),
-	addItem("Thief's Garb",35,"CHEST","EV"),
-	addItem("Eelskin Tunic",37,"CHEST","EV"),
-	addItem("Frontier Leather",41,"CHEST","EV"),
-	addItem("Glorious Leather",45,"CHEST","EV"),
-	addItem("Coronal Leather",49,"CHEST","EV"),
-	addItem("Cutthroat's Garb",53,"CHEST","EV"),
-	addItem("Sharkskin Tunic",56,"CHEST","EV"),
-	addItem("Destiny Leather",59,"CHEST","EV"),
-	addItem("Exquisite Leather",62,"CHEST","EV"),
-	addItem("Zodiac Leather",65,"CHEST","EV"),
-	addItem("Assassin's Garb",68,"CHEST","EV"),
-	addItem("Simple Robe",0,"CHEST","ES"),
-	addItem("Silken Vest",11,"CHEST","ES"),
-	addItem("Scholar's Robe",18,"CHEST","ES"),
-	addItem("Silken Garb",25,"CHEST","ES"),
-	addItem("Mage's Vestment",28,"CHEST","ES"),
-	addItem("Silk Robe",32,"CHEST","ES"),
-	addItem("Cabalist Regalia",35,"CHEST","ES"),
-	addItem("Sage's Robe",37,"CHEST","ES"),
-	addItem("Silken Wrap",41,"CHEST","ES"),
-	addItem("Conjurer's Vestment",45,"CHEST","ES"),
-	addItem("Spidersilk Robe",49,"CHEST","ES"),
-	addItem("Destroyer Regalia",53,"CHEST","ES"),
-	addItem("Savant's Robe",56,"CHEST","ES"),
-	addItem("Necromancer Silks",59,"CHEST","ES"),
-	addItem("Occultist's Vestment",62,"CHEST","ES"),
-	addItem("Widowsilk Robe",65,"CHEST","ES"),
-	addItem("Vaal Regalia",68,"CHEST","ES"),
-	addItem("Scale Vest",0,"CHEST","AR_EV"),
-	addItem("Light Brigandine",8,"CHEST","AR_EV"),
-	addItem("Scale Doublet",17,"CHEST","AR_EV"),
-	addItem("Infantry Brigandine",21,"CHEST","AR_EV"),
-	addItem("Full Scale Armour",28,"CHEST","AR_EV"),
-	addItem("Soldier's Brigandine",32,"CHEST","AR_EV"),
-	addItem("Field Lamellar",35,"CHEST","AR_EV"),
-	addItem("Wyrmscale Doublet",38,"CHEST","AR_EV"),
-	addItem("Hussar Brigandine",42,"CHEST","AR_EV"),
-	addItem("Full Wyrmscale",46,"CHEST","AR_EV"),
-	addItem("Commander's Brigandine",50,"CHEST","AR_EV"),
-	addItem("Battle Lamellar",54,"CHEST","AR_EV"),
-	addItem("Dragonscale Doublet",57,"CHEST","AR_EV"),
-	addItem("Desert Brigandine",60,"CHEST","AR_EV"),
-	addItem("Full Dragonscale",63,"CHEST","AR_EV"),
-	addItem("General's Brigandine",66,"CHEST","AR_EV"),
-	addItem("Triumphant Lamellar",69,"CHEST","AR_EV"),
-	addItem("Chainmail Vest",0,"CHEST","AR_ES"),
-	addItem("Chainmail Tunic",8,"CHEST","AR_ES"),
-	addItem("Ringmail Coat",17,"CHEST","AR_ES"),
-	addItem("Chainmail Doublet",21,"CHEST","AR_ES"),
-	addItem("Full Ringmail",28,"CHEST","AR_ES"),
-	addItem("Full Chainmail",32,"CHEST","AR_ES"),
-	addItem("Holy Chainmail",35,"CHEST","AR_ES"),
-	addItem("Latticed Ringmail",39,"CHEST","AR_ES"),
-	addItem("Crusader Chainmail",43,"CHEST","AR_ES"),
-	addItem("Ornate Ringmail",47,"CHEST","AR_ES"),
-	addItem("Chain Hauberk",51,"CHEST","AR_ES"),
-	addItem("Devout Chainmail",55,"CHEST","AR_ES"),
-	addItem("Loricated Ringmail",58,"CHEST","AR_ES"),
-	addItem("Conquest Chainmail",61,"CHEST","AR_ES"),
-	addItem("Elegant Ringmail",64,"CHEST","AR_ES"),
-	addItem("Saint's Hauberk",67,"CHEST","AR_ES"),
-	addItem("Saintly Chainmail",70,"CHEST","AR_ES"),
-	addItem("Padded Vest",0,"CHEST","EV_ES"),
-	addItem("Oiled Vest",9,"CHEST","EV_ES"),
-	addItem("Padded Jacket",18,"CHEST","EV_ES"),
-	addItem("Oiled Coat",22,"CHEST","EV_ES"),
-	addItem("Scarlet Raiment",28,"CHEST","EV_ES"),
-	addItem("Waxed Garb",32,"CHEST","EV_ES"),
-	addItem("Bone Armour",35,"CHEST","EV_ES"),
-	addItem("Quilted Jacket",40,"CHEST","EV_ES"),
-	addItem("Sleek Coat",44,"CHEST","EV_ES"),
-	addItem("Crimson Raiment",48,"CHEST","EV_ES"),
-	addItem("Lacquered Garb",52,"CHEST","EV_ES"),
-	addItem("Crypt Armour",56,"CHEST","EV_ES"),
-	addItem("Sentinel Jacket",59,"CHEST","EV_ES"),
-	addItem("Varnished Coat",62,"CHEST","EV_ES"),
-	addItem("Blood Raiment",65,"CHEST","EV_ES"),
-	addItem("Sadist Garb",68,"CHEST","EV_ES"),
-	addItem("Carnal Armour",71,"CHEST","EV_ES"),
-	addItem("Iron Greaves",0,"BOOT","AR"),
-	addItem("Steel Greaves",9,"BOOT","AR"),
-	addItem("Plated Greaves",23,"BOOT","AR"),
-	addItem("Reinforced Greaves",33,"BOOT","AR"),
-	addItem("Antique Greaves",37,"BOOT","AR"),
-	addItem("Ancient Greaves",46,"BOOT","AR"),
-	addItem("Goliath Greaves",54,"BOOT","AR"),
-	addItem("Vaal Greaves",62,"BOOT","AR"),
-	addItem("Titan Greaves",68,"BOOT","AR"),
-	addItem("Rawhide Boots",0,"BOOT","EV"),
-	addItem("Goathide Boots",12,"BOOT","EV"),
-	addItem("Deerskin Boots",22,"BOOT","EV"),
-	addItem("Nubuck Boots",34,"BOOT","EV"),
-	addItem("Eelskin Boots",39,"BOOT","EV"),
-	addItem("Sharkskin Boots",44,"BOOT","EV"),
-	addItem("Shagreen Boots",55,"BOOT","EV"),
-	addItem("Stealth Boots",62,"BOOT","EV"),
-	addItem("Slink Boots",69,"BOOT","EV"),
-	addItem("Wool Shoes",0,"BOOT","ES"),
-	addItem("Velvet Slippers",9,"BOOT","ES"),
-	addItem("Silk Slippers",22,"BOOT","ES"),
-	addItem("Scholar Boots",32,"BOOT","ES"),
-	addItem("Satin Slippers",38,"BOOT","ES"),
-	addItem("Samite Slippers",44,"BOOT","ES"),
-	addItem("Conjurer Boots",53,"BOOT","ES"),
-	addItem("Arcanist Slippers",61,"BOOT","ES"),
-	addItem("Sorcerer Boots",67,"BOOT","ES"),
-	addItem("Leatherscale Boots",6,"BOOT","AR_EV"),
-	addItem("Ironscale Boots",18,"BOOT","AR_EV"),
-	addItem("Bronzescale Boots",30,"BOOT","AR_EV"),
-	addItem("Steelscale Boots",36,"BOOT","AR_EV"),
-	addItem("Serpentscale Boots",42,"BOOT","AR_EV"),
-	addItem("Wyrmscale Boots",51,"BOOT","AR_EV"),
-	addItem("Hydrascale Boots",59,"BOOT","AR_EV"),
-	addItem("Dragonscale Boots",65,"BOOT","AR_EV"),
-	addItem("Chain Boots",5,"BOOT","AR_ES"),
-	addItem("Ringmail Boots",13,"BOOT","AR_ES"),
-	addItem("Mesh Boots",28,"BOOT","AR_ES"),
-	addItem("Riveted Boots",36,"BOOT","AR_ES"),
-	addItem("Zealot Boots",40,"BOOT","AR_ES"),
-	addItem("Soldier Boots",49,"BOOT","AR_ES"),
-	addItem("Legion Boots",58,"BOOT","AR_ES"),
-	addItem("Crusader Boots",64,"BOOT","AR_ES"),
-	addItem("Wrapped Boots",6,"BOOT","EV_ES"),
-	addItem("Strapped Boots",16,"BOOT","EV_ES"),
-	addItem("Clasped Boots",27,"BOOT","EV_ES"),
-	addItem("Shackled Boots",34,"BOOT","EV_ES"),
-	addItem("Trapper Boots",41,"BOOT","EV_ES"),
-	addItem("Ambush Boots",47,"BOOT","EV_ES"),
-	addItem("Carnal Boots",55,"BOOT","EV_ES"),
-	addItem("Assassin's Boots",63,"BOOT","EV_ES"),
-	addItem("Murder Boots",69,"BOOT","EV_ES"),
-	addItem("Iron Gauntlets",0,"GLOVE","AR"),
-	addItem("Plated Gauntlets",11,"GLOVE","AR"),
-	addItem("Bronze Gauntlets",23,"GLOVE","AR"),
-	addItem("Steel Gauntlets",35,"GLOVE","AR"),
-	addItem("Antique Gauntlets",39,"GLOVE","AR"),
-	addItem("Ancient Gauntlets",47,"GLOVE","AR"),
-	addItem("Goliath Gauntlets",53,"GLOVE","AR"),
-	addItem("Vaal Gauntlets",63,"GLOVE","AR"),
-	addItem("Titan Gauntlets",69,"GLOVE","AR"),
-	addItem("Rawhide Gloves",0,"GLOVE","EV"),
-	addItem("Goathide Gloves",9,"GLOVE","EV"),
-	addItem("Deerskin Gloves",21,"GLOVE","EV"),
-	addItem("Nubuck Gloves",33,"GLOVE","EV"),
-	addItem("Eelskin Gloves",38,"GLOVE","EV"),
-	addItem("Sharkskin Gloves",45,"GLOVE","EV"),
-	addItem("Shagreen Gloves",54,"GLOVE","EV"),
-	addItem("Stealth Gloves",62,"GLOVE","EV"),
-	addItem("Slink Gloves",70,"GLOVE","EV"),
-	addItem("Wool Gloves",0,"GLOVE","ES"),
-	addItem("Velvet Gloves",12,"GLOVE","ES"),
-	addItem("Silk Gloves",25,"GLOVE","ES"),
-	addItem("Embroidered Gloves",36,"GLOVE","ES"),
-	addItem("Satin Gloves",41,"GLOVE","ES"),
-	addItem("Samite Gloves",47,"GLOVE","ES"),
-	addItem("Conjurer Gloves",55,"GLOVE","ES"),
-	addItem("Arcanist Gloves",60,"GLOVE","ES"),
-	addItem("Sorcerer Gloves",69,"GLOVE","ES"),
-	addItem("Fishscale Gauntlets",0,"GLOVE","AR_EV"),
-	addItem("Ironscale Gauntlets",15,"GLOVE","AR_EV"),
-	addItem("Bronzescale Gauntlets",27,"GLOVE","AR_EV"),
-	addItem("Steelscale Gauntlets",36,"GLOVE","AR_EV"),
-	addItem("Serpentscale Gauntlets",43,"GLOVE","AR_EV"),
-	addItem("Wyrmscale Gauntlets",49,"GLOVE","AR_EV"),
-	addItem("Hydrascale Gauntlets",59,"GLOVE","AR_EV"),
-	addItem("Dragonscale Gauntlets",67,"GLOVE","AR_EV"),
-	addItem("Chain Gloves",7,"GLOVE","AR_ES"),
-	addItem("Ringmail Gloves",19,"GLOVE","AR_ES"),
-	addItem("Mesh Gloves",32,"GLOVE","AR_ES"),
-	addItem("Riveted Gloves",37,"GLOVE","AR_ES"),
-	addItem("Zealot Gloves",43,"GLOVE","AR_ES"),
-	addItem("Soldier Gloves",51,"GLOVE","AR_ES"),
-	addItem("Legion Gloves",57,"GLOVE","AR_ES"),
-	addItem("Crusader Gloves",66,"GLOVE","AR_ES"),
-	addItem("Wrapped Mitts",5,"GLOVE","EV_ES"),
-	addItem("Strapped Mitts",16,"GLOVE","EV_ES"),
-	addItem("Clasped Mitts",31,"GLOVE","EV_ES"),
-	addItem("Trapper Mitts",36,"GLOVE","EV_ES"),
-	addItem("Ambush Mitts",45,"GLOVE","EV_ES"),
-	addItem("Carnal Mitts",50,"GLOVE","EV_ES"),
-	addItem("Assassin's Mitts",58,"GLOVE","EV_ES"),
-	addItem("Murder Mitts",67,"GLOVE","EV_ES"),
-	addItem("Iron Hat",0,"HELM","AR"),
-	addItem("Cone Helmet",7,"HELM","AR"),
-	addItem("Barbute Helmet",18,"HELM","AR"),
-	addItem("Close Helmet",26,"HELM","AR"),
-	addItem("Gladiator Helmet",35,"HELM","AR"),
-	addItem("Reaver Helmet",40,"HELM","AR"),
-	addItem("Siege Helmet",48,"HELM","AR"),
-	addItem("Samite Helmet",55,"HELM","AR"),
-	addItem("Ezomyte Burgonet",60,"HELM","AR"),
-	addItem("Royal Burgonet",65,"HELM","AR"),
-	addItem("Eternal Burgonet",69,"HELM","AR"),
-	addItem("Leather Cap",0,"HELM","EV"),
-	addItem("Tricorne",10,"HELM","EV"),
-	addItem("Leather Hood",20,"HELM","EV"),
-	addItem("Wolf Pelt",30,"HELM","EV"),
-	addItem("Hunter Hood",41,"HELM","EV"),
-	addItem("Noble Tricorne",47,"HELM","EV"),
-	addItem("Ursine Pelt",55,"HELM","EV"),
-	addItem("Silken Hood",60,"HELM","EV"),
-	addItem("Sinner Tricorne",64,"HELM","EV"),
-	addItem("Lion Pelt",70,"HELM","EV"),
-	addItem("Vine Circlet",0,"HELM","ES"),
-	addItem("Iron Circlet",8,"HELM","ES"),
-	addItem("Torture Cage",17,"HELM","ES"),
-	addItem("Tribal Circlet",26,"HELM","ES"),
-	addItem("Bone Circlet",34,"HELM","ES"),
-	addItem("Lunaris Circlet",39,"HELM","ES"),
-	addItem("Steel Circlet",48,"HELM","ES"),
-	addItem("Necromancer Circlet",54,"HELM","ES"),
-	addItem("Solaris Circlet",59,"HELM","ES"),
-	addItem("Mind Cage",65,"HELM","ES"),
-	addItem("Hubris Circlet",69,"HELM","ES"),
-	addItem("Battered Helm",0,"HELM","AR_EV"),
-	addItem("Sallet",13,"HELM","AR_EV"),
-	addItem("Visored Sallet",23,"HELM","AR_EV"),
-	addItem("Gilded Sallet",33,"HELM","AR_EV"),
-	addItem("Secutor Helm",36,"HELM","AR_EV"),
-	addItem("Fencer Helm",43,"HELM","AR_EV"),
-	addItem("Lacquered Helmet",51,"HELM","AR_EV"),
-	addItem("Fluted Bascinet",58,"HELM","AR_EV"),
-	addItem("Pig Faced Bascinet",63,"HELM","AR_EV"),
-	addItem("Nightmare Bascinet",67,"HELM","AR_EV"),
-	addItem("Rusted Coif",5,"HELM","AR_ES"),
-	addItem("Soldier Helmet",12,"HELM","AR_ES"),
-	addItem("Great Helmet",22,"HELM","AR_ES"),
-	addItem("Crusader Helmet",31,"HELM","AR_ES"),
-	addItem("Aventail Helmet",37,"HELM","AR_ES"),
-	addItem("Zealot Helmet",44,"HELM","AR_ES"),
-	addItem("Great Crown",53,"HELM","AR_ES"),
-	addItem("Magistrate Crown",58,"HELM","AR_ES"),
-	addItem("Prophet Crown",63,"HELM","AR_ES"),
-	addItem("Praetor Crown",68,"HELM","AR_ES"),
-	addItem("Scare Mask",0,"HELM","EV_ES"),
-	addItem("Plague Mask",10,"HELM","EV_ES"),
-	addItem("Iron Mask",17,"HELM","EV_ES"),
-	addItem("Festival Mask",28,"HELM","EV_ES"),
-	addItem("Golden Mask",35,"HELM","EV_ES"),
-	addItem("Raven Mask",38,"HELM","EV_ES"),
-	addItem("Callous Mask",45,"HELM","EV_ES"),
-	addItem("Regicide Mask",52,"HELM","EV_ES"),
-	addItem("Harlequin Mask",57,"HELM","EV_ES"),
-	addItem("Vaal Mask",62,"HELM","EV_ES"),
-	addItem("Deicide Mask",67,"HELM","EV_ES"),
-	addItem("Splintered Tower Shield",0,"SHIELD","AR"),
-	addItem("Corroded Tower Shield",5,"SHIELD","AR"),
-	addItem("Rawhide Tower Shield",11,"SHIELD","AR"),
-	addItem("Cedar Tower Shield",17,"SHIELD","AR"),
-	addItem("Copper Tower Shield",24,"SHIELD","AR"),
-	addItem("Reinforced Tower Shield",30,"SHIELD","AR"),
-	addItem("Painted Tower Shield",35,"SHIELD","AR"),
-	addItem("Buckskin Tower Shield",39,"SHIELD","AR"),
-	addItem("Mahogany Tower Shield",43,"SHIELD","AR"),
-	addItem("Bronze Tower Shield",47,"SHIELD","AR"),
-	addItem("Girded Tower Shield",51,"SHIELD","AR"),
-	addItem("Crested Tower Shield",55,"SHIELD","AR"),
-	addItem("Shagreen Tower Shield",58,"SHIELD","AR"),
-	addItem("Ebony Tower Shield",61,"SHIELD","AR"),
-	addItem("Ezomyte Tower Shield",64,"SHIELD","AR"),
-	addItem("Colossal Tower Shield",67,"SHIELD","AR"),
-	addItem("Pinnacle Tower Shield",70,"SHIELD","AR"),
-	addItem("Goathide Buckler",0,"SHIELD","EV"),
-	addItem("Pine Buckler",8,"SHIELD","EV"),
-	addItem("Painted Buckler",16,"SHIELD","EV"),
-	addItem("Hammered Buckler",23,"SHIELD","EV"),
-	addItem("War Buckler",29,"SHIELD","EV"),
-	addItem("Gilded Buckler",34,"SHIELD","EV"),
-	addItem("Oak Buckler",38,"SHIELD","EV"),
-	addItem("Enameled Buckler",42,"SHIELD","EV"),
-	addItem("Corrugated Buckler",46,"SHIELD","EV"),
-	addItem("Battle Buckler",50,"SHIELD","EV"),
-	addItem("Golden Buckler",54,"SHIELD","EV"),
-	addItem("Ironwood Buckler",57,"SHIELD","EV"),
-	addItem("Lacquered Buckler",60,"SHIELD","EV"),
-	addItem("Vaal Buckler",63,"SHIELD","EV"),
-	addItem("Crusader Buckler",66,"SHIELD","EV"),
-	addItem("Imperial Buckler",69,"SHIELD","EV"),
-	addItem("Twig Spirit Shield",0,"SHIELD","ES"),
-	addItem("Yew Spirit Shield",9,"SHIELD","ES"),
-	addItem("Bone Spirit Shield",15,"SHIELD","ES"),
-	addItem("Tarnished Spirit Shield",23,"SHIELD","ES"),
-	addItem("Jingling Spirit Shield",28,"SHIELD","ES"),
-	addItem("Brass Spirit Shield",33,"SHIELD","ES"),
-	addItem("Walnut Spirit Shield",37,"SHIELD","ES"),
-	addItem("Ivory Spirit Shield",41,"SHIELD","ES"),
-	addItem("Ancient Spirit Shield",45,"SHIELD","ES"),
-	addItem("Chiming Spirit Shield",49,"SHIELD","ES"),
-	addItem("Thorium Spirit Shield",53,"SHIELD","ES"),
-	addItem("Lacewood Spirit Shield",56,"SHIELD","ES"),
-	addItem("Fossilized Spirit Shield",59,"SHIELD","ES"),
-	addItem("Vaal Spirit Shield",62,"SHIELD","ES"),
-	addItem("Harmonic Spirit Shield",65,"SHIELD","ES"),
-	addItem("Titanium Spirit Shield",68,"SHIELD","ES"),
-	addItem("Rotted Round Shield",5,"SHIELD","AR_EV"),
-	addItem("Fir Round Shield",12,"SHIELD","AR_EV"),
-	addItem("Studded Round Shield",20,"SHIELD","AR_EV"),
-	addItem("Scarlet Round Shield",27,"SHIELD","AR_EV"),
-	addItem("Splendid Round Shield",33,"SHIELD","AR_EV"),
-	addItem("Maple Round Shield",39,"SHIELD","AR_EV"),
-	addItem("Spiked Round Shield",45,"SHIELD","AR_EV"),
-	addItem("Crimson Round Shield",49,"SHIELD","AR_EV"),
-	addItem("Baroque Round Shield",54,"SHIELD","AR_EV"),
-	addItem("Teak Round Shield",58,"SHIELD","AR_EV"),
-	addItem("Spiny Round Shield",62,"SHIELD","AR_EV"),
-	addItem("Cardinal Round Shield",66,"SHIELD","AR_EV"),
-	addItem("Elegant Round Shield",70,"SHIELD","AR_EV"),
-	addItem("Plank Kite Shield",7,"SHIELD","AR_ES"),
-	addItem("Linden Kite Shield",13,"SHIELD","AR_ES"),
-	addItem("Reinforced Kite Shield",20,"SHIELD","AR_ES"),
-	addItem("Layered Kite Shield",27,"SHIELD","AR_ES"),
-	addItem("Ceremonial Kite Shield",34,"SHIELD","AR_ES"),
-	addItem("Etched Shield",40,"SHIELD","AR_ES"),
-	addItem("Steel Kite Shield",46,"SHIELD","AR_ES"),
-	addItem("Laminated Kite Shield",50,"SHIELD","AR_ES"),
-	addItem("Angelic Kite Shield",55,"SHIELD","AR_ES"),
-	addItem("Branded Kite Shield",59,"SHIELD","AR_ES"),
-	addItem("Champion Kite Shield",62,"SHIELD","AR_ES"),
-	addItem("Mosaic Kite Shield",65,"SHIELD","AR_ES"),
-	addItem("Archon Kite Shield",68,"SHIELD","AR_ES"),
-	addItem("Spiked Bundle",5,"SHIELD","EV_ES"),
-	addItem("Driftwood Spiked Shield",12,"SHIELD","EV_ES"),
-	addItem("Alloyed Spike Shield",20,"SHIELD","EV_ES"),
-	addItem("Burnished Spike Shield",27,"SHIELD","EV_ES"),
-	addItem("Ornate Spiked Shield",33,"SHIELD","EV_ES"),
-	addItem("Redwood Spiked Shield",39,"SHIELD","EV_ES"),
-	addItem("Compound Spiked Shield",45,"SHIELD","EV_ES"),
-	addItem("Polished Spiked Shield",49,"SHIELD","EV_ES"),
-	addItem("Sovereign Spiked Shield",54,"SHIELD","EV_ES"),
-	addItem("Alder Spike Shield",58,"SHIELD","EV_ES"),
-	addItem("Ezomyte Spiked Shield",62,"SHIELD","EV_ES"),
-	addItem("Mirrored Spiked Shield",66,"SHIELD","EV_ES"),
-	addItem("Supreme Spiked Shield",70,"SHIELD","EV_ES")
-	
+	addItem("Rusted Hatchet",0,ONE_HANDED_AXE,STR_DEX);
+	addItem("Jade Hatchet",6,ONE_HANDED_AXE,STR_DEX);
+	addItem("Boarding Axe",11,ONE_HANDED_AXE,STR_DEX);
+	addItem("Cleaver",16,ONE_HANDED_AXE,STR_DEX);
+	addItem("Broad Axe",21,ONE_HANDED_AXE,STR_DEX);
+	addItem("Arming Axe",25,ONE_HANDED_AXE,STR_DEX);
+	addItem("Decorative Axe",29,ONE_HANDED_AXE,STR_DEX);
+	addItem("Spectral Axe",33,ONE_HANDED_AXE,STR_DEX);
+	addItem("Jasper Axe",36,ONE_HANDED_AXE,STR_DEX);
+	addItem("Tomahawk",39,ONE_HANDED_AXE,STR_DEX);
+	addItem("Wrist Chopper",42,ONE_HANDED_AXE,STR_DEX);
+	addItem("War Axe",45,ONE_HANDED_AXE,STR_DEX);
+	addItem("Chest Splitter",48,ONE_HANDED_AXE,STR_DEX);
+	addItem("Ceremonial Axe",51,ONE_HANDED_AXE,STR_DEX);
+	addItem("Wraith Axe",54,ONE_HANDED_AXE,STR_DEX);
+	addItem("Karui Axe",57,ONE_HANDED_AXE,STR_DEX);
+	addItem("Siege Axe",59,ONE_HANDED_AXE,STR_DEX);
+	addItem("Reaver Axe",61,ONE_HANDED_AXE,STR_DEX);
+	addItem("Butcher Axe",63,ONE_HANDED_AXE,STR_DEX);
+	addItem("Vaal Hatchet",65,ONE_HANDED_AXE,STR_DEX);
+	addItem("Royal Axe",67,ONE_HANDED_AXE,STR_DEX);
+	addItem("Infernal Axe",69,ONE_HANDED_AXE,STR_DEX);
+	addItem("Stone Axe",0,TWO_HANDED_AXE,STR_DEX);
+	addItem("Jade Chopper",9,TWO_HANDED_AXE,STR_DEX);
+	addItem("Woodsplitter",13,TWO_HANDED_AXE,STR_DEX);
+	addItem("Poleaxe",18,TWO_HANDED_AXE,STR_DEX);
+	addItem("Double Axe",23,TWO_HANDED_AXE,STR_DEX);
+	addItem("Gilded Axe",28,TWO_HANDED_AXE,STR_DEX);
+	addItem("Shadow Axe",33,TWO_HANDED_AXE,STR_DEX);
+	addItem("Jasper Chopper",37,TWO_HANDED_AXE,STR_DEX);
+	addItem("Timber Axe",41,TWO_HANDED_AXE,STR_DEX);
+	addItem("Headsman Axe",45,TWO_HANDED_AXE,STR_DEX);
+	addItem("Labrys",49,TWO_HANDED_AXE,STR_DEX);
+	addItem("Noble Axe",52,TWO_HANDED_AXE,STR_DEX);
+	addItem("Abyssal Axe",55,TWO_HANDED_AXE,STR_DEX);
+	addItem("Karui Chopper",58,TWO_HANDED_AXE,STR_DEX);
+	addItem("Sundering Axe",60,TWO_HANDED_AXE,STR_DEX);
+	addItem("Ezomyte Axe",62,TWO_HANDED_AXE,STR_DEX);
+	addItem("Vaal Axe",64,TWO_HANDED_AXE,STR_DEX);
+	addItem("Despot Axe",66,TWO_HANDED_AXE,STR_DEX);
+	addItem("Void Axe",68,TWO_HANDED_AXE,STR_DEX);
+	addItem("Crude Bow",0,BOW,DEX);
+	addItem("Short Bow",5,BOW,DEX);
+	addItem("Long Bow",10,BOW,DEX);
+	addItem("Composite Bow",15,BOW,DEX);
+	addItem("Recurve Bow",20,BOW,DEX);
+	addItem("Bone Bow",24,BOW,DEX);
+	addItem("Royal Bow",28,BOW,DEX);
+	addItem("Death Bow",32,BOW,DEX);
+	addItem("Grove Bow",35,BOW,DEX);
+	addItem("Decurve Bow",38,BOW,DEX);
+	addItem("Compound Bow",41,BOW,DEX);
+	addItem("Sniper Bow",44,BOW,DEX);
+	addItem("Ivory Bow",47,BOW,DEX);
+	addItem("Highborn Bow",50,BOW,DEX);
+	addItem("Decimation Bow",53,BOW,DEX);
+	addItem("Thicket Bow",56,BOW,DEX);
+	addItem("Citadel Bow",58,BOW,DEX);
+	addItem("Ranger Bow",60,BOW,DEX);
+	addItem("Maraketh Bow",62,BOW,DEX);
+	addItem("Spine Bow",64,BOW,DEX);
+	addItem("Imperial Bow",66,BOW,DEX);
+	addItem("Harbinger Bow",68,BOW,DEX);
+	addItem("Nailed Fist",0,CLAW,DEX_INT);
+	addItem("Sharktooth Claw",7,CLAW,DEX_INT);
+	addItem("Awl",12,CLAW,DEX_INT);
+	addItem("Cat's Paw",17,CLAW,DEX_INT);
+	addItem("Blinder",22,CLAW,DEX_INT);
+	addItem("Timeworn Claw",26,CLAW,DEX_INT);
+	addItem("Sparkling Claw",30,CLAW,DEX_INT);
+	addItem("Fright Claw",34,CLAW,DEX_INT);
+	addItem("Thresher Claw",37,CLAW,DEX_INT);
+	addItem("Gouger",40,CLAW,DEX_INT);
+	addItem("Tiger's Paw",43,CLAW,DEX_INT);
+	addItem("Gut Ripper",46,CLAW,DEX_INT);
+	addItem("Prehistoric Claw",49,CLAW,DEX_INT);
+	addItem("Noble Claw",52,CLAW,DEX_INT);
+	addItem("Eagle Claw",55,CLAW,DEX_INT);
+	addItem("Great White Claw",58,CLAW,DEX_INT);
+	addItem("Throat Stabber",60,CLAW,DEX_INT);
+	addItem("Hellion's Paw",62,CLAW,DEX_INT);
+	addItem("Eye Gouger",64,CLAW,DEX_INT);
+	addItem("Vaal Claw",66,CLAW,DEX_INT);
+	addItem("Imperial Claw",68,CLAW,DEX_INT);
+	addItem("Terror Claw",70,CLAW,DEX_INT);
+	addItem("Glass Shank",0,DAGGER,DEX_INT);
+	addItem("Skinning Knife",5,DAGGER,DEX_INT);
+	addItem("Carving Knife",10,DAGGER,DEX_INT);
+	addItem("Stiletto",15,DAGGER,DEX_INT);
+	addItem("Boot Knife",20,DAGGER,DEX_INT);
+	addItem("Copper Kris",24,DAGGER,DEX_INT);
+	addItem("Skean",28,DAGGER,DEX_INT);
+	addItem("Imp Dagger",32,DAGGER,DEX_INT);
+	addItem("Flaying Knife",35,DAGGER,DEX_INT);
+	addItem("Butcher Knife",38,DAGGER,DEX_INT);
+	addItem("Poignard",41,DAGGER,DEX_INT);
+	addItem("Boot Blade",44,DAGGER,DEX_INT);
+	addItem("Golden Kris",47,DAGGER,DEX_INT);
+	addItem("Royal Skean",50,DAGGER,DEX_INT);
+	addItem("Fiend Dagger",53,DAGGER,DEX_INT);
+	addItem("Gutting Knife",56,DAGGER,DEX_INT);
+	addItem("Slaughter Knife",58,DAGGER,DEX_INT);
+	addItem("Ambusher",60,DAGGER,DEX_INT);
+	addItem("Ezomyte Dagger",62,DAGGER,DEX_INT);
+	addItem("Platinum Kris",64,DAGGER,DEX_INT);
+	addItem("Imperial Skean",66,DAGGER,DEX_INT);
+	addItem("Demon Dagger",68,DAGGER,DEX_INT);
+	addItem("Driftwood Club",0,ONE_HANDED_MACE,STR);
+	addItem("Tribal Club",5,ONE_HANDED_MACE,STR);
+	addItem("Spiked Club",10,ONE_HANDED_MACE,STR);
+	addItem("Stone Hammer",15,ONE_HANDED_MACE,STR);
+	addItem("War Hammer",20,ONE_HANDED_MACE,STR);
+	addItem("Bladed Mace",24,ONE_HANDED_MACE,STR);
+	addItem("Ceremonial Mace",28,ONE_HANDED_MACE,STR);
+	addItem("Dream Mace",28,ONE_HANDED_MACE,STR);
+	addItem("Petrified Club",35,ONE_HANDED_MACE,STR);
+	addItem("Barbed Club",38,ONE_HANDED_MACE,STR);
+	addItem("Rock Breaker",41,ONE_HANDED_MACE,STR);
+	addItem("Battle Hammer",44,ONE_HANDED_MACE,STR);
+	addItem("Flanged Mace",47,ONE_HANDED_MACE,STR);
+	addItem("Ornate Mace",50,ONE_HANDED_MACE,STR);
+	addItem("Phantom Mace",53,ONE_HANDED_MACE,STR);
+	addItem("Ancestral Club",56,ONE_HANDED_MACE,STR);
+	addItem("Tenderizer",58,ONE_HANDED_MACE,STR);
+	addItem("Gavel",60,ONE_HANDED_MACE,STR);
+	addItem("Legion Hammer",62,ONE_HANDED_MACE,STR);
+	addItem("Pernarch",64,ONE_HANDED_MACE,STR);
+	addItem("Auric Mace",66,ONE_HANDED_MACE,STR);
+	addItem("Nightmare Mace",68,ONE_HANDED_MACE,STR);
+	addItem("Driftwood Sceptre",0,SCEPTRE,STR_INT);
+	addItem("Darkwood Sceptre",5,SCEPTRE,STR_INT);
+	addItem("Bronze Sceptre",10,SCEPTRE,STR_INT);
+	addItem("Quartz Sceptre",15,SCEPTRE,STR_INT);
+	addItem("Iron Sceptre",20,SCEPTRE,STR_INT);
+	addItem("Ochre Sceptre",24,SCEPTRE,STR_INT);
+	addItem("Ritual Sceptre",28,SCEPTRE,STR_INT);
+	addItem("Shadow Sceptre",32,SCEPTRE,STR_INT);
+	addItem("Grinning Fetish",35,SCEPTRE,STR_INT);
+	addItem("Sekhem",38,SCEPTRE,STR_INT);
+	addItem("Crystal Sceptre",41,SCEPTRE,STR_INT);
+	addItem("Lead Sceptre",44,SCEPTRE,STR_INT);
+	addItem("Blood Sceptre",47,SCEPTRE,STR_INT);
+	addItem("Royal Sceptre",50,SCEPTRE,STR_INT);
+	addItem("Abyssal Sceptre",53,SCEPTRE,STR_INT);
+	addItem("Karui Sceptre",56,SCEPTRE,STR_INT);
+	addItem("Tyrant's Sekhem",58,SCEPTRE,STR_INT);
+	addItem("Opal Sceptre",60,SCEPTRE,STR_INT);
+	addItem("Platinum Sceptre",62,SCEPTRE,STR_INT);
+	addItem("Carnal Sceptre",64,SCEPTRE,STR_INT);
+	addItem("Vaal Sceptre",66,SCEPTRE,STR_INT);
+	addItem("Void Sceptre",68,SCEPTRE,STR_INT);
+	addItem("Driftwood Maul",0,TWO_HANDED_MACE,STR);
+	addItem("Tribal Maul",8,TWO_HANDED_MACE,STR);
+	addItem("Mallet",12,TWO_HANDED_MACE,STR);
+	addItem("Sledgehammer",17,TWO_HANDED_MACE,STR);
+	addItem("Spiked Maul",22,TWO_HANDED_MACE,STR);
+	addItem("Brass Maul",27,TWO_HANDED_MACE,STR);
+	addItem("Fright Maul",32,TWO_HANDED_MACE,STR);
+	addItem("Totemic Maul",36,TWO_HANDED_MACE,STR);
+	addItem("Great Mallet",40,TWO_HANDED_MACE,STR);
+	addItem("Steelhead",44,TWO_HANDED_MACE,STR);
+	addItem("Spiny Maul",48,TWO_HANDED_MACE,STR);
+	addItem("Plated Maul",51,TWO_HANDED_MACE,STR);
+	addItem("Dread Maul",54,TWO_HANDED_MACE,STR);
+	addItem("Karui Maul",57,TWO_HANDED_MACE,STR);
+	addItem("Colossus Mallet",59,TWO_HANDED_MACE,STR);
+	addItem("Piledriver",61,TWO_HANDED_MACE,STR);
+	addItem("Meatgrinder",63,TWO_HANDED_MACE,STR);
+	addItem("Imperial Maul",65,TWO_HANDED_MACE,STR);
+	addItem("Terror Maul",67,TWO_HANDED_MACE,STR);
+	addItem("Gnarled Branch",0,STAFF,STR_INT);
+	addItem("Primitive Staff",9,STAFF,STR_INT);
+	addItem("Long Staff",13,STAFF,STR_INT);
+	addItem("Iron Staff",18,STAFF,STR_INT);
+	addItem("Coiled Staff",23,STAFF,STR_INT);
+	addItem("Royal Staff",28,STAFF,STR_INT);
+	addItem("Vile Staff",33,STAFF,STR_INT);
+	addItem("Woodful Staff",37,STAFF,STR_INT);
+	addItem("Quarterstaff",41,STAFF,STR_INT);
+	addItem("Military Staff",45,STAFF,STR_INT);
+	addItem("Serpentine Staff",49,STAFF,STR_INT);
+	addItem("Highborn Staff",52,STAFF,STR_INT);
+	addItem("Foul Staff",55,STAFF,STR_INT);
+	addItem("Primordial Staff",58,STAFF,STR_INT);
+	addItem("Lathi",60,STAFF,STR_INT);
+	addItem("Ezomyte Staff",62,STAFF,STR_INT);
+	addItem("Maelstr?m Staff",64,STAFF,STR_INT);
+	addItem("Imperial Staff",66,STAFF,STR_INT);
+	addItem("Judgement Staff",68,STAFF,STR_INT);
+	addItem("Rusted Sword",0,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Copper Sword",5,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Sabre",10,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Broad Sword",15,ONE_HANDED_SWORD,STR_DEX);
+	addItem("War Sword",20,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Ancient Sword",24,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Elegant Sword",28,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Dusk Blade",32,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Variscite Blade",35,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Cutlass",38,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Baselard",41,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Battle Sword",44,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Elder Sword",47,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Graceful Sword",50,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Twilight Blade",53,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Gemstone Sword",56,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Corsair Sword",58,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Gladius",60,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Legion Sword",62,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Vaal Blade",64,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Eternal Sword",66,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Midnight Blade",68,ONE_HANDED_SWORD,STR_DEX);
+	addItem("Rusted Spike",0,ONE_HANDED_SWORD,DEX);
+	addItem("Whalebone Rapier",7,ONE_HANDED_SWORD,DEX);
+	addItem("Battered Foil",12,ONE_HANDED_SWORD,DEX);
+	addItem("Basket Rapier",17,ONE_HANDED_SWORD,DEX);
+	addItem("Jagged Foil",22,ONE_HANDED_SWORD,DEX);
+	addItem("Antique Rapier",26,ONE_HANDED_SWORD,DEX);
+	addItem("Elegant Foil",30,ONE_HANDED_SWORD,DEX);
+	addItem("Thorn Rapier",34,ONE_HANDED_SWORD,DEX);
+	addItem("Wyrmbone Rapier",37,ONE_HANDED_SWORD,DEX);
+	addItem("Burnished Foil",40,ONE_HANDED_SWORD,DEX);
+	addItem("Estoc",43,ONE_HANDED_SWORD,DEX);
+	addItem("Serrated Foil",46,ONE_HANDED_SWORD,DEX);
+	addItem("Primeval Rapier",49,ONE_HANDED_SWORD,DEX);
+	addItem("Fancy Foil",52,ONE_HANDED_SWORD,DEX);
+	addItem("Apex Rapier",55,ONE_HANDED_SWORD,DEX);
+	addItem("Dragonbone Rapier",58,ONE_HANDED_SWORD,DEX);
+	addItem("Tempered Foil",60,ONE_HANDED_SWORD,DEX);
+	addItem("Pecoraro",62,ONE_HANDED_SWORD,DEX);
+	addItem("Spiraled Foil",64,ONE_HANDED_SWORD,DEX);
+	addItem("Vaal Rapier",66,ONE_HANDED_SWORD,DEX);
+	addItem("Jeweled Foil",68,ONE_HANDED_SWORD,DEX);
+	addItem("Harpy Rapier",70,ONE_HANDED_SWORD,DEX);
+	addItem("Corroded Blade",0,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Longsword",8,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Bastard Sword",12,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Two-Handed Sword",17,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Etched Greatsword",22,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Ornate Sword",27,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Spectral Sword",32,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Butcher Sword",36,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Footman Sword",40,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Highland Blade",44,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Engraved Greatsword",48,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Tiger Sword",51,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Wraith Sword",54,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Headman's Sword",57,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Reaver Sword",59,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Ezomyte Blade",61,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Vaal Greatsword",63,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Lion Sword",65,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Infernal Sword",67,TWO_HANDED_SWORD,STR_DEX);
+	addItem("Driftwood Wand",0,WAND,INT);
+	addItem("Goat's Horn",6,WAND,INT);
+	addItem("Carved Wand",12,WAND,INT);
+	addItem("Quartz Wand",18,WAND,INT);
+	addItem("Spiraled Wand",24,WAND,INT);
+	addItem("Sage Wand",30,WAND,INT);
+	addItem("Faun's Horn",35,WAND,INT);
+	addItem("Engraved Wand",40,WAND,INT);
+	addItem("Crystal Wand",45,WAND,INT);
+	addItem("Serpent Wand",49,WAND,INT);
+	addItem("Omen Wand",53,WAND,INT);
+	addItem("Demon's Horn",56,WAND,INT);
+	addItem("Imbued Wand",59,WAND,INT);
+	addItem("Opal Wand",62,WAND,INT);
+	addItem("Tornado Wand",65,WAND,INT);
+	addItem("Prophecy Wand",68,WAND,INT);
+	addItem("Plate Vest",0,CHEST,STR);
+	addItem("Chestplate",6,CHEST,STR);
+	addItem("Copper Plate",17,CHEST,STR);
+	addItem("War Plate",21,CHEST,STR);
+	addItem("Full Plate",28,CHEST,STR);
+	addItem("Arena Plate",32,CHEST,STR);
+	addItem("Lordly Plate",35,CHEST,STR);
+	addItem("Bronze Plate",37,CHEST,STR);
+	addItem("Battle Plate",41,CHEST,STR);
+	addItem("Sun Plate",45,CHEST,STR);
+	addItem("Colosseum Plate",49,CHEST,STR);
+	addItem("Majestic Plate",53,CHEST,STR);
+	addItem("Golden Plate",56,CHEST,STR);
+	addItem("Crusader Plate",59,CHEST,STR);
+	addItem("Astral Plate",62,CHEST,STR);
+	addItem("Gladiator Plate",65,CHEST,STR);
+	addItem("Glorious Plate",68,CHEST,STR);
+	addItem("Shabby Jerkin",0,CHEST,DEX);
+	addItem("Strapped Leather",9,CHEST,DEX);
+	addItem("Buckskin Tunic",17,CHEST,DEX);
+	addItem("Wild Leather",25,CHEST,DEX);
+	addItem("Full Leather",28,CHEST,DEX);
+	addItem("Sun Leather",32,CHEST,DEX);
+	addItem("Thief's Garb",35,CHEST,DEX);
+	addItem("Eelskin Tunic",37,CHEST,DEX);
+	addItem("Frontier Leather",41,CHEST,DEX);
+	addItem("Glorious Leather",45,CHEST,DEX);
+	addItem("Coronal Leather",49,CHEST,DEX);
+	addItem("Cutthroat's Garb",53,CHEST,DEX);
+	addItem("Sharkskin Tunic",56,CHEST,DEX);
+	addItem("Destiny Leather",59,CHEST,DEX);
+	addItem("Exquisite Leather",62,CHEST,DEX);
+	addItem("Zodiac Leather",65,CHEST,DEX);
+	addItem("Assassin's Garb",68,CHEST,DEX);
+	addItem("Simple Robe",0,CHEST,INT);
+	addItem("Silken Vest",11,CHEST,INT);
+	addItem("Scholar's Robe",18,CHEST,INT);
+	addItem("Silken Garb",25,CHEST,INT);
+	addItem("Mage's Vestment",28,CHEST,INT);
+	addItem("Silk Robe",32,CHEST,INT);
+	addItem("Cabalist Regalia",35,CHEST,INT);
+	addItem("Sage's Robe",37,CHEST,INT);
+	addItem("Silken Wrap",41,CHEST,INT);
+	addItem("Conjurer's Vestment",45,CHEST,INT);
+	addItem("Spidersilk Robe",49,CHEST,INT);
+	addItem("Destroyer Regalia",53,CHEST,INT);
+	addItem("Savant's Robe",56,CHEST,INT);
+	addItem("Necromancer Silks",59,CHEST,INT);
+	addItem("Occultist's Vestment",62,CHEST,INT);
+	addItem("Widowsilk Robe",65,CHEST,INT);
+	addItem("Vaal Regalia",68,CHEST,INT);
+	addItem("Scale Vest",0,CHEST,STR_DEX);
+	addItem("Light Brigandine",8,CHEST,STR_DEX);
+	addItem("Scale Doublet",17,CHEST,STR_DEX);
+	addItem("Infantry Brigandine",21,CHEST,STR_DEX);
+	addItem("Full Scale Armour",28,CHEST,STR_DEX);
+	addItem("Soldier's Brigandine",32,CHEST,STR_DEX);
+	addItem("Field Lamellar",35,CHEST,STR_DEX);
+	addItem("Wyrmscale Doublet",38,CHEST,STR_DEX);
+	addItem("Hussar Brigandine",42,CHEST,STR_DEX);
+	addItem("Full Wyrmscale",46,CHEST,STR_DEX);
+	addItem("Commander's Brigandine",50,CHEST,STR_DEX);
+	addItem("Battle Lamellar",54,CHEST,STR_DEX);
+	addItem("Dragonscale Doublet",57,CHEST,STR_DEX);
+	addItem("Desert Brigandine",60,CHEST,STR_DEX);
+	addItem("Full Dragonscale",63,CHEST,STR_DEX);
+	addItem("General's Brigandine",66,CHEST,STR_DEX);
+	addItem("Triumphant Lamellar",69,CHEST,STR_DEX);
+	addItem("Chainmail Vest",0,CHEST,STR_INT);
+	addItem("Chainmail Tunic",8,CHEST,STR_INT);
+	addItem("Ringmail Coat",17,CHEST,STR_INT);
+	addItem("Chainmail Doublet",21,CHEST,STR_INT);
+	addItem("Full Ringmail",28,CHEST,STR_INT);
+	addItem("Full Chainmail",32,CHEST,STR_INT);
+	addItem("Holy Chainmail",35,CHEST,STR_INT);
+	addItem("Latticed Ringmail",39,CHEST,STR_INT);
+	addItem("Crusader Chainmail",43,CHEST,STR_INT);
+	addItem("Ornate Ringmail",47,CHEST,STR_INT);
+	addItem("Chain Hauberk",51,CHEST,STR_INT);
+	addItem("Devout Chainmail",55,CHEST,STR_INT);
+	addItem("Loricated Ringmail",58,CHEST,STR_INT);
+	addItem("Conquest Chainmail",61,CHEST,STR_INT);
+	addItem("Elegant Ringmail",64,CHEST,STR_INT);
+	addItem("Saint's Hauberk",67,CHEST,STR_INT);
+	addItem("Saintly Chainmail",70,CHEST,STR_INT);
+	addItem("Padded Vest",0,CHEST,DEX_INT);
+	addItem("Oiled Vest",9,CHEST,DEX_INT);
+	addItem("Padded Jacket",18,CHEST,DEX_INT);
+	addItem("Oiled Coat",22,CHEST,DEX_INT);
+	addItem("Scarlet Raiment",28,CHEST,DEX_INT);
+	addItem("Waxed Garb",32,CHEST,DEX_INT);
+	addItem("Bone Armour",35,CHEST,DEX_INT);
+	addItem("Quilted Jacket",40,CHEST,DEX_INT);
+	addItem("Sleek Coat",44,CHEST,DEX_INT);
+	addItem("Crimson Raiment",48,CHEST,DEX_INT);
+	addItem("Lacquered Garb",52,CHEST,DEX_INT);
+	addItem("Crypt Armour",56,CHEST,DEX_INT);
+	addItem("Sentinel Jacket",59,CHEST,DEX_INT);
+	addItem("Varnished Coat",62,CHEST,DEX_INT);
+	addItem("Blood Raiment",65,CHEST,DEX_INT);
+	addItem("Sadist Garb",68,CHEST,DEX_INT);
+	addItem("Carnal Armour",71,CHEST,DEX_INT);
+	addItem("Iron Greaves",0,BOOT,STR);
+	addItem("Steel Greaves",9,BOOT,STR);
+	addItem("Plated Greaves",23,BOOT,STR);
+	addItem("Reinforced Greaves",33,BOOT,STR);
+	addItem("Antique Greaves",37,BOOT,STR);
+	addItem("Ancient Greaves",46,BOOT,STR);
+	addItem("Goliath Greaves",54,BOOT,STR);
+	addItem("Vaal Greaves",62,BOOT,STR);
+	addItem("Titan Greaves",68,BOOT,STR);
+	addItem("Rawhide Boots",0,BOOT,DEX);
+	addItem("Goathide Boots",12,BOOT,DEX);
+	addItem("Deerskin Boots",22,BOOT,DEX);
+	addItem("Nubuck Boots",34,BOOT,DEX);
+	addItem("Eelskin Boots",39,BOOT,DEX);
+	addItem("Sharkskin Boots",44,BOOT,DEX);
+	addItem("Shagreen Boots",55,BOOT,DEX);
+	addItem("Stealth Boots",62,BOOT,DEX);
+	addItem("Slink Boots",69,BOOT,DEX);
+	addItem("Wool Shoes",0,BOOT,INT);
+	addItem("Velvet Slippers",9,BOOT,INT);
+	addItem("Silk Slippers",22,BOOT,INT);
+	addItem("Scholar Boots",32,BOOT,INT);
+	addItem("Satin Slippers",38,BOOT,INT);
+	addItem("Samite Slippers",44,BOOT,INT);
+	addItem("Conjurer Boots",53,BOOT,INT);
+	addItem("Arcanist Slippers",61,BOOT,INT);
+	addItem("Sorcerer Boots",67,BOOT,INT);
+	addItem("Leatherscale Boots",6,BOOT,STR_DEX);
+	addItem("Ironscale Boots",18,BOOT,STR_DEX);
+	addItem("Bronzescale Boots",30,BOOT,STR_DEX);
+	addItem("Steelscale Boots",36,BOOT,STR_DEX);
+	addItem("Serpentscale Boots",42,BOOT,STR_DEX);
+	addItem("Wyrmscale Boots",51,BOOT,STR_DEX);
+	addItem("Hydrascale Boots",59,BOOT,STR_DEX);
+	addItem("Dragonscale Boots",65,BOOT,STR_DEX);
+	addItem("Chain Boots",5,BOOT,STR_INT);
+	addItem("Ringmail Boots",13,BOOT,STR_INT);
+	addItem("Mesh Boots",28,BOOT,STR_INT);
+	addItem("Riveted Boots",36,BOOT,STR_INT);
+	addItem("Zealot Boots",40,BOOT,STR_INT);
+	addItem("Soldier's Boots",49,BOOT,STR_INT);
+	addItem("Legion Boots",58,BOOT,STR_INT);
+	addItem("Crusader Boots",64,BOOT,STR_INT);
+	addItem("Wrapped Boots",6,BOOT,DEX_INT);
+	addItem("Strapped Boots",16,BOOT,DEX_INT);
+	addItem("Clasped Boots",27,BOOT,DEX_INT);
+	addItem("Shackled Boots",34,BOOT,DEX_INT);
+	addItem("Trapper Boots",41,BOOT,DEX_INT);
+	addItem("Ambush Boots",47,BOOT,DEX_INT);
+	addItem("Carnal Boots",55,BOOT,DEX_INT);
+	addItem("Assassin's Boots",63,BOOT,DEX_INT);
+	addItem("Murder Boots",69,BOOT,DEX_INT);
+	addItem("Iron Gauntlets",0,GLOVE,STR);
+	addItem("Plated Gauntlets",11,GLOVE,STR);
+	addItem("Bronze Gauntlets",23,GLOVE,STR);
+	addItem("Steel Gauntlets",35,GLOVE,STR);
+	addItem("Antique Gauntlets",39,GLOVE,STR);
+	addItem("Ancient Gauntlets",47,GLOVE,STR);
+	addItem("Goliath Gauntlets",53,GLOVE,STR);
+	addItem("Vaal Gauntlets",63,GLOVE,STR);
+	addItem("Titan Gauntlets",69,GLOVE,STR);
+	addItem("Rawhide Gloves",0,GLOVE,DEX);
+	addItem("Goathide Gloves",9,GLOVE,DEX);
+	addItem("Deerskin Gloves",21,GLOVE,DEX);
+	addItem("Nubuck Gloves",33,GLOVE,DEX);
+	addItem("Eelskin Gloves",38,GLOVE,DEX);
+	addItem("Sharkskin Gloves",45,GLOVE,DEX);
+	addItem("Shagreen Gloves",54,GLOVE,DEX);
+	addItem("Stealth Gloves",62,GLOVE,DEX);
+	addItem("Slink Gloves",70,GLOVE,DEX);
+	addItem("Wool Gloves",0,GLOVE,INT);
+	addItem("Velvet Gloves",12,GLOVE,INT);
+	addItem("Silk Gloves",25,GLOVE,INT);
+	addItem("Embroidered Gloves",36,GLOVE,INT);
+	addItem("Satin Gloves",41,GLOVE,INT);
+	addItem("Samite Gloves",47,GLOVE,INT);
+	addItem("Conjurer Gloves",55,GLOVE,INT);
+	addItem("Arcanist Gloves",60,GLOVE,INT);
+	addItem("Sorcerer Gloves",69,GLOVE,INT);
+	addItem("Fishscale Gauntlets",0,GLOVE,STR_DEX);
+	addItem("Ironscale Gauntlets",15,GLOVE,STR_DEX);
+	addItem("Bronzescale Gauntlets",27,GLOVE,STR_DEX);
+	addItem("Steelscale Gauntlets",36,GLOVE,STR_DEX);
+	addItem("Serpentscale Gauntlets",43,GLOVE,STR_DEX);
+	addItem("Wyrmscale Gauntlets",49,GLOVE,STR_DEX);
+	addItem("Hydrascale Gauntlets",59,GLOVE,STR_DEX);
+	addItem("Dragonscale Gauntlets",67,GLOVE,STR_DEX);
+	addItem("Chain Gloves",7,GLOVE,STR_INT);
+	addItem("Ringmail Gloves",19,GLOVE,STR_INT);
+	addItem("Mesh Gloves",32,GLOVE,STR_INT);
+	addItem("Riveted Gloves",37,GLOVE,STR_INT);
+	addItem("Zealot Gloves",43,GLOVE,STR_INT);
+	addItem("Soldier Gloves",51,GLOVE,STR_INT);
+	addItem("Legion Gloves",57,GLOVE,STR_INT);
+	addItem("Crusader Gloves",66,GLOVE,STR_INT);
+	addItem("Wrapped Mitts",5,GLOVE,DEX_INT);
+	addItem("Strapped Mitts",16,GLOVE,DEX_INT);
+	addItem("Clasped Mitts",31,GLOVE,DEX_INT);
+	addItem("Trapper Mitts",36,GLOVE,DEX_INT);
+	addItem("Ambush Mitts",45,GLOVE,DEX_INT);
+	addItem("Carnal Mitts",50,GLOVE,DEX_INT);
+	addItem("Assassin's Mitts",58,GLOVE,DEX_INT);
+	addItem("Murder Mitts",67,GLOVE,DEX_INT);
+	addItem("Iron Hat",0,HELM,STR);
+	addItem("Cone Helmet",7,HELM,STR);
+	addItem("Barbute Helmet",18,HELM,STR);
+	addItem("Close Helmet",26,HELM,STR);
+	addItem("Gladiator Helmet",35,HELM,STR);
+	addItem("Reaver Helmet",40,HELM,STR);
+	addItem("Siege Helmet",48,HELM,STR);
+	addItem("Samite Helmet",55,HELM,STR);
+	addItem("Ezomyte Burgonet",60,HELM,STR);
+	addItem("Royal Burgonet",65,HELM,STR);
+	addItem("Eternal Burgonet",69,HELM,STR);
+	addItem("Leather Cap",0,HELM,DEX);
+	addItem("Tricorne",10,HELM,DEX);
+	addItem("Leather Hood",20,HELM,DEX);
+	addItem("Wolf Pelt",30,HELM,DEX);
+	addItem("Hunter Hood",41,HELM,DEX);
+	addItem("Noble Tricorne",47,HELM,DEX);
+	addItem("Ursine Pelt",55,HELM,DEX);
+	addItem("Silken Hood",60,HELM,DEX);
+	addItem("Sinner Tricorne",64,HELM,DEX);
+	addItem("Lion Pelt",70,HELM,DEX);
+	addItem("Vine Circlet",0,HELM,INT);
+	addItem("Iron Circlet",8,HELM,INT);
+	addItem("Torture Cage",17,HELM,INT);
+	addItem("Tribal Circlet",26,HELM,INT);
+	addItem("Bone Circlet",34,HELM,INT);
+	addItem("Lunaris Circlet",39,HELM,INT);
+	addItem("Steel Circlet",48,HELM,INT);
+	addItem("Necromancer Circlet",54,HELM,INT);
+	addItem("Solaris Circlet",59,HELM,INT);
+	addItem("Mind Cage",65,HELM,INT);
+	addItem("Hubris Circlet",69,HELM,INT);
+	addItem("Battered Helm",0,HELM,STR_DEX);
+	addItem("Sallet",13,HELM,STR_DEX);
+	addItem("Visored Sallet",23,HELM,STR_DEX);
+	addItem("Gilded Sallet",33,HELM,STR_DEX);
+	addItem("Secutor Helm",36,HELM,STR_DEX);
+	addItem("Fencer Helm",43,HELM,STR_DEX);
+	addItem("Lacquered Helmet",51,HELM,STR_DEX);
+	addItem("Fluted Bascinet",58,HELM,STR_DEX);
+	addItem("Pig Faced Bascinet",63,HELM,STR_DEX);
+	addItem("Nightmare Bascinet",67,HELM,STR_DEX);
+	addItem("Rusted Coif",5,HELM,STR_INT);
+	addItem("Soldier Helmet",12,HELM,STR_INT);
+	addItem("Great Helmet",22,HELM,STR_INT);
+	addItem("Crusader Helmet",31,HELM,STR_INT);
+	addItem("Aventail Helmet",37,HELM,STR_INT);
+	addItem("Zealot Helmet",44,HELM,STR_INT);
+	addItem("Great Crown",53,HELM,STR_INT);
+	addItem("Magistrate Crown",58,HELM,STR_INT);
+	addItem("Prophet Crown",63,HELM,STR_INT);
+	addItem("Praetor Crown",68,HELM,STR_INT);
+	addItem("Scare Mask",0,HELM,DEX_INT);
+	addItem("Plague Mask",10,HELM,DEX_INT);
+	addItem("Iron Mask",17,HELM,DEX_INT);
+	addItem("Festival Mask",28,HELM,DEX_INT);
+	addItem("Golden Mask",35,HELM,DEX_INT);
+	addItem("Raven Mask",38,HELM,DEX_INT);
+	addItem("Callous Mask",45,HELM,DEX_INT);
+	addItem("Regicide Mask",52,HELM,DEX_INT);
+	addItem("Harlequin Mask",57,HELM,DEX_INT);
+	addItem("Vaal Mask",62,HELM,DEX_INT);
+	addItem("Deicide Mask",67,HELM,DEX_INT);
+	addItem("Splintered Tower Shield",0,SHIELD,STR);
+	addItem("Corroded Tower Shield",5,SHIELD,STR);
+	addItem("Rawhide Tower Shield",11,SHIELD,STR);
+	addItem("Cedar Tower Shield",17,SHIELD,STR);
+	addItem("Copper Tower Shield",24,SHIELD,STR);
+	addItem("Reinforced Tower Shield",30,SHIELD,STR);
+	addItem("Painted Tower Shield",35,SHIELD,STR);
+	addItem("Buckskin Tower Shield",39,SHIELD,STR);
+	addItem("Mahogany Tower Shield",43,SHIELD,STR);
+	addItem("Bronze Tower Shield",47,SHIELD,STR);
+	addItem("Girded Tower Shield",51,SHIELD,STR);
+	addItem("Crested Tower Shield",55,SHIELD,STR);
+	addItem("Shagreen Tower Shield",58,SHIELD,STR);
+	addItem("Ebony Tower Shield",61,SHIELD,STR);
+	addItem("Ezomyte Tower Shield",64,SHIELD,STR);
+	addItem("Colossal Tower Shield",67,SHIELD,STR);
+	addItem("Pinnacle Tower Shield",70,SHIELD,STR);
+	addItem("Goathide Buckler",0,SHIELD,DEX);
+	addItem("Pine Buckler",8,SHIELD,DEX);
+	addItem("Painted Buckler",16,SHIELD,DEX);
+	addItem("Hammered Buckler",23,SHIELD,DEX);
+	addItem("War Buckler",29,SHIELD,DEX);
+	addItem("Gilded Buckler",34,SHIELD,DEX);
+	addItem("Oak Buckler",38,SHIELD,DEX);
+	addItem("Enameled Buckler",42,SHIELD,DEX);
+	addItem("Corrugated Buckler",46,SHIELD,DEX);
+	addItem("Battle Buckler",50,SHIELD,DEX);
+	addItem("Golden Buckler",54,SHIELD,DEX);
+	addItem("Ironwood Buckler",57,SHIELD,DEX);
+	addItem("Lacquered Buckler",60,SHIELD,DEX);
+	addItem("Vaal Buckler",63,SHIELD,DEX);
+	addItem("Crusader Buckler",66,SHIELD,DEX);
+	addItem("Imperial Buckler",69,SHIELD,DEX);
+	addItem("Twig Spirit Shield",0,SHIELD,INT);
+	addItem("Yew Spirit Shield",9,SHIELD,INT);
+	addItem("Bone Spirit Shield",15,SHIELD,INT);
+	addItem("Tarnished Spirit Shield",23,SHIELD,INT);
+	addItem("Jingling Spirit Shield",28,SHIELD,INT);
+	addItem("Brass Spirit Shield",33,SHIELD,INT);
+	addItem("Walnut Spirit Shield",37,SHIELD,INT);
+	addItem("Ivory Spirit Shield",41,SHIELD,INT);
+	addItem("Ancient Spirit Shield",45,SHIELD,INT);
+	addItem("Chiming Spirit Shield",49,SHIELD,INT);
+	addItem("Thorium Spirit Shield",53,SHIELD,INT);
+	addItem("Lacewood Spirit Shield",56,SHIELD,INT);
+	addItem("Fossilized Spirit Shield",59,SHIELD,INT);
+	addItem("Vaal Spirit Shield",62,SHIELD,INT);
+	addItem("Harmonic Spirit Shield",65,SHIELD,INT);
+	addItem("Titanium Spirit Shield",68,SHIELD,INT);
+	addItem("Rotted Round Shield",5,SHIELD,STR_DEX);
+	addItem("Fir Round Shield",12,SHIELD,STR_DEX);
+	addItem("Studded Round Shield",20,SHIELD,STR_DEX);
+	addItem("Scarlet Round Shield",27,SHIELD,STR_DEX);
+	addItem("Splendid Round Shield",33,SHIELD,STR_DEX);
+	addItem("Maple Round Shield",39,SHIELD,STR_DEX);
+	addItem("Spiked Round Shield",45,SHIELD,STR_DEX);
+	addItem("Crimson Round Shield",49,SHIELD,STR_DEX);
+	addItem("Baroque Round Shield",54,SHIELD,STR_DEX);
+	addItem("Teak Round Shield",58,SHIELD,STR_DEX);
+	addItem("Spiny Round Shield",62,SHIELD,STR_DEX);
+	addItem("Cardinal Round Shield",66,SHIELD,STR_DEX);
+	addItem("Elegant Round Shield",70,SHIELD,STR_DEX);
+	addItem("Plank Kite Shield",7,SHIELD,STR_INT);
+	addItem("Linden Kite Shield",13,SHIELD,STR_INT);
+	addItem("Reinforced Kite Shield",20,SHIELD,STR_INT);
+	addItem("Layered Kite Shield",27,SHIELD,STR_INT);
+	addItem("Ceremonial Kite Shield",34,SHIELD,STR_INT);
+	addItem("Etched Shield",40,SHIELD,STR_INT);
+	addItem("Steel Kite Shield",46,SHIELD,STR_INT);
+	addItem("Laminated Kite Shield",50,SHIELD,STR_INT);
+	addItem("Angelic Kite Shield",55,SHIELD,STR_INT);
+	addItem("Branded Kite Shield",59,SHIELD,STR_INT);
+	addItem("Champion Kite Shield",62,SHIELD,STR_INT);
+	addItem("Mosaic Kite Shield",65,SHIELD,STR_INT);
+	addItem("Archon Kite Shield",68,SHIELD,STR_INT);
+	addItem("Spiked Bundle",5,SHIELD,DEX_INT);
+	addItem("Driftwood Spiked Shield",12,SHIELD,DEX_INT);
+	addItem("Alloyed Spike Shield",20,SHIELD,DEX_INT);
+	addItem("Burnished Spike Shield",27,SHIELD,DEX_INT);
+	addItem("Ornate Spiked Shield",33,SHIELD,DEX_INT);
+	addItem("Redwood Spiked Shield",39,SHIELD,DEX_INT);
+	addItem("Compound Spiked Shield",45,SHIELD,DEX_INT);
+	addItem("Polished Spiked Shield",49,SHIELD,DEX_INT);
+	addItem("Sovereign Spiked Shield",54,SHIELD,DEX_INT);
+	addItem("Alder Spike Shield",58,SHIELD,DEX_INT);
+	addItem("Ezomyte Spiked Shield",62,SHIELD,DEX_INT);
+	addItem("Mirrored Spiked Shield",66,SHIELD,DEX_INT);
+	addItem("Supreme Spiked Shield",70,SHIELD,DEX_INT);
+	addItem("Iron Ring",0,RING);
+	addItem("Coral Ring",0,RING);
+	addItem("Paua Ring",0,RING);
+	addItem("Gold Ring",8,RING);
+	addItem("Ruby Ring",11,RING);
+	addItem("Sapphire Ring",11,RING);
+	addItem("Topaz Ring",11,RING);
+	addItem("Diamond Ring",20,RING);
+	addItem("Moonstone Ring",20,RING);
+	addItem("Prismatic Ring",30,RING);
+	addItem("Amethyst Ring",38,RING);
+	addItem("Two-Stone Ring",20,RING);
+	addItem("Two-Stone Ring",20,RING);
+	addItem("Two-Stone Ring",20,RING);
+	addItem("Unset Ring",45,RING);
+	addItem("Paua Amulet",0,AMULET);
+	addItem("Coral Amulet",0,AMULET);
+	addItem("Amber Amulet",5,AMULET);
+	addItem("Jade Amulet",5,AMULET);
+	addItem("Lapis Amulet",5,AMULET);
+	addItem("Gold Amulet",8,AMULET);
+	addItem("Onyx Amulet",20,AMULET);
+	addItem("Agate Amulet",16,AMULET);
+	addItem("Turquoise Amulet",16,AMULET);
+	addItem("Citrine Amulet",16,AMULET);
+	addItem("Rustic Sash",0,BELT);
+	addItem("Chain Belt",0,BELT);
+	addItem("Leather Belt",8,BELT);
+	addItem("Heavy Belt",8,BELT);
+	addItem("Studded Belt",16,BELT);
+	addItem("Cloth Belt",16,BELT);
+	addItem("Serrated Arrow Quiver",0,QUIVER);
+	addItem("Two-Point Arrow Quiver",4,QUIVER);
+	addItem("Sharktooth Arrow Quiver",10,QUIVER);
+	addItem("Blunt Arrow Quiver",16,QUIVER);
+	addItem("Fire Arrow Quiver",22,QUIVER);
+	addItem("Broadhead Arrow Quiver",28,QUIVER);
+	addItem("Penetrating Arrow Quiver",36,QUIVER);
+	addItem("Spike-Point Arrow Quiver",45,QUIVER);
+	addItem("Rugged Quiver",0,QUIVER);
+	addItem("Cured Quiver",0,QUIVER);
+	addItem("Conductive Quiver",0,QUIVER);
+	addItem("Heavy Quiver",5,QUIVER);
+	addItem("Light Quiver",12,QUIVER);
+
 	return items;
 })();
