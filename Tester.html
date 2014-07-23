@@ -117,9 +117,6 @@ var blarg = DEX | DEX_INT;
 			for (var gid in Affixes[mod.name]) {
 				var group = Affixes[mod.name][gid];
 
-				if (group.typemask[baseItem.type] != 0xff && !(group.typemask[baseItem.type] & baseItem.subtype))
-					continue;
-
 				if (group.properties.length == 2) {
 					if (!mods[group.properties[1]]) {
 						mods[group.properties[1]] = {
@@ -133,6 +130,9 @@ var blarg = DEX | DEX_INT;
 
 				for (var a in group.affixes) {
 					var affix = group.affixes[a];
+
+					if (affix.typemask[baseItem.type] != 0xff && !(affix.typemask[baseItem.type] & baseItem.subtype))
+						continue;
 
 					if (affix.properties[0].range[0].min > mod.values[0])
 						continue;

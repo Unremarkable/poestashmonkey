@@ -73,7 +73,7 @@ var Affixes = (function() {;
 				"affix"      : affix,
 				"group"      : gid,
 				"properties" : properties,
-				"typemask"   : typemask,
+			//	"typemask"   : typemask,
 				"affixes"    : []
 			};
 		}
@@ -93,20 +93,10 @@ var Affixes = (function() {;
 			affix.properties[1] = { "name" : properties[1], "range" : [ { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
 		} else if (ranges.length == 2) {
 			affix.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] },
-			                                                        { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
+			                                                            { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
 		} else {
 			affix.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] } ] };
 		}
-		
-//		for (var i = 0; i < types.length; ++i) {
-//			if (typemask[i] == 0)
-//				continue;
-//			
-//			if (!mods[types[i]][properties[0][0]])
-//				mods[types[i]][properties[0][0]] = [];
-//				
-//			mods[types[i]][properties[0][0]].push(o);
-//		}
 
 		mods[properties[0]][gid].affixes.push(affix);
 	}
