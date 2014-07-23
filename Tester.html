@@ -113,15 +113,26 @@ var blarg = DEX | DEX_INT;
 					"Compound" : false,
 					"Affixes"  : {}
 				};
-			
+
 			for (var gid in Affixes[mod.name]) {
 				var group = Affixes[mod.name][gid];
 
-				for (var a in group) {
-					var affix = group[a];
+				if (group.typemask[baseItem.type] != 0xff && !(group.typemask[baseItem.type] & baseItem.subtype))
+					continue;
 
-					if (affix.typemask[baseItem.type] != 0xff && !(affix.typemask[baseItem.type] & baseItem.subtype))
-						continue;
+				if (group.properties.length == 2) {
+					if (!mods[group.properties[1]]) {
+						mods[group.properties[1]] = {
+							"Prefix"   : false,
+							"Suffix"   : false, 
+							"Compound" : false,
+							"Affixes"  : {}
+						};
+					}
+				}
+
+				for (var a in group.affixes) {
+					var affix = group.affixes[a];
 
 					if (affix.properties[0].range[0].min > mod.values[0])
 						continue;
@@ -132,16 +143,6 @@ var blarg = DEX | DEX_INT;
 							continue;
 						if (affix.properties[1].range[0].min > mod2.values[0])
 							continue;
-
-						// Hackish.
-						if (!mods[mod2.name]) {
-							mods[mod2.name] = {
-								"Prefix"   : false,
-								"Suffix"   : false, 
-								"Compound" : false,
-								"Affixes"  : {}
-							};
-						}
 
 						mods[mod.name].Compound = true;
 						mods[mod2.name].Compound = true;

@@ -60,11 +60,28 @@ var Affixes = (function() {;
 //		mods[types[i]] = {};
 //	}
 	
-	function add(level, affix, group, name, properties, ranges, typemask) {
-		var o = {
+	function add(level, affix, gid, name, properties, ranges, typemask) {
+		// hack to seperate prefixes and suffixes with the same mods into different groups.
+		if (affix == "Prefix")
+			gid += 100;
+
+		if (!mods[properties[0]])
+			mods[properties[0]] = {};
+
+		if (!mods[properties[0]][gid]) {
+			mods[properties[0]][gid] = {
+				"affix"      : affix,
+				"group"      : gid,
+				"properties" : properties,
+				"typemask"   : typemask,
+				"affixes"    : []
+			};
+		}
+
+		var affix = {
 			"level"      : level,
 			"affix"      : affix,
-			"group"      : affix == "Prefix" ? group : group + 100,	// HAaaaaaaaaaaaaaaaaaaaaaack.
+			"group"      : gid,
 			"name"       : name,
 		//	"properties" : properties.map(function(p) { return { "name" : p[0], "range" : p[1].map(function(r) { return { "min" : r[0], "max" : r[1] }; }) }; })
 			"properties" : [],
@@ -72,13 +89,13 @@ var Affixes = (function() {;
 		};
 
 		if (properties.length == 2) {
-			o.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] } ] };
-			o.properties[1] = { "name" : properties[1], "range" : [ { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
+			affix.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] } ] };
+			affix.properties[1] = { "name" : properties[1], "range" : [ { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
 		} else if (ranges.length == 2) {
-			o.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] },
+			affix.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] },
 			                                                        { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
 		} else {
-			o.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] } ] };
+			affix.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] } ] };
 		}
 		
 //		for (var i = 0; i < types.length; ++i) {
@@ -91,11 +108,7 @@ var Affixes = (function() {;
 //			mods[types[i]][properties[0][0]].push(o);
 //		}
 
-		if (!mods[properties[0]])
-			mods[properties[0]] = {};
-		if (!mods[properties[0]][o.group])
-			mods[properties[0]][o.group] = [];
-		mods[properties[0]][o.group].push(o);
+		mods[properties[0]][gid].affixes.push(affix);
 	}
 	
 	var Prefix = "Prefix";
