@@ -111,8 +111,6 @@ function createRowFor(item, table) {
 var currency = [];
 var itemNames = [];
 
-var capacityUsed = 0;
-
 function receiveItemData(items) {
 	prepareItems(items);
 	
@@ -121,7 +119,6 @@ function receiveItemData(items) {
 		var itemType = item.frameType;
 		var name = item.typeLine
 		addNameToList(item.name);
-		addToCapacityUsed(item);
 				
 		// note, frameType 6 are green items (ie in game things like "Sewer Keys")
 		
@@ -185,16 +182,28 @@ function receiveStashDataFinished() {
 	$("#tabNames li").first().addClass("selected");
 	showTableForSelectedTab();
 
-	var capacityUtilized = Math.round(capacityUsed / (numberOfTabs * 144) * 100);
-	$("#infoBox").append("<div id='capacityUsed'>Capacity Utilized: " + capacityUtilized + "% (across " + numberOfTabs + " tabs)</div>");
-
+    showCapacityUsed();
 	showAnyItemNameRepeats();
 }
 
-function addToCapacityUsed(item) {
-    if (item.inventoryId.startsWith("Stash")) {
-        capacityUsed += item.w * item.h;
+// The capacity is based on how much space all of the items in the stash tabs take up.
+function showCapacityUsed() {
+    var capacityUsed = 0;
+    var totalTabs = 0;
+
+    for (var league in stashData) {
+        for (var tab in stashData[league]) {
+            totalTabs++;
+            var items = stashData[league][tab].items;
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                capacityUsed += item.w * item.h;
+            }
+        }
     }
+
+    var capacityUtilized = Math.round(capacityUsed / (totalTabs * 144) * 100);
+    $("#infoBox").append("<div id='capacityUsed'>Capacity Utilized: " + capacityUtilized + "% (across " + totalTabs + " tabs)</div>");
 }
 
 function showAnyItemNameRepeats() {
