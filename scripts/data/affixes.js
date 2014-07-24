@@ -49,16 +49,32 @@
 }
 */
 
-var Affixes = (function() {;
-//	var types = [
-//		"Ring", "Amulet", "Belt", "Helmet", "Glove", "Boot", "Chest", "Shield", "Quiver", "Wand", "Dagger", "Claw", "Sceptre", "Staff", "Bow", "SlashingOneHanded", "SlashingTwoHanded", "BludgeoningOneHanded", "BludgeoningTwoHanded"
-//	];
+var Affixes = (function() {
 	
 	var mods = {};
-	
-//	for (var i = 0; i < types.length; ++i) {
-//		mods[types[i]] = {};
-//	}
+
+	function Affix(level, affix, gid, name, properties, ranges, typemask) {
+		this.level      = level;
+		this.affix      = affix;
+		this.group      = gid;
+		this.name       = name;
+		this.properties = [];
+		this.typemask   = typemask;
+
+		if (properties.length == 2) {
+			this.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] } ] };
+			this.properties[1] = { "name" : properties[1], "range" : [ { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
+		} else if (ranges.length == 2) {
+			this.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] },
+			                                                           { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
+		} else {
+			this.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] } ] };
+		}
+
+		this.canAppearOnBaseItem = function(baseItem) {
+			return this.typemask[baseItem.type] == 0xff || (this.typemask[baseItem.type] & baseItem.subtype);
+		}
+	}	
 	
 	function add(level, affix, gid, name, properties, ranges, typemask) {
 		// hack to seperate prefixes and suffixes with the same mods into different groups.
@@ -78,27 +94,7 @@ var Affixes = (function() {;
 			};
 		}
 
-		var affix = {
-			"level"      : level,
-			"affix"      : affix,
-			"group"      : gid,
-			"name"       : name,
-		//	"properties" : properties.map(function(p) { return { "name" : p[0], "range" : p[1].map(function(r) { return { "min" : r[0], "max" : r[1] }; }) }; })
-			"properties" : [],
-			"typemask"   : typemask
-		};
-
-		if (properties.length == 2) {
-			affix.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] } ] };
-			affix.properties[1] = { "name" : properties[1], "range" : [ { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
-		} else if (ranges.length == 2) {
-			affix.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] },
-			                                                            { "min" : ranges[1][0], "max" : ranges[1][1] } ] };
-		} else {
-			affix.properties[0] = { "name" : properties[0], "range" : [ { "min" : ranges[0][0], "max" : ranges[0][1] } ] };
-		}
-
-		mods[properties[0]][gid].affixes.push(affix);
+		mods[properties[0]][gid].affixes.push(new Affix(level, affix, gid, name, properties, ranges, typemask));
 	}
 	
 	var Prefix = "Prefix";

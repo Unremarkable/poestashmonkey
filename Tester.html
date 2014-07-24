@@ -134,7 +134,7 @@ var blarg = DEX | DEX_INT;
 				for (var a in group.affixes) {
 					var affix = group.affixes[a];
 
-					if (affix.typemask[baseItem.type] != 0xff && !(affix.typemask[baseItem.type] & baseItem.subtype))
+					if (!affix.canAppearOnBaseItem(baseItem))
 						continue;
 
 					if (affix.properties[0].range[0].min > mod.values[0])
