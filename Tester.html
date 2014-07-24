@@ -121,12 +121,50 @@ var blarg = DEX | DEX_INT;
             if (simpleMod[0].affix == "Suffix") suffixCount++;
         });
 
-        console.log(item.name + " potential combinations BEFORE prune: ", potentialCombinations.length);
+        console.log(item.name + " potential combinations BEFORE prefix/suffix prune: ", potentialCombinations.length);
         var potentialCombinations = getCombosWithValidPrefixAndSuffixCounts(potentialCombinations, prefixCount, suffixCount);
-        console.log(item.name + " potential combinations AFTER prune: ", potentialCombinations.length);
+        console.log(item.name + " potential combinations AFTER prefix/suffix prune: ", potentialCombinations.length);
+
+        var potentialCombinations2 = getCombosWithValidStats(item, potentialCombinations);
+        console.log(item.name + " potential combinations AFTER stat check prune: ", potentialCombinations2.length);
 
         // this may not be quite right, but essentially a solution is the simple stats + the combo stats
         var solutions = potentialCombinations.concat(simple);
+
+        return solutions;
+    }
+
+    function getCombosWithValidStats(item, potentialCombinations) {
+        // console.log("Item: ", item);
+        var solutions = [];
+        Object.forEach(item.explicitMods, function (mod) {
+            //console.log(mod.name + " ", mod.values);
+            potentialCombinations.forEach(function(combo) {
+                var loLo = 0;
+                var loHi = 0;
+                var hiLo = 0;
+                var hiHi = 0;
+                combo.forEach(function(affix) {
+                    affix.properties.forEach(function(property) {
+                        if (property.name == mod.name) {
+                            loLo += property.range[0].min;
+                            loHi += property.range[0].max;
+
+                            if (property.range.length > 1) {
+                                hiLo += property.range[1].min;
+                                hiHi += property.range[1].max;
+                            }
+                        }
+                    });
+                });
+
+                var isInLowRange = mod.values[0] >= loLo && mod.values[0] <= loHi;
+                var isInHighRange = mod.values.length == 1 || mod.values[1] >= hiLo && mod.values[1] <= hiHi;
+                if (isInHighRange && isInLowRange) {
+                    solutions.push(combo);
+                }
+            });
+        });
         return solutions;
     }
 
@@ -143,7 +181,8 @@ var blarg = DEX | DEX_INT;
             });
 
             // there can be a maximum of only 3 prefixes and 3 suffixes per item
-            if (prefixCount + comboPrefixCount <= 3 &&
+            if (potentialSolution.length > 0 &&
+                prefixCount + comboPrefixCount <= 3 &&
                 suffixCount + comboSuffixCount <= 3) {
                 solutions.push(potentialSolution);
             }
