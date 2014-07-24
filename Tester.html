@@ -226,31 +226,6 @@ var blarg = DEX | DEX_INT;
 
         return mods;
 	}
-
-    // Any prefix or suffix that is the only possibility for a given type will get counted.
-    // Ideally these are the ones we have guessed for sure.
-    // There should be a max of 3 prefixes and 3 suffixes.
-    // If there are more than 3 of either then one of them is wrong (i.e. incorrect guess caused by a compound stat that needs to be eliminated).
-    function addKnownPrefixAndSuffixCountToItem(item, mods) {
-        var prefixCount = 0;
-        var suffixCount = 0;
-
-        for (var a in mods) {
-            var mod = mods[a];
-            if (Object.keys(mod.Affixes).length == 1) {
-                for(var key in mod.Affixes) break; // get the first and only element
-                if (mod.Affixes[key].length == 1) {
-                    if (mod.Affixes[key][0].affix == "Prefix") prefixCount++;
-                    if (mod.Affixes[key][0].affix == "Suffix") suffixCount++;
-                }
-            }
-        }
-        item.prefixCount = prefixCount;
-        item.suffixCount = suffixCount;
-
-        //console.log("Prefix count: " + item.prefixCount);
-        //console.log("Suffix count: " + item.suffixCount);
-    }
  
 function getBaseItem(item) {
     var name = item.typeLine;
@@ -293,7 +268,6 @@ function getBaseItem(item) {
 		$(document.body).append($("<dl></dl>").append($.map(Items, function(item) {
 			var base = getBaseItem(item);
 			var affixes = getAffixesFor(item, base);
-            addKnownPrefixAndSuffixCountToItem(item, affixes);
 
 			function li_property(property) {
 				if (property.range.length == 2)
