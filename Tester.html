@@ -82,6 +82,23 @@ var blarg = DEX | DEX_INT;
 		}
 	}
 
+	Object.map = function(obj, fct) {
+		var r = {};
+		Object.forEach(obj, function(v, k) {
+			r[k] = fct(v, k);
+		});
+		return r;
+	}
+
+	Object.filter = function(obj, fct) {
+		var r = {};
+		Object.forEach(obj, function(v, k) {
+			if (fct(v, k))
+				r[k] = v;
+		});
+		return r;
+	}
+
 	function solve(item, mods) {
         var simple = [];
         var complex = [];
@@ -149,9 +166,7 @@ var blarg = DEX | DEX_INT;
 					"Affixes"  : {}
 				};
 
-			for (var gid in Affixes[mod.name]) {
-				var group = Affixes[mod.name][gid];
-
+			mods[mod.name].Affixes = Object.map(Affixes[mod.name], function(group) {
 				if (group.properties.length == 2) {
 					if (!mods[group.properties[1]]) {
 						mods[group.properties[1]] = {
@@ -163,64 +178,42 @@ var blarg = DEX | DEX_INT;
 					}
 				}
 
-				for (var a in group.affixes) {
-					var affix = group.affixes[a];
-
+				return group.affixes.filter(function(affix) {
 					if (!affix.canAppearOnBaseItem(baseItem))
-						continue;
+						return false;
 
-					if (affix.properties[0].range[0].min > mod.values[0])
-						continue;
+					if (!affix.itemHasMods(item))
+						return false;
 						
-					if (affix.properties.length == 2) {
-						var mod2 = item.explicitMods[affix.properties[1].name];
-						if (!mod2)
-							continue;
-						if (affix.properties[1].range[0].min > mod2.values[0])
-							continue;
+					if (affix.minGtItem(item))
+						return false;
 
+					if (affix.properties.length == 2) {
 						mods[mod.name].Compound = true;
-						mods[mod2.name].Compound = true;
-					} else if (affix.properties[0].range.length == 2) {
-						if (affix.properties[0].range[1].min > mod.values[1])
-							continue;
+						mods[affix.properties[1].name].Compound = true;
 					}
 					
 					mods[mod.name][affix.affix] = true;
 
-					if (!mods[mod.name].Affixes[gid])
-						mods[mod.name].Affixes[gid] = [];
-					mods[mod.name].Affixes[gid].push(affix);
-				}
-			}
+					return true;
+				});
+			});
 		}
-			
-		for (var a in mods) {
-			var mod = mods[a];
+
+		Object.forEach(mods, function(mod) {
 			if (!mod.Compound && (!mod.Prefix || !mod.Suffix)) {
 			//	simple mod.
-				for (var gid in mod.Affixes) {
-					var group = mod.Affixes[gid];
-
-					var next = [];
-					for (var aff in group) {
-						var affix = group[aff];
-						if (affix.properties[0].range[0].max < item.explicitMods[a].values[0])
-							continue;
-						if (affix.properties.length == 2) {
-							if (affix.properties[1].range[0].max < item.explicitMods[affix.properties[1].name].values[0])
-								continue;
-						} else if (affix.properties[0].range.length == 2) {
-							if (affix.properties[0].range[1].max < item.explicitMods[a].values[1])
-								continue;
-						}
-						
-						next.push(affix);
-					}
-					mod.Affixes[gid] = next;
-				}
+				mod.Affixes = Object.map(mod.Affixes, function(group) {			
+					return group.filter(function(affix) {
+						return !affix.maxLtItem(item);
+					});
+				});
 			}
-		}
+
+			mod.Affixes = Object.filter(mod.Affixes, function(group) {
+				return group.length > 0;
+			});
+		});
 
 		solve(item, mods);
 

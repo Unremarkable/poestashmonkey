@@ -73,7 +73,45 @@ var Affixes = (function() {
 
 		this.canAppearOnBaseItem = function(baseItem) {
 			return this.typemask[baseItem.type] == 0xff || (this.typemask[baseItem.type] & baseItem.subtype);
+		};
+
+		this.itemHasMods = function(item) {
+			if (!item.explicitMods[this.properties[0].name])
+				return false;
+			if (this.properties.length == 2)
+				if (!item.explicitMods[this.properties[1].name])
+					return false;
+			return true;
 		}
+
+		// returns true iif all mods appear on the item and no mod's minimum roll is higher than appears on item.
+		this.minGtItem = function(item) {
+			var mod =  item.explicitMods[this.properties[0].name];
+			if (this.properties[0].range[0].min > mod.values[0])
+				return true;
+			if (this.properties.length == 2) {
+				if (this.properties[1].range[0].min > item.explicitMods[this.properties[1].name].values[0])
+					return true;
+			} else if (this.properties[0].range.length == 2) {
+				if (this.properties[0].range[1].min > mod.values[1])
+					return true;
+			}
+			return false;
+		};
+
+		this.maxLtItem = function(item) {
+			var mod =  item.explicitMods[this.properties[0].name];
+			if (this.properties[0].range[0].max < mod.values[0])
+				return true;
+			if (this.properties.length == 2) {
+				if (this.properties[1].range[0].max < item.explicitMods[this.properties[1].name].values[0])
+					return true;
+			} else if (this.properties[0].range.length == 2) {
+				if (this.properties[0].range[1].max < mod.values[1])
+					return true;
+			}
+			return false;
+		};
 	}	
 	
 	function add(level, affix, gid, name, properties, ranges, typemask) {
