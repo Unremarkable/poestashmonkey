@@ -83,21 +83,53 @@ var blarg = DEX | DEX_INT;
 	}
 
 	function solve(item, mods) {
-		var simple = [];
-		var complex = [];
+        var simple = [];
+        var complex = [];
 
-		Object.forEach(mods, function(mod) {
-			var type = (!mod.Compound && Object.keys(mod.Affixes).length == 1) ? simple : complex;
+        Object.forEach(mods, function (mod) {
+            var type = (!mod.Compound && Object.keys(mod.Affixes).length == 1) ? simple : complex;
 
-			Object.forEach(mod.Affixes, function(group) {
-				type.push(group);
-			});
-		});
+            Object.forEach(mod.Affixes, function (group) {
+                type.push(group);
+            });
+        });
 
-		var solutions = [];
+        var potentialCombinations = combinations(complex);
 
-		combinations(complex).forEach(function(combination) {
-			// if simple + combination is valid, add to solutions.
+        console.log("Simple: ", simple);
+        var prefixCount = 0;
+        var suffixCount = 0;
+        simple.forEach(function (simpleMod) {
+            if (simpleMod[0].affix == "Prefix") prefixCount++;
+            if (simpleMod[0].affix == "Suffix") suffixCount++;
+        });
+
+        console.log(item.name + " potential combinations BEFORE prune: ", potentialCombinations.length);
+        var potentialCombinations = getCombosWithValidPrefixAndSuffixCounts(potentialCombinations, prefixCount, suffixCount);
+        console.log(item.name + " potential combinations AFTER prune: ", potentialCombinations.length);
+
+        // this may not be quite right, but essentially a solution is the simple stats + the combo stats
+        var solutions = potentialCombinations.concat(simple);
+        return solutions;
+    }
+
+    function getCombosWithValidPrefixAndSuffixCounts(potentialSolutions, prefixCount, suffixCount){
+        var solutions = [];
+
+        potentialSolutions.forEach(function(potentialSolution) {
+            var comboPrefixCount = 0;
+            var comboSuffixCount = 0;
+            potentialSolution.forEach(function(affix) {
+
+               if (affix.affix == "Prefix") comboPrefixCount++;
+               if (affix.affix == "Suffix") comboSuffixCount++;
+            });
+
+            // there can be a maximum of only 3 prefixes and 3 suffixes per item
+            if (prefixCount + comboPrefixCount <= 3 &&
+                suffixCount + comboSuffixCount <= 3) {
+                solutions.push(potentialSolution);
+            }
 		});
 
 		return solutions;
