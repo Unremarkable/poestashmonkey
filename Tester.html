@@ -85,7 +85,7 @@ var blarg = DEX | DEX_INT;
 	Object.map = function(obj, fct) {
 		var r = {};
 		Object.forEach(obj, function(v, k) {
-			r[k] = fct(v, k);
+			r[k] = fct.apply(this, arguments);
 		});
 		return r;
 	}
@@ -93,11 +93,19 @@ var blarg = DEX | DEX_INT;
 	Object.filter = function(obj, fct) {
 		var r = {};
 		Object.forEach(obj, function(v, k) {
-			if (fct(v, k))
+			if (fct.apply(this, arguments))
 				r[k] = v;
 		});
 		return r;
 	}
+
+    Object.every = function(obj, fct) {
+        for (var k in obj) {
+            if (!fct(obj[k], k))
+                return false;
+        }
+        return true;
+    }
 
 	function solve(item, mods) {
         var simple = [];
@@ -121,9 +129,13 @@ var blarg = DEX | DEX_INT;
             if (simpleMod[0].affix == "Suffix") suffixCount++;
         });
 
+        simple = simple.map(function(e) { return e[0]; });
+
         console.log(item.name + " potential combinations BEFORE prefix/suffix prune: ", potentialCombinations.length);
         var potentialCombinations = getCombosWithValidPrefixAndSuffixCounts(potentialCombinations, prefixCount, suffixCount);
         console.log(item.name + " potential combinations AFTER prefix/suffix prune: ", potentialCombinations.length);
+
+        potentialCombinations = potentialCombinations.map(function(c) { return c.concat(simple); });
 
         var potentialCombinations2 = getCombosWithValidStats(item, potentialCombinations);
         console.log(item.name + " potential combinations AFTER stat check prune: ", potentialCombinations2.length);
@@ -135,12 +147,8 @@ var blarg = DEX | DEX_INT;
     }
 
     function getCombosWithValidStats(item, potentialCombinations) {
-        // console.log("Item: ", item);
-        var solutions = [];
-        Object.forEach(item.explicitMods, function (mod) {
-            //console.log(mod.name + " ", mod.values);
-            potentialCombinations.forEach(function(combo) {
-                combo.hasValidStats = true;
+        return potentialCombinations.filter(function(combo) {
+            return Object.every(item.explicitMods, function (mod) {
                 var loLo = 0;
                 var loHi = 0;
                 var hiLo = 0;
@@ -159,22 +167,12 @@ var blarg = DEX | DEX_INT;
                     });
                 });
 
-
                 var isInLowRange = mod.values[0] >= loLo && mod.values[0] <= loHi;
                 var isInHighRange = mod.values.length == 1 || mod.values[1] >= hiLo && mod.values[1] <= hiHi;
-                if (!isInHighRange || !isInLowRange) {
-                    combo.hasValidStats = false;
-                }
+
+                return isInHighRange && isInLowRange;
             });
         });
-
-        // make sure all stats for each combo are valid
-        potentialCombinations.forEach(function(combo) {
-            if (combo.hasValidStats) {
-                solutions.push(combo);
-            }
-        });
-        return solutions;
     }
 
     function getCombosWithValidPrefixAndSuffixCounts(potentialSolutions, prefixCount, suffixCount){
