@@ -62,6 +62,45 @@ var blarg = DEX | DEX_INT;
 
 	console.log(Items);
 
+    Object.forEach = function(obj, fct) {
+        for (var k in obj) {
+            fct(obj[k], k);
+        }
+    }
+
+    Object.map = function(obj, fct) {
+        var r = {};
+        Object.forEach(obj, function(v, k) {
+            r[k] = fct.apply(this, arguments);
+        });
+        return r;
+    }
+
+    Object.filter = function(obj, fct) {
+        var r = {};
+        Object.forEach(obj, function(v, k) {
+            if (fct.apply(this, arguments))
+                r[k] = v;
+        });
+        return r;
+    }
+
+    Object.every = function(obj, fct) {
+        for (var k in obj) {
+            if (!fct(obj[k], k))
+                return false;
+        }
+        return true;
+    }
+
+    Object.any = function(obj, fct) {
+        for (var k in obj) {
+            if (fct(obj[k], k))
+                return true;
+        }
+        return false;
+    }
+
 	var ATTR = {
 		0x00 : "NONE",
 		0xFF : "ANY",
