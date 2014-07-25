@@ -49,6 +49,153 @@
 }
 */
 
+var flatten = function(array) {
+    return Array.prototype.concat.apply([], array);
+};
+
+function combinations(array) {
+    return array.reduce(function(prv, cur) {
+        return flatten(prv.map(function(x) {
+            return cur.concat(null).map(function(y) {
+                return y == null ? x : x.concat([y]);
+            });
+        }));
+    }, [[]]);
+}
+
+function getAffixCombinations(item, mods) {
+    var simple = [];
+    var complex = [];
+
+    Object.forEach(mods, function (mod) {
+        var type = (!mod.Compound && Object.keys(mod.Affixes).length == 1 && mod.Affixes[Object.keys(mod.Affixes)[0]].length == 1) ? simple : complex;
+
+        Object.forEach(mod.Affixes, function (group) {
+            type.push(group);
+        });
+    });
+
+    var potentialCombinations = combinations(complex);
+
+    simple = flatten(simple);
+    // Add our simple affixes into each combination
+    potentialCombinations = potentialCombinations.map(function(cmb) {
+        return cmb.concat(simple);
+    });
+
+    potentialCombinations = getCombosWithValidPrefixAndSuffixCounts(potentialCombinations);
+    potentialCombinations = getCombosWithValidStats(item, potentialCombinations);
+
+    return potentialCombinations;
+}
+
+function getCombosWithValidStats(item, potentialCombinations) {
+    return potentialCombinations.filter(function(combo) {
+        return Object.every(item.explicitMods, function (mod) {
+            var loLo = 0, loHi = 0;
+            var hiLo = 0, hiHi = 0;
+
+            combo.forEach(function(affix) {
+                affix.properties.forEach(function(property) {
+                    if (property.name == mod.name) {
+                        loLo += property.range[0].min;
+                        loHi += property.range[0].max;
+
+                        if (property.range.length > 1) {
+                            hiLo += property.range[1].min;
+                            hiHi += property.range[1].max;
+                        }
+                    }
+                });
+            });
+
+            var isInLowRange = mod.values[0] >= loLo && mod.values[0] <= loHi;
+            var isInHighRange = mod.values.length == 1 || mod.values[1] >= hiLo && mod.values[1] <= hiHi;
+
+            return isInHighRange && isInLowRange;
+        });
+    });
+}
+
+function getCombosWithValidPrefixAndSuffixCounts(potentialSolutions){
+    return potentialSolutions.filter(function(combo) {
+        var counts = { "Prefix" : 0, "Suffix" : 0 };
+        combo.forEach(function(affix) {
+            counts[affix.affix]++;
+        });
+        return counts["Prefix"] <= 3
+            && counts["Suffix"] <= 3;
+    });
+}
+
+function getAffixesFor(item, baseItem) {
+    var mods = {};
+
+    for (var m in item.explicitMods) {
+        var mod = item.explicitMods[m];
+
+        if (!mods[mod.name])
+            mods[mod.name] = {
+                "Prefix"   : false,// Prefix/Suffix probably no longer needed.
+                "Suffix"   : false,
+                "Compound" : false,
+                "Affixes"  : {}
+            };
+
+        mods[mod.name].Affixes = Object.map(Affixes[mod.name], function(group) {
+            if (group.properties.length == 2) {
+                if (!mods[group.properties[1]]) {
+                    mods[group.properties[1]] = {
+                        "Prefix"   : false,
+                        "Suffix"   : false,
+                        "Compound" : false,
+                        "Affixes"  : {}
+                    };
+                }
+            }
+
+            return group.affixes.filter(function(affix) {
+                if (!affix.canAppearOnBaseItem(baseItem))
+                    return false;
+
+                if (!affix.itemHasMods(item))
+                    return false;
+
+                if (affix.minGtItem(item))
+                    return false;
+
+                if (affix.properties.length == 2) {
+                    mods[mod.name].Compound = true;
+                    mods[affix.properties[1].name].Compound = true;
+                }
+
+                mods[mod.name][affix.affix] = true;
+
+                return true;
+            });
+        });
+    }
+
+    Object.forEach(mods, function(mod) {
+        if (!mod.Compound && Object.keys(mod.Affixes).length == 1) {
+            //	simple mod.
+            mod.Affixes = Object.map(mod.Affixes, function(group) {
+                return group.filter(function(affix) {
+                    return !affix.maxLtItem(item);
+                });
+            });
+        }
+
+        mod.Affixes = Object.filter(mod.Affixes, function(group) {
+            return group.length > 0;
+        });
+    });
+
+    var combinations = getAffixCombinations(item, mods);
+
+    return mods;
+}
+
 var Affixes = (function() {
 	
 	var mods = {};

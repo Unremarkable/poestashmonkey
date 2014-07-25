@@ -1,3 +1,25 @@
+function getBaseItem(item) {
+    var name = item.typeLine;
+
+    if (baseEquipment[name]) return baseEquipment[name];
+
+    // search for and remove suffix
+    var end = name.indexOf(" of ");
+    if (end != -1) name = name.substring(0, end);
+
+    if (baseEquipment[name]) return baseEquipment[name];
+
+    // iteratively remove prefixes
+    var start = 0;
+    while ((start = name.indexOf(" ", start)) != -1) {
+        name = name.substring(start + 1);
+
+        if (baseEquipment[name]) return baseEquipment[name];
+    }
+
+    return false;
+}
+
 var baseEquipment = (function() {
 	var items = {};
 	
