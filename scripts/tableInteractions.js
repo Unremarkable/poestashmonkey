@@ -36,7 +36,7 @@ function handleSearching() {
 function search(searchString) {
     $(".stash").show();
     $("tr").hide();
-    $("tr:contains('" + searchString + "')").show();
+    $("tr:containsIgnoreCase('" + searchString + "')").show();
     $("#tabNames .selected").removeClass("selected");
 
     var tablesWithRowsInSearch = $("table.stash tr:visible").parents("table.stash");
