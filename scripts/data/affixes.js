@@ -193,7 +193,7 @@ function getAffixesFor(item, baseItem) {
 
     var combinations = getAffixCombinations(item, mods);
 
-    return mods;
+    return combinations;
 }
 
 var Affixes = (function() {

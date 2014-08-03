@@ -101,6 +101,29 @@ var blarg = DEX | DEX_INT;
         return false;
     }
 
+    Object.min = function(obj, fct) {
+        var min = undefined;
+
+        for (var k in obj) {
+            var val = fct(obj[k], obj);
+            if (val < min || min == undefined)
+                min = val
+        }
+
+        return min;
+    }
+
+    function getAverageAffixLevel(affixes) {
+        return affixes.min(function(combination) {
+            var sum = 0;
+            for (var affix in combination) {
+                sum += combination[affix].level;
+            }
+            return sum / combination.length;
+        });
+    }
+
+
 	var ATTR = {
 		0x00 : "NONE",
 		0xFF : "ANY",
@@ -161,7 +184,7 @@ var blarg = DEX | DEX_INT;
 				];
 			}
 
-			return draw_item(item);
+			//return draw_item(item);
 		})));
 	});
 

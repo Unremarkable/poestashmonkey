@@ -9,7 +9,7 @@ if (typeof String.prototype.startsWith != 'function') {
     return this.substring(0, str.length) === str;
   };
 }
-	
+
 function insertStylesheet() {
     var style = window.document.createElement("link");
 	style.rel = "stylesheet";
@@ -17,7 +17,7 @@ function insertStylesheet() {
 	style.href=BASE_URL+"/css/main.css?_v=3";
     $("head")[0].appendChild(style);
 }
- 
+
 var existingItems = [];
 
 function getParameterByName(name) {
@@ -26,19 +26,19 @@ function getParameterByName(name) {
 
 function ready() {
     insertStylesheet();
-	
+
     if ($("pre").length > 0) {
         existingItems = JSON.parse($("pre").html()).items;
     }
- 
+
     $("body").html("<h2>Loading...</h2>");
- 
+
 	var league = getParameterByName("league") || "Standard";
- 
+
 	buildPage();
 	requestCharacterData(league);
     requestStashData(league);
-    
+
     // does not work yet
     // fetchCurrencyConversionTable();
 };
@@ -46,25 +46,25 @@ function ready() {
 function prepareItems(items) {
 	for (var i = 0; i < items.length; ++i) {
 		var item = items[i];
-		
+
 		if (item.prepared)
 			return;
 		item.prepared = true;
-		
+
 		if (item.properties) {
 			var temp = item.properties;
 			item.properties = {};
-			
+
 			for (var p = 0; p < temp.length; ++p) {
 				item.properties[temp[p].name] = temp[p];
 			}
 		} else {
 			item.properties = [];
 		}
-		
+
 		item.implicitMods = parseMods(item.implicitMods);
 		item.explicitMods = parseMods(item.explicitMods);
-		
+
 		if (typeof item["socketedItems"] !== "undefined") {
 			for (var j = 0; j < item["socketedItems"].length; ++j) {
 				var socketedItem = item["socketedItems"][j];
@@ -101,10 +101,11 @@ function createRowFor(item, table) {
 			"eDPS":    addEDPS,
 			"CPS":     addCPS,
 			"Inc":     addpIncreaseDPS,
-			"eDMG":    addItemElementalDamage
+			"eDMG":    addItemElementalDamage,
+            "AffixRating": addAffixRating
 		})[table.columns[c]](row, item);
 	}
-	
+
 	table.dom.appendChild(row);
 }
 
@@ -113,15 +114,15 @@ var itemNames = [];
 
 function receiveItemData(items) {
 	prepareItems(items);
-	
+
 	for (var i = 0; i < items.length; ++i) {
 		var item = items[i];
 		var itemType = item.frameType;
 		var name = item.typeLine
 		addNameToList(item.name);
-				
+
 		// note, frameType 6 are green items (ie in game things like "Sewer Keys")
-		
+
 		if (itemType == 5) {
 			addCurrency(item);
 		} else if (itemType == 4) {
@@ -157,7 +158,7 @@ function receiveItemData(items) {
 				console.log("Uncategorized Item", item);
 			}
 		}
-	}	
+	}
 }
 
 function addNameToList(name) {
@@ -170,15 +171,15 @@ function addNameToList(name) {
 	}
 }
 
-function receiveStashDataFinished() {	
+function receiveStashDataFinished() {
 	for (var item in currency) {
 		createRowFor(currency[item], tables["currency"]);
 	}
-	
+
 	if ($("#uncategorized").length > 1) {
 		$("li[href='#uncategorized']").show();
 	}
-	
+
 	$("#tabNames li").first().addClass("selected");
 	showTableForSelectedTab();
 
@@ -220,16 +221,16 @@ function showAnyItemNameRepeats() {
 
 function addCurrency(item) {
 	var name = item.typeLine;
-	
+
 	setItemQuantity(item);
-	
+
 	if (!currency[name]) {
 		currency[name] = item;
 		removeStackSizeFromImageLink(item);
 		currency[name].instances = [];
 		currency[name].totalQuantity = 0;
 	}
-	
+
 	currency[name].instances.push(item);
 	currency[name].totalQuantity += item.quantity;
 }
@@ -241,7 +242,7 @@ function setItemQuantity(item) {
 function removeStackSizeFromImageLink(item) {
 	var parts = item.icon.split("stackSize");
 	if (parts.length > 1) {
-		item.icon = parts[0] + parts[1].split("&").splice(1).join("&");	
+		item.icon = parts[0] + parts[1].split("&").splice(1).join("&");
 	}
 }
 
@@ -259,9 +260,9 @@ function changeImageStackSize(imgLink, n) {
 */
 
 var basicColumns = ["Icon", "Name", "Level"];
-var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist"]);
+var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist", "AffixRating"]);
 var accesoriesColumnsWithDamage = accesoriesColumns.concat(["eDMG"]);
-var advancedColumns = basicColumns.concat(["Str", "Int", "Dex", "Quality", "Sockets", "Mods"]);
+var advancedColumns = basicColumns.concat(["Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AffixRating"]);
 var gearColumns =  advancedColumns.concat(["AR", "EV", "ES", "tResist", "eDMG"]);
 
 var tables = {
@@ -341,10 +342,10 @@ var tables = {
 		"columns": ["Icon", "Name", "Mods"]
 	}
 };
- 
+
  var rings = ["Iron Ring", "Coral Ring", "Paua Ring", "Gold Ring", "Ruby Ring", "Sapphire Ring", "Topaz Ring", "Diamond Ring", "Moonstone Ring", "Prismatic Ring", "Amethyst Ring", "Two-Stone Ring", "Unset Ring"];
  var amulets = ["Paua Amulet", "Coral Amulet", "Amber Amulet", "Jade Amulet", "Lapis Amulet", "Gold Amulet", "Onyx Amulet", "Agate Amulet", "Turquoise Amulet", "Citrine Amulet"];
- 
+
 function isFlask(name) { return name.match(/Flask/) != null; }
 
 function isRing(name)   { return getItemBaseName(name, rings); }
@@ -367,17 +368,17 @@ function isMap(item) { return (item.properties["Map Level"]); }
 
 function parseMods(descriptions) {
     var mods = {};
- 
+
     for (var i in descriptions) {
         var mod = {
 			"description": descriptions[i],
 			"name":        descriptions[i].replace(/\d+/g, "#"),
 			"values":      descriptions[i].match  (/\d+/g),
 		};
-		
+
         mods[mod.name] = mod;
     }
- 
+
     return mods;
 }
 
@@ -401,7 +402,7 @@ function addResistsFromMods(modGroup) {
 	for (var type in resistTypes) {
 		var mod = modGroup[type];
 		var multiplier = resistTypes[type];
-		if (mod) 
+		if (mod)
 			tResist += parseInt(mod.values[0]) * multiplier;
 	}
 	return tResist;
@@ -415,7 +416,7 @@ var damageTypes = [
 
 function getElementalDamage(item) {
 	var eDMG = [0, 0];
-	
+
 	for (var type in damageTypes) {
 		var mod = item.explicitMods[damageTypes[type]];
 		if (mod) {
@@ -423,13 +424,31 @@ function getElementalDamage(item) {
 			eDMG[1] += parseInt(mod.values[1]);
 		}
 	}
-	
+
 	return eDMG;
+}
+
+function getAverageAffixLevel(affixes) {
+    return Object.min(affixes, function(combination) {
+        var sum = 0;
+        for (var affix in combination) {
+            sum += combination[affix].level;
+        }
+        return sum / combination.length;
+    });
 }
 
 function addItemElementalDamage(row, item) {
 	var eDMG = getElementalDamage(item);
 	appendNewCellWithTextAndClass(row, (eDMG[0] || eDMG[1]) ? eDMG[0]+"-"+eDMG[1] : 0, "edmg", eDMG[0] + eDMG[1]);
+}
+
+function addAffixRating(row, item) {
+    var baseItem = getBaseItem(item);
+    var affixes = getAffixesFor(item, baseItem);
+    var average = getAverageAffixLevel(affixes) - baseItem.level;
+    average = average? average.toFixed(1) : 0;
+    appendNewCellWithTextAndClass(row, average, "AffixRating", average);
 }
 
 function getItemQuality(item) {
@@ -445,86 +464,86 @@ function addTotalResistances(row, item) {
 	var tResist = getTotalResistances(item);
 	appendNewCellWithTextAndClass(row, tResist + "%", "tresist", tResist);
 }
- 
+
  function addArmour(row, item) {
 	var ar  = item.properties["Armour"] ? parseInt(item.properties["Armour"].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, ar, "ar", ar);
  }
- 
+
  function addEvasion(row, item) {
 	var ev = item.properties["Evasion Rating"] ? parseInt(item.properties["Evasion Rating"].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, ev, "ev", ev);
  }
- 
+
  function addEnergyShield(row, item) {
 	var es = item.properties["Energy Shield"] ? parseInt(item.properties["Energy Shield"].values[0]) : 0;
 	appendNewCellWithTextAndClass(row, es, "es", es);
  }
- 
+
  function addDPS(row, item) {
 	var dps = item.weaponInfo ? item.weaponInfo.dps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, dps, "dps", dps);
  }
- 
+
  function addPDPS(row, item) {
 	var pdps = item.weaponInfo ? item.weaponInfo.pdps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, pdps, "pdps", pdps);
  }
- 
+
  function addEDPS(row, item) {
 	var edps = item.weaponInfo ? item.weaponInfo.edps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, edps, "edps", edps);
  }
- 
+
  function addCPS(row, item) {
 	var cps = item.weaponInfo ? item.weaponInfo.cps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, cps, "cps", cps);
  }
- 
+
  function addpIncreaseDPS(row, item) {
 	var pIncreaseDps = item.weaponInfo ? item.weaponInfo.pIncreaseDps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "inc", pIncreaseDps);
  }
- 
+
 function createHeaders(table, headers) {
     var headerRow = newRow();
     headerRow.id = "headerRow";
     for (var i = 0; i < headers.length; i++) {
         var td = document.createElement("th");
- 
+
         td.id = headers[i].toLowerCase();
         td.innerHTML = headers[i];
         headerRow.appendChild(td);
     }
     table.appendChild(headerRow);
 }
- 
+
 function createImageCell(row, item) {
     var td = newCell();
     var img = document.createElement("img");
     img.src = item.icon;
-    
+
     if (item.descrText) {
 	    img.title = item.descrText;
 	}
- 
+
     td.appendChild(img);
     row.appendChild(td);
 }
- 
+
 function createTitleCell(row, item) {
     var t = item.frameType;
     var type = t == 3 ? "unique" : t == 2 ? "rare" : t == 1 ? "magic" : "normal";
     var className = "name " + type;
-    
+
     var title = "";
     if (item.name) {
         title += "<strong>" + item.name + "</strong><br />";
     }
     title += item.typeLine;
-    
+
     var td = appendNewCellWithTextAndClass(row, title, className, item.typeLine);
-	
+
 	if (typeof item.instances === "undefined") {
 		td.title = item.inventoryId + " (" + item.x + ", " + item.y + ")";
 	} else {
@@ -540,19 +559,19 @@ function createTitleCell(row, item) {
 function createQuantityCell(row, item) {
 	appendNewCellWithTextAndClass(row, item.totalQuantity, "quantity", item.quantity);
 }
- 
+
 function createModsCell(row, item) {
     var td = newCell();
     td.className = "mods";
-	
+
     var implicit = getModsText(item.implicitMods);
     var explicit = getModsText(item.explicitMods);
-  
+
 	var html = "";
-  
+
 	if (implicit.length > 0)
 		html += "<div class='implicit'>"+implicit+"</div>";
-	
+
 	if (explicit.length > 0 || !item.identified) {
 		if (implicit.length > 0)
 			html += "<div class='divider'></div>";
@@ -561,68 +580,68 @@ function createModsCell(row, item) {
 		else
 			html += "<div class='unidentified'>UNIDENTIFIED</div>"
 	}
- 
+
     td.innerHTML = html;
     row.appendChild(td);
 }
- 
+
 function getModFormat(mod) {
     return "<span>" + mod.description + "</span>";
- 
+
 }
- 
+
 function getModsText(mods) {
     var modsText = "";
     var modNames = Object.keys(mods);
- 
+
     if (mods && modNames.length > 0) {
         modsText = getModFormat(mods[modNames[0]]);
         for (var j = 1; j < modNames.length; ++j) {
             modsText += "<br />" + getModFormat(mods[modNames[j]]);
- 
+
         }
     }
     return modsText;
 }
- 
+
 function createSocketsCell(row, item) {
 	var text  = "";
 	var value = 0;
- 
+
     if (item.sockets) {
 		var groups = [];
 		var total  = 0;
-		
+
 		for (var i = 0; i < item.sockets.length; ++i) {
 			var socket = item.sockets[i];
-			
+
 			if (socket.group >= groups.length)
 				groups[socket.group] = {"S":0, "D":0, "I":0, "total":0};
-				
+
 			groups[socket.group][socket.attr]++;
 			groups[socket.group].total++;
 		}
-		
+
 		for (var i = 0; i < groups.length; ++i) {
 			var group = groups[i];
-			
+
 			value += [0,1,7,22,45,53,55][group.total];
-			
-			if (i > 0) 
+
+			if (i > 0)
 				text += "<br />";
 			text += "<span class='group'>";
 
 			if (group["S"] > 0) { text += "<span class='S'>"; for (var j = 0; j < group["S"]; ++j) text += "R"; text += "</span>"; }
 			if (group["D"] > 0) { text += "<span class='D'>"; for (var j = 0; j < group["D"]; ++j) text += "G"; text += "</span>"; }
 			if (group["I"] > 0) { text += "<span class='I'>"; for (var j = 0; j < group["I"]; ++j) text += "B"; text += "</span>"; }
-			
+
 			text += "</span>";
 		}
     }
-	
+
 	appendNewCellWithTextAndClass(row, text, "sockets", value);
 }
- 
+
 function getRequirement(item, type) {
     if (item.requirements) {
         for (var i = 0; i < item.requirements.length; i++) {
@@ -660,13 +679,13 @@ function newRow() {
     var row = document.createElement("tr");
 	return row;
 }
- 
+
 function newItemRow() {
     var row = document.createElement("tr");
 	$(row).addClass("itemRow");
 	return row;
 }
- 
+
 function newCell() {
     return document.createElement("td");
 }
@@ -676,16 +695,16 @@ function buildPage() {
     var searchBox = "<form onSubmit='return false;' id='searchBox'><input type='text' placeholder='Search...' /><div id='clearSearch'>x</div></form>";
     var infoBox = "<div id='infoBox'></div>";
     $("body").html("<div>" + title + searchBox + infoBox + "</div>");
-    
+
 	var tabView = $("<div></div>").attr("id", "tabView");
 	tabView.append($("<ul></ul>").attr("id", "tabNames"));
 	tabView.append($("<div></div>").attr("id", "tabContents"));
 	$("body").append(tabView);
-	
+
 	for (var t in tables) {
 		tables[t].dom = buildTable(tables[t]["name"], tables[t]["idName"], tables[t]["columns"]);
 	}
-	
+
 	attachHandlers();
 }
 
@@ -694,18 +713,18 @@ function buildTable(titleText, idName, headers) {
 	tab.html(titleText);
 	tab.attr("href", "#"+idName);
 	$("#tabNames").append(tab);
-	
+
     var table = document.createElement("table");
     table.id = idName;
     table.className = "stash";
- 
+
     createHeaders(table, headers);
- 
+
     $("#tabContents").append(table);
-    
+
 	return table;
 }
- 
+
 /*
     WeaponInfo
         - name
@@ -713,33 +732,33 @@ function buildTable(titleText, idName, headers) {
         - baseWeaponDps
         - attacksPerSecond
         - dps
- 
+
         - physical
         - fire
         - cold
- 
+
         - lightning
 */
- 
+
 function getItemBaseName(typeLine, itemList) {
     var name = typeLine;
- 
+
     if (isItemInList(name, itemList)) return name;
- 
+
     // search for and remove suffix
     var end = name.indexOf(" of ");
     if (end != -1) name = name.substring(0, end);
- 
+
     if (isItemInList(name, itemList)) return name;
- 
+
     // iteratively remove prefixes
     var start = 0;
     while ((start = name.indexOf(" ", start)) != -1) {
         name = name.substring(start + 1);
- 
+
         if (isItemInList(name, itemList)) return name;
     }
- 
+
     return false;
 }
 
