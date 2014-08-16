@@ -187,7 +187,7 @@ var baseEquipment = (function() {
 	addItem("War Hammer",20,ONE_HANDED_MACE,STR);
 	addItem("Bladed Mace",24,ONE_HANDED_MACE,STR);
 	addItem("Ceremonial Mace",28,ONE_HANDED_MACE,STR);
-	addItem("Dream Mace",28,ONE_HANDED_MACE,STR);
+	addItem("Dream Mace",32,ONE_HANDED_MACE,STR);
 	addItem("Petrified Club",35,ONE_HANDED_MACE,STR);
 	addItem("Barbed Club",38,ONE_HANDED_MACE,STR);
 	addItem("Rock Breaker",41,ONE_HANDED_MACE,STR);
@@ -707,7 +707,7 @@ var baseEquipment = (function() {
 	addItem("Diamond Ring",20,RING);
 	addItem("Moonstone Ring",20,RING);
 	addItem("Prismatic Ring",30,RING);
-	addItem("Amethyst Ring",38,RING);
+	addItem("Amethyst Ring",30,RING);
 	addItem("Two-Stone Ring",20,RING);
 	addItem("Two-Stone Ring",20,RING);
 	addItem("Two-Stone Ring",20,RING);

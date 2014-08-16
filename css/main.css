@@ -197,6 +197,8 @@ table.stash .cold { color: #366492; }
 
 table.stash .lightning { color: #e1be00; }
 
+.affixes { list-style: none; }
+
 #tabNames li {
 	color: #A38D6D;
 	background-color: #26231B;

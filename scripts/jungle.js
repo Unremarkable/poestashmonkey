@@ -14,7 +14,7 @@ function insertStylesheet() {
     var style = window.document.createElement("link");
 	style.rel = "stylesheet";
 	style.type="text/css";
-	style.href=BASE_URL+"/css/main.css?_v=3";
+	style.href=BASE_URL+"/css/main.css?_v=4";
     $("head")[0].appendChild(style);
 }
 
@@ -42,40 +42,6 @@ function ready() {
     // does not work yet
     // fetchCurrencyConversionTable();
 };
-
-function prepareItems(items) {
-	for (var i = 0; i < items.length; ++i) {
-		var item = items[i];
-
-		if (item.prepared)
-			return;
-		item.prepared = true;
-
-		if (item.properties) {
-			var temp = item.properties;
-			item.properties = {};
-
-			for (var p = 0; p < temp.length; ++p) {
-				item.properties[temp[p].name] = temp[p];
-			}
-		} else {
-			item.properties = [];
-		}
-
-		item.implicitMods = parseMods(item.implicitMods);
-		item.explicitMods = parseMods(item.explicitMods);
-
-		if (typeof item["socketedItems"] !== "undefined") {
-			for (var j = 0; j < item["socketedItems"].length; ++j) {
-				var socketedItem = item["socketedItems"][j];
-				socketedItem.inventoryId = item.inventoryId;
-				socketedItem.x = item.x;
-				socketedItem.y = item.y;
-				items.push(socketedItem);
-			}
-		}
-	}
-}
 
 function createRowFor(item, table) {
 	var row = newItemRow();
@@ -428,14 +394,65 @@ function getElementalDamage(item) {
 	return eDMG;
 }
 
-function getAverageAffixLevel(affixes) {
-    return Object.min(affixes, function(combination) {
-        var sum = 0;
-        for (var affix in combination) {
-            sum += combination[affix].level;
+function getRequiredLevel(item) {
+    if (item.baseItem) {
+        if (item.affixes && item.affixes.length > 0) {
+            var highestAffix = Object.max(item.affixes, function (affix) {
+                return affix.level;
+            });
+            return Math.max(item.baseItem.level, Math.floor(highestAffix * 0.8));
         }
-        return sum / combination.length;
-    });
+        return item.baseItem.level;
+    }
+
+    return getRequirement(item, "level");
+}
+
+function prepareItems(items) {
+    for (var i = 0; i < items.length; ++i) {
+        var item = items[i];
+
+        if (item.prepared)
+            return;
+        item.prepared = true;
+
+
+        item.baseItem = getBaseItem(item);
+
+
+        if (item.properties) {
+            var temp = item.properties;
+            item.properties = {};
+
+            for (var p = 0; p < temp.length; ++p) {
+                item.properties[temp[p].name] = temp[p];
+            }
+        } else {
+            item.properties = [];
+        }
+
+        item.implicitMods = parseMods(item.implicitMods);
+        item.explicitMods = parseMods(item.explicitMods);
+
+        if (item.baseItem) {
+            item.affixCombinations = getAffixesFor(item, item.baseItem);
+            item.affixes = item.affixCombinations[Object.smallest(item.affixCombinations, function(combination) {
+                return Object.max(combination, function(affix) {
+                    return affix.level;
+                })
+            })];
+        }
+
+        if (typeof item["socketedItems"] !== "undefined") {
+            for (var j = 0; j < item["socketedItems"].length; ++j) {
+                var socketedItem = item["socketedItems"][j];
+                socketedItem.inventoryId = item.inventoryId;
+                socketedItem.x = item.x;
+                socketedItem.y = item.y;
+                items.push(socketedItem);
+            }
+        }
+    }
 }
 
 function addItemElementalDamage(row, item) {
@@ -444,11 +461,46 @@ function addItemElementalDamage(row, item) {
 }
 
 function addAffixRating(row, item) {
-    var baseItem = getBaseItem(item);
-    var affixes = getAffixesFor(item, baseItem);
-    var average = getAverageAffixLevel(affixes) - baseItem.level;
-    average = average? average.toFixed(1) : 0;
-    appendNewCellWithTextAndClass(row, average, "AffixRating", average);
+    if (item.affixes && item.affixes.length > 0) {
+        var average = (item.affixes.reduce(function (sum, affix) {
+            return sum + affix.level;
+        }, 0) / item.affixes.length) - parseInt(getRequirement(item, "Level"));
+
+        var text = "<ul class='affixes'>"+item.affixes.map(function (affix) {
+            var highestForItemLevel = true;
+            var highestInGroup      = true;
+
+            var highestAffixLevel = Math.floor(getRequirement(item, "Level") / 0.8 + 1);
+
+            Object.forEach(affix.group.affixes, function (alternative) {
+               if (alternative.level > affix.level) {
+                   highestInGroup = false;
+                   if (alternative.level <= highestAffixLevel)
+                        highestForItemLevel = false;
+               }
+            });
+
+            // this should be moved to affix.js
+            var title = affix.properties.map(function (property) {
+                if (property.range.length == 2)
+                    return property.name.replace("#-#","["+property.range[0].min+"-"+property.range[0].max+"]-["+property.range[1].min+"-"+property.range[1].max+"]");
+                return property.name.replace("#","["+property.range[0].min+"-"+property.range[0].max+"]");
+            }).join("\n");
+
+            var val = "<li title=\""+title+"\">"+affix.name + "(" + affix.level + ")</li>";
+
+            if (highestInGroup)
+                return val.fontcolor("green");
+            if (highestForItemLevel)
+                return val.fontcolor("yellow");
+
+            return val;
+        }).join("")+"</ul>";
+
+        appendNewCellWithTextAndClass(row, text, "AffixRating", average);
+    } else {
+        appendNewCellWithTextAndClass(row, "", "AffixRating", -9999);
+    }
 }
 
 function getItemQuality(item) {
@@ -657,8 +709,15 @@ function getRequirement(item, type) {
 function createDexCell(row, item) { createRequirementCell(row, item, "Dex"); }
 function createIntCell(row, item) { createRequirementCell(row, item, "Int"); }
 function createStrCell(row, item) { createRequirementCell(row, item, "Str"); }
-function createLevelCell(row, item) { createRequirementCell(row, item, "Level"); }
-
+function createLevelCell(row, item) {
+    createRequirementCell(row, item, "Level");
+//    var req = getRequiredLevel(item);
+//    var old = getRequirement(item, "Level");
+//    if (req != old && req && old && item.frameType != 3 && old.indexOf("(gem)") == -1)
+//        console.log("cmp", item, req, old, mistake_count++);
+//    appendNewCellWithTextAndClass(row, req, "level", req);
+}
+var mistake_count = 0;
 function createRequirementCell(row, item, reqName) {
     var req = getRequirement(item, reqName);
     appendNewCellWithTextAndClass(row, req, reqName.toLowerCase(), req);
@@ -667,10 +726,10 @@ function createRequirementCell(row, item, reqName) {
 function appendNewCellWithTextAndClass(row, text, className, sortValue) {
     var td = newCell();
     td.className = className;
-    if (text) {
+//    if (text) {
         var sortBlurb = sortValue ? "<input type='hidden' name='sortValue' value='" + sortValue + "' />" : "";
         td.innerHTML = sortBlurb + text;
-    }
+  //  }
     row.appendChild(td);
     return td;
 }

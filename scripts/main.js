@@ -69,3 +69,30 @@ Object.min = function(obj, fct) {
 
     return min;
 };
+
+Object.max = function(obj, fct) {
+    var max = undefined;
+
+    for (var k in obj) {
+        var val = fct(obj[k], obj);
+        if (val > max || max == undefined)
+            max = val
+    }
+
+    return max;
+};
+
+Object.smallest = function(obj, fct) {
+    var min = undefined;
+    var key = undefined;
+
+    for (var k in obj) {
+        var val = fct(obj[k], obj);
+        if (val < min || min == undefined) {
+            min = val;
+            key = k;
+        }
+    }
+
+    return key;
+};
