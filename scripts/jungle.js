@@ -470,7 +470,7 @@ function addAffixRating(row, item) {
             var highestForItemLevel = true;
             var highestInGroup      = true;
 
-            var highestAffixLevel = Math.floor(getRequirement(item, "Level") / 0.8 + 1);
+            var highestAffixLevel = Math.floor(parseInt(getRequirement(item, "Level")) / 0.8 + 1);
 
             Object.forEach(affix.group.affixes, function (alternative) {
                if (alternative.level > affix.level) {
