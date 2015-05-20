@@ -147,7 +147,7 @@ var PoEData = (function() {
 			if (data.ajax.character_data[i].state != "success")
 				return false;
 		for (var i = 0; i < data.ajax.stash_data.length; ++i)
-			if (data.ajax.stash_data[i].state != "success")
+			if (!data.ajax.stash_data[i] || data.ajax.stash_data[i].state != "success")
 				return false;
 		return true;
 	}
