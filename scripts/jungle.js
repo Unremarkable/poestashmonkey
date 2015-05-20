@@ -160,7 +160,15 @@ var PoEData = (function() {
 		}
 	}
 	
-	var accountName = prompt("Account name");
+	var accountNameCookie = document.cookie.match('(^|;)?stashMonkeyAccountName=([^;]*)(;|$)');
+    
+	if (accountNameCookie) {
+		var accountName = accountNameCookie[2] 
+		console.log("Account name " + accountName + " loaded from cookie.")
+	} else {
+		var accountName = prompt("Account name");
+		document.cookie = 'stashMonkeyAccountName=' + accountName
+	}
 	
 	data.receive_character_metadata = function(metadata) {
 		data.ajax.character_data = new Array(metadata.length);
