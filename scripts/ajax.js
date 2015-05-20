@@ -3,6 +3,10 @@ var numberOfTabs = 0;
 var stashMetaData = {};
 
 function receiveStashData(league, tab, data) {
+    if (typeof stashData[league] === "undefined") stashData[league] = {};
+	console.log(league, tab, data);
+	console.log(stashMetaData);
+	
 	for (var i = 0; i < data.items.length; ++i)
 		data.items[i].inventoryId = stashMetaData[league][tab].n;
 
@@ -74,6 +78,14 @@ function setCharacterCache(name, value) {
 	});
 }
 
+function receiveCharacterData(league, name, data) {
+	for (var i = 0; i < data.items.length; ++i) {
+		data.items[i].inventoryId = name + "'s " + data.items[i].inventoryId;
+	}
+	setCharacterCache(name, data);
+	receiveItemData(data.items);
+}
+
 function requestCharacterData(league) {
 	$.ajax("http://www.pathofexile.com/character-window/get-characters")
 	.done(function(charlist) {
@@ -93,11 +105,7 @@ function requestCharacterData(league) {
 						}
 					})
 					.done(function(data) {
-						for (var i = 0; i < data.items.length; ++i) {
-							data.items[i].inventoryId = name + "'s " + data.items[i].inventoryId;
-						}
-						setCharacterCache(name, data);
-						receiveItemData(data.items);
+						receiveCharacterData(league, name, data);
 					});
 				})(name);
 			}

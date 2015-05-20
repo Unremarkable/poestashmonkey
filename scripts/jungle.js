@@ -155,7 +155,7 @@ var PoEData = (function() {
 	function finish() {
 		if (data.finished()) {
 			console.log("Done!");
-			data.ui.base.css("display","none");
+			data.ui.base.css("display", "none");
 			receiveStashDataFinished();
 		}
 	}
@@ -167,7 +167,7 @@ var PoEData = (function() {
 		for (var i = 0; i < metadata.length; ++i) {
 			var name = metadata[i].name;
 			if (typeof data.ajax.character_data[i] === "undefined")
-				data.ajax.character_data[i] = new Ajaxable(name, { "url": "http://www.pathofexile.com/character-window/get-items", "data" : { "character" : name, "accountName" : accountName } }, data.receive_character_data);
+				data.ajax.character_data[i] = new Ajaxable(name, { "url": "http://www.pathofexile.com/character-window/get-items", "data" : { "character" : name, "accountName" : accountName } }, (function(k) { return function (r) { data.receive_character_data(r, k); }; })(name));
 			data.ui.character_data.append($("<li></li>").append(data.ajax.character_data[i].dom));
 		
 			data.ajax.character_data[i].request();
@@ -175,10 +175,12 @@ var PoEData = (function() {
 	}
 	
 	data.receive_stash_metadata = function(metadata) {
+		stashMetaData["Standard"] = metadata.tabs;	// legacy
+		
 		data.ajax.stash_data = new Array(metadata.tabs.length);
 		for (var i = 0; i < metadata.tabs.length; ++i) {
 			var tab = metadata.tabs[i];
-			data.ajax.stash_data[i] = new Ajaxable(tab.n, { url: "http://www.pathofexile.com/character-window/get-stash-items", data: { "league": "Standard", "tabs": 0, "tabIndex": i } },	data.receive_stash_data);
+			data.ajax.stash_data[i] = new Ajaxable(tab.n, { url: "http://www.pathofexile.com/character-window/get-stash-items", data: { "league": "Standard", "tabs": 0, "tabIndex": i } },	(function(k) { return function(r) { data.receive_stash_data(r, k); }; })(i));
 			data.ui.stash_data.append($("<li></li>").append(data.ajax.stash_data[i].dom));
 			if (i == 0) {
 				data.ajax.stash_data[0].setState("success");
@@ -187,18 +189,19 @@ var PoEData = (function() {
 				data.ajax.stash_data[i].request();
 			}
 		}
-		data.receive_stash_data(metadata);
 	}
 	
-	data.receive_character_data = function(result) {
-		console.log(result);
-		receiveItemData(result.items);
+	data.receive_character_data = function(result, name) {
+	//	console.log(result);
+	//	receiveItemData(result.items);
+		receiveCharacterData("Standard", name, result);
 		finish();
 	}
 	
-	data.receive_stash_data = function(result) {
-		console.log(result);
-		receiveItemData(result.items);
+	data.receive_stash_data = function(result, tab) {
+	//	console.log(result);
+	//	receiveItemData(result.items);
+		receiveStashData("Standard", tab, result);
 		finish();
 	}
 
