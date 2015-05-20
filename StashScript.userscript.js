@@ -8,7 +8,7 @@
 // @grant       none
 // ==/UserScript==
 
-var BASE_URL = "https://raw.github.com/Unremarkable/poestashmonkey/master"
+var BASE_URL = "https://rawgithub.com/Unremarkable/poestashmonkey/master"
 
 $.getScript(BASE_URL+"/scripts/main.js", function() {
     main(BASE_URL);

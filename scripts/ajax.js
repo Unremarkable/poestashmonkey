@@ -88,7 +88,8 @@ function requestCharacterData(league) {
 				(function(name) {
 					$.ajax("http://www.pathofexile.com/character-window/get-items", {
 						"data" : {
-							"character" : name
+							"character" : name,
+							"accountName" : "Unremarkable"
 						}
 					})
 					.done(function(data) {
