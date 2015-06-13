@@ -19,13 +19,13 @@ function handleSearching() {
     $("#searchBox").keyup(function() {
 //		$("tr.itemRow").removeClass("searchFilter");
 //		$("tr.itemRow:not(:containsIgnoreCase('" + $(this).find("input").val() +"'))").addClass("searchFilter");
-        search($(this).find("input").val());
+        search($(this).val());
     });
 
-    $("#searchBox #clearSearch").click(function() {
+    $("#clearSearch").click(function() {
         $(".stash").hide();
         $("tr").show();
-        $("#searchBox input").val("");
+        $("#searchBox").val("");
 
         showTableForSelectedTab();
 //		$("#searchBox input").val("");

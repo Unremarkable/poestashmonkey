@@ -14,7 +14,7 @@ function insertStylesheet() {
     var style = window.document.createElement("link");
 	style.rel = "stylesheet";
 	style.type="text/css";
-	style.href=BASE_URL+"/css/main.css?_v=4";
+	style.href=BASE_URL+"/css/main.css?_v=5";
     $("head")[0].appendChild(style);
 }
 
@@ -977,9 +977,15 @@ function newCell() {
 
 function buildPage() {
     var title = "<h1>Stash Inventory</h1>";
-    var searchBox = "<form onSubmit='return false;' id='searchBox'><input type='text' placeholder='Search...' /><div id='clearSearch'>x</div></form>";
+    var searchBox = "<div id='searchBoxContainer'><input id='searchBox' type='text' placeholder='Search...' autofocus /><div id='clearSearch'>x</div></div>";
     var infoBox = "<div id='infoBox'></div>";
     $("body").html("<div>" + title + searchBox + infoBox + "</div>");
+
+    $("body").keypress(function(e) {
+        if (!$("#searchBox").is(":focus")) {
+            $("#searchBox").focus();
+        }
+    });
 
 	var tabView = $("<div></div>").attr("id", "tabView");
 	tabView.append($("<ul></ul>").attr("id", "tabNames"));

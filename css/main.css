@@ -101,13 +101,13 @@ h1, h2 {
 
 #infoBox #capacityUsed { color: #a38d6d; }
 
-#searchBox {
+#searchBoxContainer {
 	position: absolute;
 	right: 270px;
 	top: 10px;
 }
 
-#searchBox input {
+#searchBox {
 	padding: 4px;
 	padding-right: 20px;
 	width: 220px;

@@ -1,6 +1,5 @@
 function main(baseURL) {
     window.BASE_URL = baseURL || "https://raw.github.com/Unremarkable/poestashmonkey/master";
-	
     var timestamp = new Date().getTime();
 
     $.getScript("http://requirejs.org/docs/release/2.1.9/minified/require.js")
