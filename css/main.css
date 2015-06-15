@@ -80,23 +80,26 @@ h1, h2 {
 }
 
 #infoBox {
-	color:#8DA36D;
+	color:#4D632D;
 	font-size: 10px;
-	height: 50px;
 	overflow:hidden;
 	position: absolute;
 	right: 10px;
 	top: 10px;
-    text-align:right;
+	text-align:right;
 	width: 250px;
+	z-index: -1;
 }
 
 #infoBox:hover {
     background-color: #1a1812;
     border: 1px solid #a38d6d;
-    border-radius: 8px;
+    border-radius: 4px;
+    color:#8DA36D;
     overflow: visible;
-    padding: 19px;
+    margin: -6px;
+    padding: 5px;
+    z-index: 10;
 }
 
 #infoBox #capacityUsed { color: #a38d6d; }
