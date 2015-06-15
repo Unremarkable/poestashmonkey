@@ -88,5 +88,5 @@ function handleSorting() {
 }
 
 function getSortValue(row, col) {
-    return $(row).find("td." + col + " input[name='sortValue']").val() || 0;
+    return $(row).find("td." + col).attr("data-sortValue") || 0;
 }
