@@ -3,7 +3,7 @@ function main(baseURL) {
 	
     var timestamp = new Date().getTime();
 
-    $.getScript("http://requirejs.org/docs/release/2.1.9/minified/require.js")
+    $.getScript("https://requirejs.org/docs/release/2.1.9/minified/require.js")
         .done(function() {
             require([
                     BASE_URL+"/scripts/ajax.js?_v="+timestamp,
