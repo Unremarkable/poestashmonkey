@@ -14,7 +14,8 @@ function insertStylesheet() {
     var style = window.document.createElement("link");
 	style.rel = "stylesheet";
 	style.type="text/css";
-	style.href=BASE_URL+"/css/main.css?_v=4";
+	var timestamp = new Date().getTime();
+	style.href=BASE_URL+"/css/main.css?_v=" + timestamp;
     $("head")[0].appendChild(style);
 }
 
@@ -294,15 +295,13 @@ function createRowFor(item, table) {
 			"CPS":     addCPS,
 			"Inc":     addpIncreaseDPS,
 			"eDMG":    addItemElementalDamage,
+			"Rarity":  addIncreasedRarity,
             "AffixRating": addAffixRating
 		})[table.columns[c]](row, item);
 	}
 
 	table.dom.appendChild(row);
 }
-
-var currency = [];
-var itemNames = [];
 
 function receiveItemData(items) {
 	prepareItems(items);
@@ -353,15 +352,7 @@ function receiveItemData(items) {
 	}
 }
 
-function addNameToList(name) {
-	if (name) {
-		var count = 1;
-		if (itemNames[name]) {
-			count += itemNames[name];
-		}
-		itemNames[name] = count;
-	}
-}
+var currency = [];
 
 function receiveStashDataFinished() {
 	for (var item in currency) {
@@ -377,38 +368,6 @@ function receiveStashDataFinished() {
 
     showCapacityUsed();
 	showAnyItemNameRepeats();
-}
-
-// The capacity is based on how much space all of the items in the stash tabs take up.
-function showCapacityUsed() {
-    var capacityUsed = 0;
-    var totalTabs = 0;
-
-    for (var league in stashData) {
-        for (var tab in stashData[league]) {
-            totalTabs++;
-            var items = stashData[league][tab].items;
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                capacityUsed += item.w * item.h;
-            }
-        }
-    }
-
-    var capacityUtilized = Math.round(capacityUsed / (totalTabs * 144) * 100);
-    $("#infoBox").append("<div id='capacityUsed'>Capacity Utilized: " + capacityUtilized + "% (across " + totalTabs + " tabs)</div>");
-}
-
-function showAnyItemNameRepeats() {
-	var duplicates = "";
-	for (var name in itemNames) {
-		if (itemNames[name] > 1) {
-			duplicates = duplicates + name + " (" + itemNames[name] + ") ";
-		}
-	}
-	if (duplicates.length > 0) {
-		$("#infoBox").append("<div id='duplicates'>Item name repeats: " + duplicates + "</div>");
-	}
 }
 
 function addCurrency(item) {
@@ -453,9 +412,9 @@ function changeImageStackSize(imgLink, n) {
 
 var basicColumns = ["Icon", "Name", "Level"];
 var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist", "AffixRating"]);
-var accesoriesColumnsWithDamage = accesoriesColumns.concat(["eDMG"]);
+var accesoriesColumnsWithDamage = accesoriesColumns.concat(["eDMG", "Rarity"]);
 var advancedColumns = basicColumns.concat(["Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AffixRating"]);
-var gearColumns =  advancedColumns.concat(["AR", "EV", "ES", "tResist", "eDMG"]);
+var gearColumns =  advancedColumns.concat(["AR", "EV", "ES", "tResist", "eDMG", "Rarity"]);
 
 var tables = {
 	"gems": {
@@ -686,6 +645,22 @@ function addItemElementalDamage(row, item) {
 	appendNewCellWithTextAndClass(row, (eDMG[0] || eDMG[1]) ? eDMG[0]+"-"+eDMG[1] : 0, "edmg", eDMG[0] + eDMG[1]);
 }
 
+function getRarityIncreaseForMods(mods) {
+	var rarityType = "#% increased Rarity of Items found";
+
+	var rarityIncrease = 0;
+	var mod = mods[rarityType];
+	if (mod) {
+		rarityIncrease = parseInt(mod.values[0]);
+	}
+	return rarityIncrease;
+}
+
+function addIncreasedRarity(row, item) {
+	var rarityIncrease = getRarityIncreaseForMods(item.explicitMods) + getRarityIncreaseForMods(item.implicitMods);
+	appendNewCellWithTextAndClass(row, rarityIncrease, "rarity", rarityIncrease);
+}
+
 function addAffixRating(row, item) {
     if (item.affixes && item.affixes.length > 0) {
         var average = (item.affixes.reduce(function (sum, affix) {
@@ -865,7 +840,6 @@ function createModsCell(row, item) {
 
 function getModFormat(mod) {
     return "<span>" + mod.description + "</span>";
-
 }
 
 function getModsText(mods) {
@@ -952,10 +926,8 @@ function createRequirementCell(row, item, reqName) {
 function appendNewCellWithTextAndClass(row, text, className, sortValue) {
     var td = newCell();
     td.className = className;
-//    if (text) {
-        var sortBlurb = sortValue ? "<input type='hidden' name='sortValue' value='" + sortValue + "' />" : "";
-        td.innerHTML = sortBlurb + text;
-  //  }
+    $(td).attr("data-sortValue", sortValue);
+    td.innerHTML = text;
     row.appendChild(td);
     return td;
 }
@@ -977,9 +949,15 @@ function newCell() {
 
 function buildPage() {
     var title = "<h1>Stash Inventory</h1>";
-    var searchBox = "<form onSubmit='return false;' id='searchBox'><input type='text' placeholder='Search...' /><div id='clearSearch'>x</div></form>";
+    var searchBox = "<div id='searchBoxContainer'><input id='searchBox' type='text' placeholder='Search...' autofocus /><div id='clearSearch'>x</div></div>";
     var infoBox = "<div id='infoBox'></div>";
     $("body").html("<div>" + title + searchBox + infoBox + "</div>");
+
+    $("body").keypress(function(e) {
+        if (!$("#searchBox").is(":focus")) {
+            $("#searchBox").focus();
+        }
+    });
 
 	var tabView = $("<div></div>").attr("id", "tabView");
 	tabView.append($("<ul></ul>").attr("id", "tabNames"));
