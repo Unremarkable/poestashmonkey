@@ -2,7 +2,7 @@ function main(baseURL) {
     window.BASE_URL = baseURL || "https://raw.github.com/Unremarkable/poestashmonkey/master";
     var timestamp = new Date().getTime();
 
-    $.getScript("https://requirejs.org/docs/release/2.1.9/minified/require.js")
+    $.getScript("https://rawgit.com/Unremarkable/poestashmonkey/master/scripts/require.js")
         .done(function() {
             require([
                     BASE_URL+"/scripts/ajax.js?_v="+timestamp,
