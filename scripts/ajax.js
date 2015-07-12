@@ -19,7 +19,7 @@ function requestStashData(league, tab) {
     if (typeof stashData[league] === "undefined") stashData[league] = {};
 
     function ajax(league, tab, metadata) {
-        return $.ajax("http://www.pathofexile.com/character-window/get-stash-items", {
+        return $.ajax("https://www.pathofexile.com/character-window/get-stash-items", {
             data: {
                 "league": league,
                 "tabs": metadata ? 1 : 0,
@@ -87,7 +87,7 @@ function receiveCharacterData(league, name, data) {
 }
 
 function requestCharacterData(league) {
-	$.ajax("http://www.pathofexile.com/character-window/get-characters")
+	$.ajax("https://www.pathofexile.com/character-window/get-characters")
 	.done(function(charlist) {
 		for (var i = 0; i < charlist.length; ++i) {
 			if (charlist[i]["league"] != league)
@@ -98,7 +98,7 @@ function requestCharacterData(league) {
 				receiveItemData(cache.items);
 			} else {
 				(function(name) {
-					$.ajax("http://www.pathofexile.com/character-window/get-items", {
+					$.ajax("https://www.pathofexile.com/character-window/get-items", {
 						"data" : {
 							"character" : name,
 							"accountName" : "Unremarkable"
