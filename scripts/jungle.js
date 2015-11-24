@@ -96,7 +96,7 @@ var Ajaxable = function(text, ajax, callback) {
 			case "error":   self.dom.css('color', 'red'); break;
 		}
 		self.state = state;
-	}
+	};
 	
 	self.dom = $("<span></span>");
 	self.dom.text(text);
@@ -125,7 +125,7 @@ var Ajaxable = function(text, ajax, callback) {
 				})*/
 				.fail(function() {
 				//	Shouldn't fail.  Something messed up!
-				})
+				});
 		}
 	};
 	
@@ -133,8 +133,8 @@ var Ajaxable = function(text, ajax, callback) {
 		console.log("Will retry in " + self.timeout + "ms.");
 		setTimeout(self.request, self.timeout);
 		self.timeout = Math.min(self.timeout * 2, 32000);
-	}
-}
+	};
+};
 
 var PoEData = (function() {
 	var data = {};
@@ -151,7 +151,7 @@ var PoEData = (function() {
 			if (!data.ajax.stash_data[i] || data.ajax.stash_data[i].state != "success")
 				return false;
 		return true;
-	}
+	};
 	
 	function finish() {
 		if (data.finished()) {
@@ -164,8 +164,8 @@ var PoEData = (function() {
 	var accountNameCookie = document.cookie.match('(^|;)?stashMonkeyAccountName=([^;]*)(;|$)');
     
 	if (accountNameCookie) {
-		var accountName = accountNameCookie[2] 
-		console.log("Account name " + accountName + " loaded from cookie.")
+		var accountName = accountNameCookie[2];
+		console.log("Account name " + accountName + " loaded from cookie.");
 	} else {
 		var accountName = prompt("Account name");
 		document.cookie = 'stashMonkeyAccountName=' + accountName
@@ -181,7 +181,7 @@ var PoEData = (function() {
 		
 			data.ajax.character_data[i].request();
 		}
-	}
+	};
 	
 	data.receive_stash_metadata = function(metadata) {
 		stashMetaData["Standard"] = metadata.tabs;	// legacy
@@ -198,21 +198,21 @@ var PoEData = (function() {
 				data.ajax.stash_data[i].request();
 			}
 		}
-	}
+	};
 	
 	data.receive_character_data = function(result, name) {
 	//	console.log(result);
 	//	receiveItemData(result.items);
 		receiveCharacterData("Standard", name, result);
 		finish();
-	}
+	};
 	
 	data.receive_stash_data = function(result, tab) {
 	//	console.log(result);
 	//	receiveItemData(result.items);
 		receiveStashData("Standard", tab, result);
 		finish();
-	}
+	};
 
 	data.ajax = {};
 	data.ajax.character_metadata = new Ajaxable("Character List", { url: "https://www.pathofexile.com/character-window/get-characters" }, data.receive_character_metadata);
@@ -309,7 +309,7 @@ function receiveItemData(items) {
 	for (var i = 0; i < items.length; ++i) {
 		var item = items[i];
 		var itemType = item.frameType;
-		var name = item.typeLine
+		var name = item.typeLine;
 		addNameToList(item.name);
 
 		// note, frameType 6 are green items (ie in game things like "Sewer Keys")
@@ -604,6 +604,8 @@ function prepareItems(items) {
 
         item.baseItem = getBaseItem(item);
 
+        item.typeLine = removeStrangeCharacters(item.typeLine);
+        item.name = removeStrangeCharacters(item.name);
 
         if (item.properties) {
             var temp = item.properties;
@@ -638,6 +640,11 @@ function prepareItems(items) {
             }
         }
     }
+}
+
+function removeStrangeCharacters(text) {
+	var parts = text.split("<<set:MS>><<set:M>><<set:S>>");
+	return parts[parts.length -1];
 }
 
 function addItemElementalDamage(row, item) {
