@@ -168,7 +168,7 @@ var PoEData = (function() {
 		console.log("Account name " + accountName + " loaded from cookie.");
 	} else {
 		var accountName = prompt("Account name");
-		document.cookie = 'stashMonkeyAccountName=' + accountName
+		document.cookie = 'stashMonkeyAccountName=' + accountName;
 	}
 	
 	data.receive_character_metadata = function(metadata) {
@@ -296,7 +296,8 @@ function createRowFor(item, table) {
 			"Inc":     addpIncreaseDPS,
 			"eDMG":    addItemElementalDamage,
 			"Rarity":  addIncreasedRarity,
-            "AffixRating": addAffixRating
+            "AffixRating": addAffixRating,
+            "MapTier": addMapTier
 		})[table.columns[c]](row, item);
 	}
 
@@ -485,7 +486,7 @@ var tables = {
 	"maps": {
 		"name":    "Maps",
 		"idName":  "maps",
-		"columns": ["Icon", "Name", "Mods", "Quality"]
+		"columns": ["Icon", "Name", "MapTier", "Quality", "Mods"]
 	},
 	"uncategorized": {
 		"name":    "Uncategorized",
@@ -515,7 +516,7 @@ function isWeapon(item) { return (item.properties["Physical Damage"]); }
 
 function isShield(item) { return (item.properties["Chance to Block"]); }
 
-function isMap(item) { return (item.properties["Map Level"]); }
+function isMap(item) { return (item.properties["Map Tier"]); }
 
 function parseMods(descriptions) {
     var mods = {};
@@ -626,7 +627,7 @@ function prepareItems(items) {
             item.affixes = item.affixCombinations[Object.smallest(item.affixCombinations, function(combination) {
                 return Object.max(combination, function(affix) {
                     return affix.level;
-                })
+                });
             })];
         }
 
@@ -765,6 +766,11 @@ function addTotalResistances(row, item) {
 	appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "inc", pIncreaseDps);
  }
 
+function addMapTier(row, item) {
+   var mapTier  = item.properties["Map Tier"] ? parseInt(item.properties["Map Tier"].values[0]) : 0;
+   appendNewCellWithTextAndClass(row, mapTier, "mapTier", mapTier);
+}
+
 function createHeaders(table, headers) {
     var headerRow = newRow();
     headerRow.id = "headerRow";
@@ -838,7 +844,7 @@ function createModsCell(row, item) {
 		if (explicit.length > 0)
 			html += "<div class='explicit'>"+explicit+"</div>";
 		else
-			html += "<div class='unidentified'>UNIDENTIFIED</div>"
+			html += "<div class='unidentified'>UNIDENTIFIED</div>";
 	}
 
     td.innerHTML = html;
@@ -869,7 +875,6 @@ function createSocketsCell(row, item) {
 
     if (item.sockets) {
 		var groups = [];
-		var total  = 0;
 
 		for (var i = 0; i < item.sockets.length; ++i) {
 			var socket = item.sockets[i];
