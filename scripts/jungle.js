@@ -297,7 +297,10 @@ function createRowFor(item, table) {
 			"eDMG":    addItemElementalDamage,
 			"Rarity":  addIncreasedRarity,
             "AffixRating": addAffixRating,
-            "MapTier": addMapTier
+            "MapTier": addMapTier,
+            "Description": addDescription,
+            "SkillType": addSkillType,
+            "Support": addSupport
 		})[table.columns[c]](row, item);
 	}
 
@@ -429,7 +432,7 @@ var tables = {
 	"gems": {
 		"name":    "Gems",
 		"idName":  "gems",
-		"columns": basicColumns.concat(["Str", "Int", "Dex", "Quality", "Mods"])
+		"columns": basicColumns.concat(["Str", "Int", "Dex", "Quality", "Support", "SkillType", "Mods", "Description"])
 	},
 	"jewels": {
 		"name":    "Jewels",
@@ -780,8 +783,32 @@ function addTotalResistances(row, item) {
  }
 
 function addMapTier(row, item) {
-   var mapTier  = item.properties["Map Tier"] ? parseInt(item.properties["Map Tier"].values[0]) : 0;
-   appendNewCellWithTextAndClass(row, mapTier, "mapTier", mapTier);
+    var mapTier  = item.properties["Map Tier"] ? parseInt(item.properties["Map Tier"].values[0]) : 0;
+    appendNewCellWithTextAndClass(row, mapTier, "mapTier", mapTier);
+}
+
+function addDescription(row, item) {
+	var text = item.secDescrText ? item.secDescrText : "";
+    appendNewCellWithTextAndClass(row, text, "description", text);
+}
+
+function addSupport(row, item) {
+	var text = item.support ? "Support" : "";
+    appendNewCellWithTextAndClass(row, text, "support", text);
+}
+
+function addSkillType(row, item) {
+    var text = "";
+    for (var property in item.properties) {
+        // need to identify names like "Totem, Aura, Spell, AoE, Duration"
+        // unless we build a list of expected values we could potentially look for presence of a comma
+        // right now this seems to be the only requirement without values
+        if (item.properties[property].values.length == 0) {
+            text = property;
+        }
+    }
+
+    appendNewCellWithTextAndClass(row, text, "skillType", text);
 }
 
 function createHeaders(table, headers) {

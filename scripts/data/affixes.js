@@ -108,6 +108,8 @@ function getCombosWithValidStats(item, potentialCombinations) {
                 });
             });
 
+            if (!mod.values) return false;
+
             var isInLowRange = mod.values[0] >= loLo && mod.values[0] <= loHi;
             var isInHighRange = mod.values.length == 1 || mod.values[1] >= hiLo && mod.values[1] <= hiHi;
 
