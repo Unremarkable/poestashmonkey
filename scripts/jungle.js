@@ -313,7 +313,8 @@ function receiveItemData(items) {
 		var name = item.typeLine;
 		addNameToList(item.name);
 
-		// note, frameType 6 are green items (ie in game things like "Sewer Keys")
+		// note, frameType 6 are green items (ie in game things like "Sewer Keys"), ALSO divination cards
+		// Sacrifices are frameType 1
 
 		if (itemType == 5) {
 			addCurrency(item);
@@ -345,6 +346,8 @@ function receiveItemData(items) {
 			} else if (isWeapon(item)) {
 				item.weaponInfo = getWeaponInfo(item);	// HACK
 				createRowFor(item, tables["weapons"]);
+			} else if (isJewel(item)) {
+				createRowFor(item, tables["jewels"]);
 			} else {
 				createRowFor(item, tables["uncategorized"]);
 				console.log("Uncategorized Item", item);
@@ -418,15 +421,20 @@ var advancedColumns = basicColumns.concat(["Str", "Int", "Dex", "Quality", "Sock
 var gearColumns =  advancedColumns.concat(["AR", "EV", "ES", "tResist", "eDMG", "Rarity"]);
 
 var tables = {
+	"currency": {
+		"name":    "Currency",
+		"idName":  "currency",
+		"columns": ["Icon", "Quantity", "Name", "Mods"]
+	},
 	"gems": {
 		"name":    "Gems",
 		"idName":  "gems",
 		"columns": basicColumns.concat(["Str", "Int", "Dex", "Quality", "Mods"])
 	},
-	"currency": {
-		"name":    "Currency",
-		"idName":  "currency",
-		"columns": ["Icon", "Quantity", "Name", "Mods"]
+	"jewels": {
+		"name":    "Jewels",
+		"idName":  "jewels",
+		"columns": ["Icon", "Name", "Mods"]
 	},
 	"flasks": {
 		"name":    "Flasks",
@@ -505,6 +513,8 @@ function isAmulet(name) { return getItemBaseName(name, amulets); }
 
 function isQuiver(name) { return name.match(/Quiver/) != null; }
 function isBelt(name) { return name.match(/Belt|Sash/) != null; }
+
+function isJewel(name) { return name.match(/Jewel/) != null; }
 
 function isGloves(name) { return name.match(/Mitts|Gloves|Gauntlets/) != null; }
 function isBoots(name) { return name.match(/Boots|Slippers|Shoes|Greaves/) != null; }
@@ -644,6 +654,9 @@ function prepareItems(items) {
 }
 
 function removeStrangeCharacters(text) {
+	if (!text) {
+		return null;
+	}
 	var parts = text.split("<<set:MS>><<set:M>><<set:S>>");
 	return parts[parts.length -1];
 }
