@@ -346,7 +346,7 @@ function receiveItemData(items) {
 			} else if (isWeapon(item)) {
 				item.weaponInfo = getWeaponInfo(item);	// HACK
 				createRowFor(item, tables["weapons"]);
-			} else if (isJewel(item)) {
+			} else if (isJewel(name)) {
 				createRowFor(item, tables["jewels"]);
 			} else {
 				createRowFor(item, tables["uncategorized"]);
