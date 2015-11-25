@@ -300,7 +300,10 @@ function createRowFor(item, table) {
             "MapTier": addMapTier,
             "Description": addDescription,
             "SkillType": addSkillType,
-            "Support": addSupport
+            "Support": addSupport,
+            "GemLevel": addGemLevel,
+            "ManaCost": addManaCost,
+            "CastTime": addCastTime
 		})[table.columns[c]](row, item);
 	}
 
@@ -432,7 +435,7 @@ var tables = {
 	"gems": {
 		"name":    "Gems",
 		"idName":  "gems",
-		"columns": basicColumns.concat(["Str", "Int", "Dex", "Quality", "Support", "SkillType", "Mods", "Description"])
+		"columns": basicColumns.concat(["GemLevel", "Str", "Int", "Dex", "Quality", "ManaCost", "CastTime", "Support", "SkillType", "Mods", "Description"])
 	},
 	"jewels": {
 		"name":    "Jewels",
@@ -783,7 +786,7 @@ function addTotalResistances(row, item) {
  }
 
 function addMapTier(row, item) {
-    var mapTier  = item.properties["Map Tier"] ? parseInt(item.properties["Map Tier"].values[0]) : 0;
+    var mapTier = item.properties["Map Tier"] ? parseInt(item.properties["Map Tier"].values[0]) : 0;
     appendNewCellWithTextAndClass(row, mapTier, "mapTier", mapTier);
 }
 
@@ -794,7 +797,28 @@ function addDescription(row, item) {
 
 function addSupport(row, item) {
 	var text = item.support ? "Support" : "";
-    appendNewCellWithTextAndClass(row, text, "support", text);
+	var sortValue = item.support ? 1 : 0;
+    appendNewCellWithTextAndClass(row, text, "support", sortValue);
+}
+
+function getValueForProperty(item, propertyName) {
+	var property = item.properties[propertyName];
+	return property ? property.values[0][0] : "";
+}
+
+function addGemLevel(row, item) {
+	var value = getValueForProperty(item, "Level");
+    appendNewCellWithTextAndClass(row, value, "gemLevel", value);
+}
+
+function addManaCost(row, item) {
+	var value = getValueForProperty(item, "Mana Cost");
+    appendNewCellWithTextAndClass(row, value, "manaCost", value);
+}
+
+function addCastTime(row, item) {
+	var value = getValueForProperty(item, "Cast Time");
+    appendNewCellWithTextAndClass(row, value, "castTime", value.split(" ")[0]);
 }
 
 function addSkillType(row, item) {
@@ -969,10 +993,11 @@ function createLevelCell(row, item) {
 //        console.log("cmp", item, req, old, mistake_count++);
 //    appendNewCellWithTextAndClass(row, req, "level", req);
 }
+
 var mistake_count = 0;
 function createRequirementCell(row, item, reqName) {
     var req = getRequirement(item, reqName);
-    appendNewCellWithTextAndClass(row, req, reqName.toLowerCase(), req);
+    appendNewCellWithTextAndClass(row, req, reqName.toLowerCase().replace(" ", ""), req);
 }
 
 function appendNewCellWithTextAndClass(row, text, className, sortValue) {
