@@ -38,8 +38,8 @@ function search(searchString) {
     $("tr").hide();
     removeTermHighlighting();
 
-    var andSearch = searchString.contains("AND");
-    var orSearch = searchString.contains("OR");
+    var andSearch = searchString.match(/AND/) != null;
+    var orSearch = searchString.match(/OR/) != null;
     if (searchString.length == 0 || andSearch && orSearch) {
         return;
     }
@@ -87,7 +87,7 @@ function termsContainedInText(searchTerms, text) {
     var termsContained = 0;
     for (var i = 0; i < searchTerms.length; i++) {
         var term = searchTerms[i];
-        if (text.contains(term)) {
+        if (text.match(new RegExp(term, 'g'))) {
             termsContained++;
         }
     }
