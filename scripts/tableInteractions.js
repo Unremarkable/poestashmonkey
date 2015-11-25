@@ -36,13 +36,52 @@ function handleSearching() {
 function search(searchString) {
     $(".stash").show();
     $("tr").hide();
-    $("tr:containsIgnoreCase('" + searchString + "')").show();
-    $("#tabNames .selected").removeClass("selected");
 
+    var andSearch = searchString.contains("AND");
+    var andSearchTerms = searchString.split("AND");
+    var orSearch = searchString.contains("OR");
+    var orSearchTerms = searchString.split("OR");
+
+    if (andSearch && orSearch) {
+        return; // cannot handle both at the same time
+    }
+
+    $("tr").each(function(index, row) {
+        var $row = $(row);
+        var text = $row.html().toLowerCase();
+
+        if (orSearch) {
+            for (var i = 0; i < orSearchTerms.length; i++) {
+                var term = orSearchTerms[i].trim();
+                if (text.contains(term)) {
+                    $row.show();
+                }
+            }
+        } else if (andSearch) {
+            var containsAllTerms = true;
+            for (var i = 0; i < andSearchTerms.length; i++) {
+                var term = andSearchTerms[i].trim();
+                if (!text.contains(term)) {
+                    containsAllTerms = false;
+                }
+            }
+            if (containsAllTerms) {
+                $row.show();
+            }
+        } else if (text.contains(searchString)) {
+            $row.show();
+        }
+    });
+
+    $("#tabNames .selected").removeClass("selected");
     var tablesWithRowsInSearch = $("table.stash tr:visible").parents("table.stash");
     $(".stash").hide();
     tablesWithRowsInSearch.show();
     tablesWithRowsInSearch.find("#headerRow").show();
+}
+
+function showRowsWithTerm(term) {
+	$("tr:containsIgnoreCase('" + term + "')").show();
 }
 
 function showTableForSelectedTab() {
