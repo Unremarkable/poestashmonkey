@@ -245,3 +245,9 @@ table.stash .lightning { color: #e1be00; }
 }
 
 li[href='#uncategorized'] { display: none; }
+
+.searchHighlight {
+	background-color: #DFCF99;
+	color: #211F18;
+	padding: 0 1px;
+}

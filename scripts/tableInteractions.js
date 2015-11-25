@@ -16,11 +16,12 @@ function handleTabSwitching() {
 }
 
 function handleSearching() {
-    $("#searchBox").keyup(function() {
-//		$("tr.itemRow").removeClass("searchFilter");
-//		$("tr.itemRow:not(:containsIgnoreCase('" + $(this).find("input").val() +"'))").addClass("searchFilter");
-        search($(this).val());
-    });
+	$("#searchBox").keypress(function(e) {
+		var code = (e.keyCode ? e.keyCode : e.which);
+		if (code == 13) { // Enter keycode
+			search($(this).val());
+		}
+	});
 
     $("#clearSearch").click(function() {
         $(".stash").hide();
@@ -28,47 +29,29 @@ function handleSearching() {
         $("#searchBox").val("");
 
         showTableForSelectedTab();
-//		$("#searchBox input").val("");
-//		$("tr.itemRow").removeClass("searchFilter");
+        removeTermHighlighting();
     });
 }
 
 function search(searchString) {
     $(".stash").show();
     $("tr").hide();
+    removeTermHighlighting();
 
     var andSearch = searchString.contains("AND");
-    var andSearchTerms = searchString.split("AND");
     var orSearch = searchString.contains("OR");
-    var orSearchTerms = searchString.split("OR");
-
-    if (andSearch && orSearch) {
-        return; // cannot handle both at the same time
+    if (searchString.length == 0 || andSearch && orSearch) {
+        return;
     }
 
+    var searchTerms = prepareSearchTerms(searchString, andSearch, orSearch);
     $("tr").each(function(index, row) {
         var $row = $(row);
         var text = $row.html().toLowerCase();
+        var termsContained = termsContainedInText(searchTerms, text);
 
-        if (orSearch) {
-            for (var i = 0; i < orSearchTerms.length; i++) {
-                var term = orSearchTerms[i].trim();
-                if (text.contains(term)) {
-                    $row.show();
-                }
-            }
-        } else if (andSearch) {
-            var containsAllTerms = true;
-            for (var i = 0; i < andSearchTerms.length; i++) {
-                var term = andSearchTerms[i].trim();
-                if (!text.contains(term)) {
-                    containsAllTerms = false;
-                }
-            }
-            if (containsAllTerms) {
-                $row.show();
-            }
-        } else if (text.contains(searchString)) {
+        if (termsContained > 0 && !andSearch || termsContained == searchTerms.length) {
+            highlightTermsInRow(searchTerms, $row);
             $row.show();
         }
     });
@@ -80,8 +63,52 @@ function search(searchString) {
     tablesWithRowsInSearch.find("#headerRow").show();
 }
 
-function showRowsWithTerm(term) {
-	$("tr:containsIgnoreCase('" + term + "')").show();
+function prepareSearchTerms(searchString, andSearch, orSearch) {
+    var searchTermsRaw = [];
+    if (andSearch) {
+        searchTermsRaw = searchString.split("AND");
+    } else if (orSearch) {
+        searchTermsRaw = searchString.split("OR");
+    } else {
+        searchTermsRaw.push(searchString);
+    }
+
+    var searchTerms = [];
+    for (var i = 0; i < searchTermsRaw.length; i++) {
+        var term = searchTermsRaw[i].trim().toLowerCase();
+        if (term.length > 0) {
+            searchTerms.push(term);
+        }
+    }
+    return searchTerms;
+}
+
+function termsContainedInText(searchTerms, text) {
+    var termsContained = 0;
+    for (var i = 0; i < searchTerms.length; i++) {
+        var term = searchTerms[i];
+        if (text.contains(term)) {
+            termsContained++;
+        }
+    }
+    return termsContained;
+}
+
+function highlightTermsInRow(searchTerms, $row) {
+    var text = $row.html();
+    for (var i = 0; i < searchTerms.length; i++) {
+        var term = searchTerms[i];
+        var regEx = new RegExp(term, "ig");
+        var replaceMask = "<span class='searchHighlight'>" + term + "</span>";
+        text = text.replace(regEx, replaceMask);
+    }
+    $row.html(text);
+}
+
+function removeTermHighlighting() {
+    $(".searchHighlight").each(function(index, term) {
+        term.outerHTML = term.innerHTML;
+    });
 }
 
 function showTableForSelectedTab() {
