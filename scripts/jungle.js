@@ -271,10 +271,11 @@ function ready() {
 };
 
 function createRowFor(item, table) {
-	var row = newItemRow();
+	var row = newItemRow(item.id);
 
 	for (var c = 0; c < table.columns.length; ++c) {
 		({
+			"+":       createSelectedCell,
 			"Icon":    createImageCell,
 			"Name":    createTitleCell,
 			"Quantity":createQuantityCell,
@@ -310,11 +311,20 @@ function createRowFor(item, table) {
 	table.dom.appendChild(row);
 }
 
+var itemStore = [];
+var itemStoreIdCounter = 0;
+
 function receiveItemData(items) {
 	prepareItems(items);
 
 	for (var i = 0; i < items.length; ++i) {
 		var item = items[i];
+
+		// store items in structure for later referencing and processing
+		item.id = itemStoreIdCounter;
+		itemStoreIdCounter++;
+		itemStore.push(item);
+
 		var itemType = item.frameType;
 		var name = item.typeLine;
 		addNameToList(item.name);
@@ -420,7 +430,7 @@ function changeImageStackSize(imgLink, n) {
 }
 */
 
-var basicColumns = ["Icon", "Name", "Level"];
+var basicColumns = ["+", "Icon", "Name", "Level"];
 var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist", "AffixRating"]);
 var accesoriesColumnsWithDamage = accesoriesColumns.concat(["eDMG", "Rarity"]);
 var advancedColumns = basicColumns.concat(["Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AffixRating"]);
@@ -440,7 +450,7 @@ var tables = {
 	"jewels": {
 		"name":    "Jewels",
 		"idName":  "jewels",
-		"columns": ["Icon", "Name", "Mods"]
+		"columns": ["+", "Icon", "Name", "Mods"]
 	},
 	"flasks": {
 		"name":    "Flasks",
@@ -848,6 +858,16 @@ function createHeaders(table, headers) {
     table.appendChild(headerRow);
 }
 
+function createSelectedCell(row, item) {
+	var td = newCell();
+	var checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.name = "selectedItem";
+	$(checkbox).attr("data-item-id", item.id);
+	td.appendChild(checkbox);
+	row.appendChild(td);
+}
+
 function createImageCell(row, item) {
     var td = newCell();
     var img = document.createElement("img");
@@ -1014,8 +1034,9 @@ function newRow() {
 	return row;
 }
 
-function newItemRow() {
+function newItemRow(itemId) {
     var row = document.createElement("tr");
+    $(row).attr("id", itemId);
 	$(row).addClass("itemRow");
 	return row;
 }
@@ -1026,9 +1047,10 @@ function newCell() {
 
 function buildPage() {
     var title = "<h1>Stash Inventory</h1>";
+    var showSelected = "<div id='showSelected'>show selected</div>";
     var searchBox = "<div id='searchBoxContainer'><input id='searchBox' type='text' placeholder='Search...' autofocus /><div id='clearSearch'>x</div></div>";
     var infoBox = "<div id='infoBox'></div>";
-    $("body").html("<div>" + title + searchBox + infoBox + "</div>");
+    $("body").html("<div id='interactions'>" + title + showSelected + searchBox + infoBox + "</div>");
 
     $("body").keypress(function(e) {
         if (!$("#searchBox").is(":focus")) {

@@ -2,6 +2,7 @@ function attachHandlers() {
     handleSearching();
     handleTabSwitching();
     handleSorting();
+    handleSelectedItems();
 }
 
 function handleTabSwitching() {
@@ -15,6 +16,33 @@ function handleTabSwitching() {
     });
 }
 
+function handleSelectedItems() {
+	$("#showSelected").click(function() {
+		var button = $(this);
+		if (button.hasClass("showingSelected")) {
+			button.removeClass("showingSelected");
+			button.html("show selected");
+			clearFilter();
+			showTableForSelectedTab();
+			return;
+		}
+
+		preFilter();
+
+		var selectedItems = $("tr input[name='selectedItem']:checked");
+		selectedItems.each(function() {
+			var $row = $(this).parents("tr");
+			$row.show();
+
+			var item = itemStore[$row.attr("id")];
+			console.log("ITEM [" + item.id + "] ", item);
+		});
+
+		button.addClass("showingSelected").html("show all");
+		postFilter();
+	});
+}
+
 function handleSearching() {
 	$("#searchBox").keypress(function(e) {
 		var code = (e.keyCode ? e.keyCode : e.which);
@@ -24,8 +52,7 @@ function handleSearching() {
 	});
 
     $("#clearSearch").click(function() {
-        $(".stash").hide();
-        $("tr").show();
+        clearFilter();
         $("#searchBox").val("");
 
         showTableForSelectedTab();
@@ -33,9 +60,26 @@ function handleSearching() {
     });
 }
 
-function search(searchString) {
+function clearFilter() {
+    $(".stash").hide();
+    $("tr").show();
+}
+
+function preFilter() {
     $(".stash").show();
     $("tr").hide();
+}
+
+function postFilter() {
+    $("#tabNames .selected").removeClass("selected");
+    var tablesWithRowsInSearch = $("table.stash tr:visible").parents("table.stash");
+    $(".stash").hide();
+    tablesWithRowsInSearch.show();
+    tablesWithRowsInSearch.find("#headerRow").show();
+}
+
+function search(searchString) {
+	preFilter();
     removeTermHighlighting();
 
     var andSearch = searchString.match(/AND/) != null;
@@ -56,11 +100,7 @@ function search(searchString) {
         }
     });
 
-    $("#tabNames .selected").removeClass("selected");
-    var tablesWithRowsInSearch = $("table.stash tr:visible").parents("table.stash");
-    $(".stash").hide();
-    tablesWithRowsInSearch.show();
-    tablesWithRowsInSearch.find("#headerRow").show();
+    postFilter();
 }
 
 function prepareSearchTerms(searchString, andSearch, orSearch) {

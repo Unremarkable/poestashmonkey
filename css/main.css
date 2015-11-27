@@ -104,6 +104,13 @@ h1, h2 {
 
 #infoBox #capacityUsed { color: #a38d6d; }
 
+#showSelected {
+	cursor: pointer;
+	position: absolute;
+	right: 510px;
+	top: 15px;
+}
+
 #searchBoxContainer {
 	position: absolute;
 	right: 270px;
