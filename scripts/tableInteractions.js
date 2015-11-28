@@ -135,14 +135,23 @@ function termsContainedInText(searchTerms, text) {
 }
 
 function highlightTermsInRow(searchTerms, $row) {
-    var text = $row.html();
     for (var i = 0; i < searchTerms.length; i++) {
         var term = searchTerms[i];
+        highlightTermInElement(term, $row);
+    }
+}
+
+function highlightTermInElement(term, element) {
+	if (element.children().length === 0) {
         var regEx = new RegExp(term, "ig");
         var replaceMask = "<span class='searchHighlight'>" + term + "</span>";
-        text = text.replace(regEx, replaceMask);
-    }
-    $row.html(text);
+        var text = element.html().replace(regEx, replaceMask);
+        element.html(text);
+	} else {
+		element.children().each(function(){
+			highlightTermInElement(term, $(this));
+		});
+	}
 }
 
 function removeTermHighlighting() {
