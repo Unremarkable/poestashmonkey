@@ -143,8 +143,8 @@ function highlightTermsInRow(searchTerms, $row) {
 
 function highlightTermInElement(term, element) {
 	if (element.children().length === 0) {
-        var regEx = new RegExp(term, "ig");
-        var replaceMask = "<span class='searchHighlight'>" + term + "</span>";
+        var regEx = new RegExp("(" + term + ")", "ig");
+        var replaceMask = "<span class='searchHighlight'>$1</span>";
         var text = element.html().replace(regEx, replaceMask);
         element.html(text);
 	} else {
