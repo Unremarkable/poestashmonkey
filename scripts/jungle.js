@@ -847,7 +847,7 @@ function addSkillType(row, item) {
 
 function createHeaders(table, headers) {
     var headerRow = newRow();
-    headerRow.id = "headerRow";
+    $(headerRow).addClass("headerRow");
     for (var i = 0; i < headers.length; i++) {
         var td = document.createElement("th");
 
@@ -1062,6 +1062,8 @@ function buildPage() {
 	tabView.append($("<ul></ul>").attr("id", "tabNames"));
 	tabView.append($("<div></div>").attr("id", "tabContents"));
 	$("body").append(tabView);
+
+	handleSelectedSummary();
 
 	for (var t in tables) {
 		tables[t].dom = buildTable(tables[t]["name"], tables[t]["idName"], tables[t]["columns"]);

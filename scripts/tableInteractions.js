@@ -24,19 +24,23 @@ function handleSelectedItems() {
 			button.html("show selected");
 			clearFilter();
 			showTableForSelectedTab();
+			$("#selectedSummaryTable").empty();
 			return;
 		}
 
 		preFilter();
+		$("#selectedSummaryTable").remove("tr");
 
 		var selectedItems = $("tr input[name='selectedItem']:checked");
+		var selectedItemsMap = {};
 		selectedItems.each(function() {
 			var $row = $(this).parents("tr");
 			$row.show();
 
 			var item = itemStore[$row.attr("id")];
-			console.log("ITEM [" + item.id + "] ", item);
+			selectedItemsMap[item.id] = item;
 		});
+		showSelectedItemsSummaryTable(selectedItemsMap);
 
 		button.addClass("showingSelected").html("show all");
 		postFilter();
@@ -61,21 +65,21 @@ function handleSearching() {
 }
 
 function clearFilter() {
-    $(".stash").hide();
-    $("tr").show();
+    $("#tabView .stash").hide();
+    $("#tabView tr").show();
 }
 
 function preFilter() {
-    $(".stash").show();
-    $("tr").hide();
+    $("#tabView .stash").show();
+    $("#tabView tr").hide();
 }
 
 function postFilter() {
     $("#tabNames .selected").removeClass("selected");
-    var tablesWithRowsInSearch = $("table.stash tr:visible").parents("table.stash");
-    $(".stash").hide();
+    var tablesWithRowsInSearch = $("#tabView table.stash tr:visible").parents("table.stash");
+    $("#tabView .stash").hide();
     tablesWithRowsInSearch.show();
-    tablesWithRowsInSearch.find("#headerRow").show();
+    tablesWithRowsInSearch.find(".headerRow").show();
 }
 
 function search(searchString) {
@@ -89,7 +93,7 @@ function search(searchString) {
     }
 
     var searchTerms = prepareSearchTerms(searchString, andSearch, orSearch);
-    $("tr").each(function(index, row) {
+    $("#tabView tr").each(function(index, row) {
         var $row = $(row);
         var text = $row.html().toLowerCase();
         var termsContained = termsContainedInText(searchTerms, text);
@@ -166,11 +170,11 @@ function showTableForSelectedTab() {
 }
 
 function handleSorting() {
-    $(".stash th").click(function() {
+    $("#tabView .stash th").click(function() {
         var header = $(this);
         var table = header.parents("table");
         var col = header.attr("id");
-        var headerRow = table.find("#headerRow");
+        var headerRow = table.find(".headerRow");
         headerRow.removeClass("unsorted");
 
         var sortDescending = header.hasClass("ascending");

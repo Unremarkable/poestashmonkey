@@ -137,12 +137,12 @@ h1, h2 {
 	margin-bottom: 10px;
 }
 
-#headerRow {
+.headerRow {
 	backgronud-color: #332f24;
 	color: #DFCF99;
 }
 
-#headerRow th {
+.headerRow th {
 	cursor: pointer;
 	font-size: 14px;
 	text-align: center;
@@ -257,4 +257,14 @@ li[href='#uncategorized'] { display: none; }
 	background-color: #DFCF99;
 	color: #211F18;
 	padding: 0 1px;
+}
+
+#selectedSummary {
+	margin-top: 30px;
+}
+
+.totalsRow td {
+	color: #A38D6D;
+	background-color: #26231B;
+	font-size: 16px;
 }
