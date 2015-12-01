@@ -205,10 +205,11 @@ var Affixes = (function() {
 	
 	var mods = {};
 
-	function Affix(level, affix, group, name, properties, ranges, typemask) {
+	function Affix(level, affix, group, key, name, properties, ranges, typemask) {
 		this.level      = level;
 		this.affix      = affix;
 		this.group      = group;
+		this.key        = key;
 		this.name       = name;
 		this.properties = [];
 		this.typemask   = typemask;
@@ -286,7 +287,7 @@ var Affixes = (function() {
 			};
 		}
 
-		mods[key][gid].affixes.push(new Affix(level, affix, mods[key][gid], name, properties, ranges, typemask));
+		mods[key][gid].affixes.push(new Affix(level, affix, gid, key, name, properties, ranges, typemask));
 	}
 	
 	var Prefix = "Prefix";
