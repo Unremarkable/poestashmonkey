@@ -189,7 +189,7 @@ var PoEData = (function() {
 		data.ajax.stash_data = new Array(metadata.tabs.length);
 		for (var i = 0; i < metadata.tabs.length; ++i) {
 			var tab = metadata.tabs[i];
-			data.ajax.stash_data[i] = new Ajaxable(tab.n, { url: "https://www.pathofexile.com/character-window/get-stash-items", data: { "league": "Standard", "tabs": 0, "tabIndex": i } },	(function(k) { return function(r) { data.receive_stash_data(r, k); }; })(i));
+			data.ajax.stash_data[i] = new Ajaxable(tab.n, { url: "https://www.pathofexile.com/character-window/get-stash-items", data: { "league": "Standard", "tabs": 0, "tabIndex": i, "accountName" : accountName } },	(function(k) { return function(r) { data.receive_stash_data(r, k); }; })(i));
 			data.ui.stash_data.append($("<li></li>").append(data.ajax.stash_data[i].dom));
 			if (i == 0) {
 				data.ajax.stash_data[0].setState("success");
@@ -216,7 +216,7 @@ var PoEData = (function() {
 
 	data.ajax = {};
 	data.ajax.character_metadata = new Ajaxable("Character List", { url: "https://www.pathofexile.com/character-window/get-characters" }, data.receive_character_metadata);
-	data.ajax.stash_metadata     = new Ajaxable("Stash List", { url: "https://www.pathofexile.com/character-window/get-stash-items", data: { "league": "Standard", "tabs": 1, "tabIndex": 0 } },	data.receive_stash_metadata);
+	data.ajax.stash_metadata     = new Ajaxable("Stash List", { url: "https://www.pathofexile.com/character-window/get-stash-items", data: { "league": "Standard", "tabs": 1, "tabIndex": 0, "accountName": accountName } },	data.receive_stash_metadata);
 	data.ajax.character_data     = {};
 	data.ajax.stash_data         = {};
 	

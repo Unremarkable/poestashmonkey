@@ -23,7 +23,8 @@ function requestStashData(league, tab) {
             data: {
                 "league": league,
                 "tabs": metadata ? 1 : 0,
-                "tabIndex": (tab || 0)
+                "tabIndex": (tab || 0),
+                "accountName" : getAccountName()
             },
         })
     }
@@ -59,6 +60,20 @@ function requestStashData(league, tab) {
             })
         }
     }
+}
+
+function getAccountName() {
+	var accountNameCookie = document.cookie.match('(^|;)?stashMonkeyAccountName=([^;]*)(;|$)');
+    var accountName;
+	
+	if (accountNameCookie) {
+		accountName = accountNameCookie[2];
+	} else {
+		accountName = prompt("Account name");
+		document.cookie = 'stashMonkeyAccountName=' + accountName;
+	}
+	
+	return accountName;
 }
 
 function getCharacterCache(name) {
@@ -101,7 +116,7 @@ function requestCharacterData(league) {
 					$.ajax("https://www.pathofexile.com/character-window/get-items", {
 						"data" : {
 							"character" : name,
-							"accountName" : "Unremarkable"
+							"accountName" : getAccountName()
 						}
 					})
 					.done(function(data) {
