@@ -192,6 +192,8 @@ table.stash .sockets .I { color: #114181; }
 table.stash .str,
 table.stash .sockets .S { color: #9e1328; }
 
+table.stash .sockets .G { color: #fff; }
+
 table.stash .castTime { color: #416151; }
 table.stash .manaCost { color: #415161; }
 table.stash .support { color: #555; }

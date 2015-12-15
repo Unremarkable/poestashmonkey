@@ -343,6 +343,8 @@ function receiveItemData(items) {
 				createRowFor(item, tables["rings"]);
 			} else if (isAmulet(name)) {
 				createRowFor(item, tables["amulets"]);
+			} else if (isTalisman(name)) {
+				createRowFor(item, tables["talismans"]);
 			} else if (isMap(item)) {
 				createRowFor(item, tables["maps"]);
 			} else if (isBelt(name)) {
@@ -462,6 +464,11 @@ var tables = {
 		"idName":  "amulets",
 		"columns": accesoriesColumnsWithDamage
 	},
+	"talismans": {
+		"name":    "Talismans",
+		"idName":  "talismans",
+		"columns": accesoriesColumnsWithDamage
+	},
 	"rings": {
 		"name":    "Rings",
 		"idName":  "rings",
@@ -531,12 +538,13 @@ function isQuiver(name) { return name.match(/Quiver/) != null; }
 function isBelt(name) { return name.match(/Belt|Sash/) != null; }
 
 function isJewel(name) { return name.match(/Jewel/) != null; }
+function isTalisman(name) { return name.match(/Talisman/) != null; }
 
 function isGloves(name) { return name.match(/Mitts|Gloves|Gauntlets/) != null; }
 function isBoots(name) { return name.match(/Boots|Slippers|Shoes|Greaves/) != null; }
 function isHelmet(name) { return name.match(/Cage|Mask|Helmet|Sallet|Hood|Tricorne|Helm|Circlet|Cap|Pelt|Burgonet|Bascinet|Crown|Coif|Hat/) != null; }
 
-function isArmour(item) { return (item.properties["Evasion Rating"] || item.properties["Armour"] || item.properties["Energy Shield"]); }
+function isArmour(item) { return (item.properties["Evasion Rating"] || item.properties["Armour"] || item.properties["Energy Shield"] || item.name === "Tabula Rasa"); }
 
 function isWeapon(item) { return (item.properties["Physical Damage"]); }
 
@@ -964,7 +972,7 @@ function createSocketsCell(row, item) {
 			var socket = item.sockets[i];
 
 			if (socket.group >= groups.length)
-				groups[socket.group] = {"S":0, "D":0, "I":0, "total":0};
+				groups[socket.group] = {"S":0, "D":0, "I":0, "G":0, "total":0};
 
 			groups[socket.group][socket.attr]++;
 			groups[socket.group].total++;
@@ -982,6 +990,7 @@ function createSocketsCell(row, item) {
 			if (group["S"] > 0) { text += "<span class='S'>"; for (var j = 0; j < group["S"]; ++j) text += "R"; text += "</span>"; }
 			if (group["D"] > 0) { text += "<span class='D'>"; for (var j = 0; j < group["D"]; ++j) text += "G"; text += "</span>"; }
 			if (group["I"] > 0) { text += "<span class='I'>"; for (var j = 0; j < group["I"]; ++j) text += "B"; text += "</span>"; }
+			if (group["G"] > 0) { text += "<span class='G'>"; for (var j = 0; j < group["G"]; ++j) text += "W"; text += "</span>"; }
 
 			text += "</span>";
 		}

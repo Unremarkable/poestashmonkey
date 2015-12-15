@@ -8,45 +8,45 @@ function handleSelectedSummary() {
 	$selectedSummary.append($selectedSummaryTable);
 }
 
-function showSelectedItemsSummaryTable(selectedItemsMap) {
+function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
+	var selectedItemsMap = JSON.parse(JSON.stringify(selectedItemsMapOriginal)); // COPY
+	preprocessItemMods(selectedItemsMap);
+
 	var $table = $("#selectedSummaryTable");
+
 	var $headerRow = $("<tr></tr>").addClass("headerRow");
 	$table.append($headerRow);
+	addHeaderCell($headerRow, "");
 
 	var modsMap = {};
 	var rows = {};
 	for (var itemId in selectedItemsMap) {
 		var item = selectedItemsMap[itemId];
-		handleModsMap(modsMap, item.implicitMods);
-		handleModsMap(modsMap, item.explicitMods);
+		addModsToSummaryMap(modsMap, item.mods);
 
 		var $row = $("<tr></tr>").attr("data-item-id", item.id);
 		$table.append($row);
-		rows[item.id] = $row;
 		createTitleCell($row[0], item);
+		rows[item.id] = $row;
 	}
 
-	addHeaderCell($headerRow, "");
 	$totalsRow = $("<tr></tr>").addClass("totalsRow");
 	$table.append($totalsRow);
 	addCellWithValue($totalsRow, "TOTALS");
 
-	console.log("MODS SUMMARY MAP: ", modsMap);
-
-	var sortedMods = Object.keys(modsMap).sort();
-	for (var i = 0; i < sortedMods.length; i++) {
-		var mod = sortedMods[i];
-		addHeaderCell($headerRow, mod);
+	var sortedModNames = Object.keys(modsMap).sort();
+	for (var i = 0; i < sortedModNames.length; i++) {
+		var modName = sortedModNames[i];
+		addHeaderCell($headerRow, modName);
 
 		for (var itemId in rows) {
 			var item = selectedItemsMap[itemId];
-			var values = getModValuesForItem(item, mod);
-			var displayText = renderValuesArray(values);
+			var displayText = renderValuesArray(item.mods[modName]);
 			var $row = rows[itemId];
 			addCellWithValue($row, displayText);
 		}
 
-		var totalsText = renderValuesArray(modsMap[mod]);
+		var totalsText = renderValuesArray(modsMap[modName]);
 		addCellWithValue($totalsRow, totalsText);
 	}
 }
@@ -55,28 +55,14 @@ function renderValuesArray(values) {
 	return values ? values.join("-") : "";
 }
 
-function handleModsMap(modsMap, mods) {
-	if (mods) {
-		for (var mod in mods) {
-			var values = mods[mod].values;
-			if (modsMap[mod]) {
-				values = mergeValuesArrays(values, modsMap[mod]);
-			}
-			modsMap[mod] = values;
+function addModsToSummaryMap(modsMap, mods) {
+	for (var modName in mods) {
+		var values = mods[modName];
+		if (modsMap[modName]) {
+			values = mergeValuesArrays(values, modsMap[modName]);
 		}
+		modsMap[modName] = values;
 	}
-}
-
-function getModValuesForItem(item, mod) {
-	var implicitMods = item.implicitMods[mod];
-	var explicitMods = item.explicitMods[mod];
-
-	// the mod may not exist for this item or may exist in only the implicit or explicit mods
-	if (!implicitMods && !explicitMods) return null;
-	if (!implicitMods) return explicitMods.values;
-	if (!explicitMods) return implicitMods.values;
-
-	return mergeValuesArrays(implicitMods.values, explicitMods.values);
 }
 
 function mergeValuesArrays(first, second) {
@@ -90,19 +76,6 @@ function mergeValuesArrays(first, second) {
 		sumArray.push(sum);
 	}
 	return sumArray;
-}
-
-function getModAverageValue(mod) {
-	var values = mod.values;
-	if (values.length == 0) {
-		return 0;
-	}
-
-	var sum = 0;
-	for (var i = 0; i < values.length; i++) {
-		sum += values[i];
-	}
-	return sum / values.length;
 }
 
 function addHeaderCell($row, value) {
@@ -128,6 +101,42 @@ function addSummaryRowForItem(item) {
 	addCellWithValue(row, 0);
 
 	$("#selectedSummaryTable")[0].appendChild(row);
+}
+
+function preprocessItemMods(items) {
+	for (var itemId in items) {
+		var item = items[itemId];
+		item.mods = {};
+		moveToModsAttribute(item, item.implicitMods);
+		moveToModsAttribute(item, item.explicitMods);
+	}
+}
+
+function moveToModsAttribute(item, otherMods) {
+	for (var modName in otherMods) {
+		var values = otherMods[modName].values;
+		if (resistTypesComboConversion[modName]) {
+			flattenComboModForItem(item, modName, values);
+		} else {
+			addValuesForMods(item, modName, values);
+		}
+	}
+}
+
+function flattenComboModForItem(item, comboModName, comboModValue) {
+	var comboModList = resistTypesComboConversion[comboModName];
+
+	for (var i = 0; i < comboModList.length; i++) {
+		var modName = comboModList[i];
+		addValuesForMods(item, modName, comboModValue);
+	}
+}
+
+function addValuesForMods(item, modName, values) {
+	if (item.mods[modName]) {
+		values = mergeValuesArrays(values, item.mods[modName]);
+	}
+	item.mods[modName] = values;
 }
 
 var coldResistance = 		"+#% to Cold Resistance";

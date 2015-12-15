@@ -268,7 +268,7 @@ var Affixes = (function() {
 	}	
 	
 	function add(level, affix, gid, name, properties, ranges, typemask) {
-		// hack to seperate prefixes and suffixes with the same mods into different groups.
+		// hack to separate prefixes and suffixes with the same mods into different groups.
 		if (affix == "Prefix")
 			gid += 100;
 

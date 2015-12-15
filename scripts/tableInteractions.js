@@ -40,10 +40,11 @@ function handleSelectedItems() {
 			var item = itemStore[$row.attr("id")];
 			selectedItemsMap[item.id] = item;
 		});
-		showSelectedItemsSummaryTable(selectedItemsMap);
 
 		button.addClass("showingSelected").html("show all");
 		postFilter();
+
+		showSelectedItemsSummaryTable(selectedItemsMap);
 	});
 }
 
