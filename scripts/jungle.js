@@ -38,8 +38,6 @@ function ready() {
 
 	buildPage();
 	preload_main();
-//	requestCharacterData(league);
-//	requestStashData(league);
 
     // does not work yet
     // fetchCurrencyConversionTable();
