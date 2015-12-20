@@ -21,6 +21,10 @@ function main(baseURL) {
         });
 }
 
+function getParameterByName(name) {
+	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+}
+
 Object.forEach = function(obj, fct) {
     for (var k in obj) {
         fct(obj[k], k);
@@ -66,7 +70,7 @@ Object.min = function(obj, fct) {
     for (var k in obj) {
         var val = fct(obj[k], obj);
         if (val < min || min == undefined)
-            min = val
+            min = val;
     }
 
     return min;
@@ -78,7 +82,7 @@ Object.max = function(obj, fct) {
     for (var k in obj) {
         var val = fct(obj[k], obj);
         if (val > max || max == undefined)
-            max = val
+            max = val;
     }
 
     return max;
