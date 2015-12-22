@@ -159,6 +159,7 @@ function receiveStashDataFinished() {
 	}
 
 	$("#tabNames li").first().addClass("selected");
+	console.log($("#tabNames li"));
 	showTableForSelectedTab();
 
     showCapacityUsed();

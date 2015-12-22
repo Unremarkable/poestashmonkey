@@ -93,14 +93,12 @@ var PoEData = (function() {
 		var accountName = prompt("Account name");
 		document.cookie = 'stashMonkeyAccountName=' + accountName;
 	}
-
-	var useCache = getParameterByName("cache");
-	console.log("Should load from cache if possible? " + useCache);
 	
 	data.receive_character_metadata = function(metadata) {
 		data.ajax.character_data = new Array(metadata.length);
 		for (var i = 0; i < metadata.length; ++i) {
 			var name = metadata[i].name;
+
 			if (typeof data.ajax.character_data[i] === "undefined")
 				data.ajax.character_data[i] = new Ajaxable(name, { "url": URL_GET_ITEMS, "data" : { "character" : name, "accountName" : accountName } }, (function(k) { return function (r) { data.receive_character_data(r, k); }; })(name));
 			data.ui.character_data.append($("<li></li>").append(data.ajax.character_data[i].dom));
@@ -108,14 +106,16 @@ var PoEData = (function() {
 			data.ajax.character_data[i].request();
 		}
 	};
-	
+
 	data.receive_stash_metadata = function(metadata) {
-		stashMetaData["Standard"] = metadata.tabs;	// legacy
+		var league = "Standard";
+		stashMetaData[league] = metadata.tabs;	// legacy
 		
 		data.ajax.stash_data = new Array(metadata.tabs.length);
 		for (var i = 0; i < metadata.tabs.length; ++i) {
 			var tab = metadata.tabs[i];
-			data.ajax.stash_data[i] = new Ajaxable(tab.n, { url: URL_GET_STASH_ITEMS, data: { "league": "Standard", "tabs": 0, "tabIndex": i, "accountName" : accountName } },	(function(k) { return function(r) { data.receive_stash_data(r, k); }; })(i));
+
+			data.ajax.stash_data[i] = new Ajaxable(tab.n, { url: URL_GET_STASH_ITEMS, data: { "league": league, "tabs": 0, "tabIndex": i, "accountName" : accountName } },	(function(k) { return function(r) { data.receive_stash_data(r, k); }; })(i));
 			data.ui.stash_data.append($("<li></li>").append(data.ajax.stash_data[i].dom));
 			if (i == 0) {
 				data.ajax.stash_data[0].setState("success");
@@ -160,9 +160,17 @@ var PoEData = (function() {
 	
 	data.ui.stash_data = $("<ul></ul>");
 	data.ui.base.append(data.ui.stash_data);
-	
-	data.ajax.character_metadata.request();
-	data.ajax.stash_metadata.request();
+
+	var useCache = getParameterByName("cache");
+	if (useCache) {
+		// the timeout is necessary to give time to all of the java script files to load
+		// there may be a better place to intercept this
+		setTimeout(loadFromLocalStorage, 100);
+	} else {
+		// load from server
+		data.ajax.character_metadata.request();
+		data.ajax.stash_metadata.request();
+	}
 	
 	return data;
 })();
@@ -172,11 +180,14 @@ function receiveStashData(league, tab, data) {
 	console.log(league, tab, data);
 	console.log(stashMetaData);
 	
-	for (var i = 0; i < data.items.length; ++i)
+	for (var i = 0; i < data.items.length; ++i) {
 		data.items[i].inventoryId = stashMetaData[league][tab].n;
+	}
 
 	stashData[league][tab] = data;
-	receiveItemData(data.items)
+
+	localStorage.setItem(getLocalStorageKey(tab, league), JSON.stringify(data.items)); // save
+	receiveItemData(data.items);
 }
 
 function getAccountName() {
@@ -215,11 +226,35 @@ function receiveCharacterData(league, name, data) {
 		data.items[i].inventoryId = name + "'s " + data.items[i].inventoryId;
 	}
 	setCharacterCache(name, data);
+
+	localStorage.setItem(getLocalStorageKey(name), JSON.stringify(data.items)); // save
 	receiveItemData(data.items);
 }
 
-function getLocalStorageKey(league, tabName) {
-    return "POEStashTab-" + league + "-" + tabName;
+// The key consists of a POE base and a key name. A league is optionally inserted if present and not empty.
+function getLocalStorageKey(keyName, league) {
+	if (league) {
+		return "POEStashTab-" + league + "-" + keyName;
+	} else {
+		return "POECharacter-" + keyName;
+	}
+}
+
+// Load all PoE data stored in the local browser cache
+function loadFromLocalStorage() {
+	for (key in localStorage) {
+		if (key.startsWith("POE")) {
+			var itemsFromStore = JSON.parse(localStorage.getItem(key));
+			if (itemsFromStore) {
+				PoEData.ui.base.append(key);
+				console.log("Loading from storage: " + key);
+				receiveItemData(itemsFromStore);
+			}
+		}
+	}
+
+	PoEData.ui.base.css("display", "none");
+	receiveStashDataFinished();
 }
 
 //*****************************************************************************

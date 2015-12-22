@@ -167,7 +167,7 @@ function removeTermHighlighting() {
 
 function showTableForSelectedTab() {
     var tableName = $("#tabNames .selected").attr("href");
-    $("#tabContents " + tableName).show();
+    $("#tabContents " + tableName).css("display", "table");
 }
 
 function handleSorting() {
