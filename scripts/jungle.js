@@ -71,6 +71,7 @@ function createRowFor(item, table) {
 			"eDMG":    addItemElementalDamage,
 			"APS": addAttacksPerSecondCell,
 			"CritChance": addCritChanceCell,
+			"Type": addWeaponTypeCell,
 			"Rarity":  addIncreasedRarity,
             "AffixRating": addAffixRating,
             "MapTier": addMapTier,
@@ -227,7 +228,7 @@ function changeImageStackSize(imgLink, n) {
 var basicColumns = ["+", "Icon", "Name", "Level"];
 var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist", "AffixRating"]);
 var accesoriesColumnsWithDamage = accesoriesColumns.concat(["eDMG", "Rarity"]);
-var advancedColumns = basicColumns.concat(["Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AffixRating"]);
+var advancedColumns = ["Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AffixRating"];
 var gearColumns =  advancedColumns.concat(["AR", "EV", "ES", "tResist", "eDMG", "Rarity"]);
 
 var tables = {
@@ -299,12 +300,12 @@ var tables = {
 	"weapons": {
 		"name":    "Weapons",
 		"idName":  "weapons",
-		"columns": advancedColumns.concat(["DPS", "pDPS", "eDPS", "CPS", "Inc", "APS", "CritChance"])
+		"columns": basicColumns.concat(["Type"]).concat(advancedColumns).concat(["DPS", "pDPS", "eDPS", "CPS", "Inc", "APS", "CritChance"])
 	},
 	"shields": {
 		"name":    "Shields",
 		"idName":  "shields",
-		"columns": advancedColumns.concat(["tResist"])
+		"columns": basicColumns.concat(advancedColumns).concat(["tResist"])
 	},
 	"maps": {
 		"name":    "Maps",
@@ -323,8 +324,10 @@ var tables = {
 	}
 };
 
- var rings = ["Iron Ring", "Coral Ring", "Paua Ring", "Gold Ring", "Ruby Ring", "Sapphire Ring", "Topaz Ring", "Diamond Ring", "Moonstone Ring", "Prismatic Ring", "Amethyst Ring", "Two-Stone Ring", "Unset Ring"];
- var amulets = ["Paua Amulet", "Coral Amulet", "Amber Amulet", "Jade Amulet", "Lapis Amulet", "Gold Amulet", "Onyx Amulet", "Agate Amulet", "Turquoise Amulet", "Citrine Amulet"];
+var rings = ["Iron Ring", "Coral Ring", "Paua Ring", "Gold Ring", "Ruby Ring", "Sapphire Ring", "Topaz Ring", "Diamond Ring", "Moonstone Ring", "Prismatic Ring", "Amethyst Ring", "Two-Stone Ring", "Unset Ring"];
+var amulets = ["Paua Amulet", "Coral Amulet", "Amber Amulet", "Jade Amulet", "Lapis Amulet", "Gold Amulet", "Onyx Amulet", "Agate Amulet", "Turquoise Amulet", "Citrine Amulet"];
+
+var weaponTypes = ["Bow", "Claw", "Dagger", "One Handed Axe", "One Handed Mace", "One Handed Sword", "Staff", "Two Handed Axe", "Two Handed Mace", "Two Handed Sword", "Wand"];
 
 function isFlask(name) { return name.match(/Flask/) != null; }
 
@@ -614,6 +617,17 @@ function addCritChanceCell(row, item) {
 function addMapTier(row, item) {
     var mapTier = item.properties["Map Tier"] ? parseInt(item.properties["Map Tier"].values[0]) : 0;
     appendNewCellWithTextAndClass(row, mapTier, "mapTier", mapTier);
+}
+
+function addWeaponTypeCell(row, item) {
+	var text = "";
+	for (var i = 0; i < weaponTypes.length; i++) {
+		var type = weaponTypes[i];
+		if (item.properties[type]) {
+			text = type;
+		}
+	}
+    appendNewCellWithTextAndClass(row, text, "type", text);
 }
 
 function createStackSizeCell(row, item) {
