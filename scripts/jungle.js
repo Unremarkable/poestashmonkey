@@ -341,12 +341,12 @@ function isHelmet(name) { return name.match(/Cage|Mask|Helmet|Sallet|Hood|Tricor
 
 function isArmour(item) { return (item.properties["Evasion Rating"] || item.properties["Armour"] || item.properties["Energy Shield"] || item.name === "Tabula Rasa"); }
 
-function isWeapon(item) { return (item.properties["Physical Damage"]); }
+function isWeapon(item) { return (item.properties["Physical Damage"] || item.properties["Elemental Damage"]); }
 
 function isShield(item) { return (item.properties["Chance to Block"]); }
 
 function isMap(item) { return (item.properties["Map Tier"]); }
-function isSacrifice(name) { return name.match(/Sacrifice/) != null; }
+function isSacrifice(name) { return name.match(/Sacrifice at/) != null; }
 
 function parseMods(descriptions) {
     var mods = {};

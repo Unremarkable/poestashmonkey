@@ -30,9 +30,9 @@ function getWeaponInfo(item) {
 
 function addWeaponDamages(item, weaponInfo) {
     var physicalDamage = getItemProperty(item, "Physical Damage");
-    weaponInfo.physical = getValueRange(physicalDamage.values[0][0]);
-    weaponInfo.elemental = { "min": 0, "max": 0, "avg": 0 };
+    weaponInfo.physical = physicalDamage ? getValueRange(physicalDamage.values[0][0]) : { "min": 0, "max": 0, "avg": 0 };
 
+    weaponInfo.elemental = { "min": 0, "max": 0, "avg": 0 };
     var elementalDamages = getItemProperty(item, "Elemental Damage");
     if (elementalDamages != null) {
         for (var i in elementalDamages.values) {
