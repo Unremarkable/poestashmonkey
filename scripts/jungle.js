@@ -177,8 +177,13 @@ function addCurrency(item) {
 		currency[name].totalQuantity = 0;
 	}
 
-	currency[name].instances.push(item);
+	currency[name].instances.push(cloneItem(item));
 	currency[name].totalQuantity += item.quantity;
+}
+
+// this is a clean copy so it prevents cycles
+function cloneItem(item) {
+	return JSON.parse(JSON.stringify(item));
 }
 
 function setItemQuantity(item) {
@@ -678,13 +683,14 @@ function createTitleCell(row, item) {
 	if (typeof item.instances === "undefined") {
 		td.title = item.inventoryId + " (" + item.x + ", " + item.y + ")";
 	} else {
-		function fI(item) {
-			return "[" + item.quantity + "] " + item.inventoryId + " (" + item.x + ", " + item.y + ")";
-		}
-		td.title = fI(item.instances[0]);
+		td.title = getCurrencyTitle(item.instances[0]);
 		for (var i = 1; i < item.instances.length; ++i)
-			td.title += "\n" + fI(item.instances[i]);
+			td.title += "\n" + getCurrencyTitle(item.instances[i]);
 	}
+}
+
+function getCurrencyTitle(item) {
+	return "[" + item.quantity + "] " + item.inventoryId + " (" + item.x + ", " + item.y + ")";
 }
 
 function createQuantityCell(row, item) {
