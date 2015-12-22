@@ -69,6 +69,8 @@ function createRowFor(item, table) {
 			"CPS":     addCPS,
 			"Inc":     addpIncreaseDPS,
 			"eDMG":    addItemElementalDamage,
+			"APS": addAttacksPerSecondCell,
+			"CritChance": addCritChanceCell,
 			"Rarity":  addIncreasedRarity,
             "AffixRating": addAffixRating,
             "MapTier": addMapTier,
@@ -297,7 +299,7 @@ var tables = {
 	"weapons": {
 		"name":    "Weapons",
 		"idName":  "weapons",
-		"columns": advancedColumns.concat(["DPS", "pDPS", "eDPS", "CPS", "Inc"])
+		"columns": advancedColumns.concat(["DPS", "pDPS", "eDPS", "CPS", "Inc", "APS", "CritChance"])
 	},
 	"shields": {
 		"name":    "Shields",
@@ -598,6 +600,16 @@ function addTotalResistances(row, item) {
 	var pIncreaseDps = item.weaponInfo ? item.weaponInfo.pIncreaseDps.toFixed(1) : 0;
 	appendNewCellWithTextAndClass(row, pIncreaseDps + " %", "inc", pIncreaseDps);
  }
+
+function addAttacksPerSecondCell(row, item) {
+    var aps = item.properties["Attacks per Second"] ? parseFloat(item.properties["Attacks per Second"].values[0][0]) : 0;
+    appendNewCellWithTextAndClass(row, aps, "aps", aps);
+}
+
+function addCritChanceCell(row, item) {
+    var critChance = item.properties["Critical Strike Chance"] ? parseFloat(item.properties["Critical Strike Chance"].values[0][0]) : 0;
+    appendNewCellWithTextAndClass(row, critChance + "%", "critChance", critChance);
+}
 
 function addMapTier(row, item) {
     var mapTier = item.properties["Map Tier"] ? parseInt(item.properties["Map Tier"].values[0]) : 0;
