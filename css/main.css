@@ -188,6 +188,8 @@ table.stash .cold { color: #366492; }
 
 table.stash .lightning { color: #e1be00; }
 
+table.stash .completeStack { color: #3dddf3; }
+
 .affixes { list-style: none; padding: 0px; }
 
 #tabNames li {

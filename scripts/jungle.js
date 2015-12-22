@@ -72,6 +72,7 @@ function createRowFor(item, table) {
 			"Rarity":  addIncreasedRarity,
             "AffixRating": addAffixRating,
             "MapTier": addMapTier,
+            "StackSize": createStackSizeCell,
             "Description": addDescription,
             "SkillType": addSkillType,
             "Support": addSupport,
@@ -102,10 +103,10 @@ function receiveItemData(items) {
 		var name = item.typeLine;
 		addNameToList(item.name);
 
-		// note, frameType 6 are green items (ie in game things like "Sewer Keys"), ALSO divination cards
-		// Sacrifices are frameType 1
-
-		if (itemType == 5) {
+		if (itemType == 6 && item.properties["Stack Size"]) {
+			// type 6 is also in game green items like "Sewer Keys", but those wouldn't have a stack size
+			createRowFor(item, tables["cards"]);
+		} else if (itemType == 5) {
 			addCurrency(item);
 		} else if (itemType == 4) {
 			createRowFor(item, tables["gems"]);
@@ -120,6 +121,9 @@ function receiveItemData(items) {
 				createRowFor(item, tables["talismans"]);
 			} else if (isMap(item)) {
 				createRowFor(item, tables["maps"]);
+			} else if (isSacrifice(name)) {
+				addStackSizeToProperties(item, 1, 50);
+				addCurrency(item);
 			} else if (isBelt(name)) {
 				createRowFor(item, tables["belts"]);
 			} else if (isQuiver(name)) {
@@ -159,7 +163,6 @@ function receiveStashDataFinished() {
 	}
 
 	$("#tabNames li").first().addClass("selected");
-	console.log($("#tabNames li"));
 	showTableForSelectedTab();
 
     showCapacityUsed();
@@ -180,6 +183,14 @@ function addCurrency(item) {
 
 	currency[name].instances.push(cloneItem(item));
 	currency[name].totalQuantity += item.quantity;
+}
+
+function addStackSizeToProperties(item, value, total) {
+	var stackSizeProperty = {};
+	stackSizeProperty.name = "Stack Size";
+	stackSizeProperty.displayMode = 0;
+	stackSizeProperty.values = [[value + "/" + total], 0];
+	item.properties["Stack Size"] = stackSizeProperty;
 }
 
 // this is a clean copy so it prevents cycles
@@ -298,6 +309,11 @@ var tables = {
 		"idName":  "maps",
 		"columns": ["Icon", "Name", "MapTier", "Quality", "Mods"]
 	},
+	"cards": {
+		"name":    "Cards",
+		"idName":  "cards",
+		"columns": ["Icon", "Name", "Mods", "StackSize"]
+	},
 	"uncategorized": {
 		"name":    "Uncategorized",
 		"idName":  "uncategorized",
@@ -330,6 +346,7 @@ function isWeapon(item) { return (item.properties["Physical Damage"]); }
 function isShield(item) { return (item.properties["Chance to Block"]); }
 
 function isMap(item) { return (item.properties["Map Tier"]); }
+function isSacrifice(name) { return name.match(/Sacrifice/) != null; }
 
 function parseMods(descriptions) {
     var mods = {};
@@ -585,6 +602,23 @@ function addTotalResistances(row, item) {
 function addMapTier(row, item) {
     var mapTier = item.properties["Map Tier"] ? parseInt(item.properties["Map Tier"].values[0]) : 0;
     appendNewCellWithTextAndClass(row, mapTier, "mapTier", mapTier);
+}
+
+function createStackSizeCell(row, item) {
+    var text = "";
+    var sortValue = 0;
+    var stackSizeProperty = item.properties["Stack Size"];
+    if (stackSizeProperty) {
+        var stackSize = stackSizeProperty.values[0][0];
+        var parts = stackSize.split("/");
+        sortValue = (parts[0] / parts[1]).toPrecision(2);
+
+        text = stackSize;
+        if (sortValue == 1) {
+            text = "<span class='completeStack'>" + text + "</span>";
+        }
+    }
+    appendNewCellWithTextAndClass(row, text, "stackSize", sortValue);
 }
 
 function addDescription(row, item) {

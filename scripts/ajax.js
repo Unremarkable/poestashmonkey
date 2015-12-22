@@ -246,7 +246,7 @@ function loadFromLocalStorage() {
 		if (key.startsWith("POE")) {
 			var itemsFromStore = JSON.parse(localStorage.getItem(key));
 			if (itemsFromStore) {
-				PoEData.ui.base.append(key);
+				PoEData.ui.base.append("<div>" + key + "</div>");
 				console.log("Loading from storage: " + key);
 				receiveItemData(itemsFromStore);
 			}
