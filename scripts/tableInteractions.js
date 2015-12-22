@@ -96,8 +96,7 @@ function search(searchString) {
     var searchTerms = prepareSearchTerms(searchString, andSearch, orSearch);
     $("#tabView tr").each(function(index, row) {
         var $row = $(row);
-        var text = $row.html().toLowerCase();
-        var termsContained = termsContainedInText(searchTerms, text);
+        var termsContained = searchForTermsInRow(searchTerms, $row);
 
         if (termsContained > 0 && !andSearch || termsContained == searchTerms.length) {
             highlightTermsInRow(searchTerms, $row);
@@ -128,15 +127,31 @@ function prepareSearchTerms(searchString, andSearch, orSearch) {
     return searchTerms;
 }
 
-function termsContainedInText(searchTerms, text) {
+function searchForTermsInRow(searchTerms, $row) {
     var termsContained = 0;
     for (var i = 0; i < searchTerms.length; i++) {
         var term = searchTerms[i];
-        if (text.match(new RegExp(term, 'g'))) {
+        if (searchForTermInElement(term, $row)) {
             termsContained++;
         }
     }
     return termsContained;
+}
+
+function searchForTermInElement(term, element) {
+    var found = false;
+    if (element.children().length === 0) {
+        if (element.html().match(new RegExp(term, 'ig'))) {
+            found = true;
+        }
+    } else {
+        element.children().each(function(){
+            if (searchForTermInElement(term, $(this))) {
+                found = true;
+            }
+        });
+    }
+    return found;
 }
 
 function highlightTermsInRow(searchTerms, $row) {
