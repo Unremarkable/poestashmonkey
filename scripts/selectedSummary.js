@@ -10,19 +10,17 @@ function handleSelectedSummary() {
 
 function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
 	var selectedItemsMap = JSON.parse(JSON.stringify(selectedItemsMapOriginal)); // COPY
-	preprocessItemMods(selectedItemsMap);
-
 	var $table = $("#selectedSummaryTable");
 
 	var $headerRow = $("<tr></tr>").addClass("headerRow");
 	$table.append($headerRow);
 	addHeaderCell($headerRow, "");
 
-	var modsMap = {};
+	var statsMap = {};
 	var rows = {};
 	for (var itemId in selectedItemsMap) {
 		var item = selectedItemsMap[itemId];
-		addModsToSummaryMap(modsMap, item.mods);
+		addStatsToSummaryMap(statsMap, item.stats);
 
 		var $row = $("<tr></tr>").attr("data-item-id", item.id);
 		$table.append($row);
@@ -34,19 +32,19 @@ function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
 	$table.append($totalsRow);
 	addCellWithValue($totalsRow, "TOTALS");
 
-	var sortedModNames = Object.keys(modsMap).sort();
-	for (var i = 0; i < sortedModNames.length; i++) {
-		var modName = sortedModNames[i];
-		addHeaderCell($headerRow, modName);
+	var sortedStatNames = Object.keys(statsMap).sort();
+	for (var i = 0; i < sortedStatNames.length; i++) {
+		var statName = sortedStatNames[i];
+		addHeaderCell($headerRow, statName);
 
 		for (var itemId in rows) {
 			var item = selectedItemsMap[itemId];
-			var displayText = renderValuesArray(item.mods[modName]);
+			var displayText = renderValuesArray(item.stats[statName]);
 			var $row = rows[itemId];
 			addCellWithValue($row, displayText);
 		}
 
-		var totalsText = renderValuesArray(modsMap[modName]);
+		var totalsText = renderValuesArray(statsMap[statName]);
 		addCellWithValue($totalsRow, totalsText);
 	}
 }
@@ -55,13 +53,13 @@ function renderValuesArray(values) {
 	return values ? values.join("-") : "";
 }
 
-function addModsToSummaryMap(modsMap, mods) {
-	for (var modName in mods) {
-		var values = mods[modName];
-		if (modsMap[modName]) {
-			values = mergeValuesArrays(values, modsMap[modName]);
+function addStatsToSummaryMap(statsMap, stats) {
+	for (var statName in stats) {
+		var values = stats[statName];
+		if (statsMap[statName]) {
+			values = mergeValuesArrays(values, statsMap[statName]);
 		}
-		modsMap[modName] = values;
+		statsMap[statName] = values;
 	}
 }
 
@@ -70,7 +68,7 @@ function mergeValuesArrays(first, second) {
 	if (!second) return first;
 
 	var sumArray = [];
-	// assuming these are the same length since they should be the same mod type
+	// assuming these are the same length since they should be the same stat type
 	for (var i = 0; i < first.length; i++) {
 		var sum = parseInt(first[i]) + parseInt(second[i]);
 		sumArray.push(sum);
@@ -102,51 +100,3 @@ function addSummaryRowForItem(item) {
 
 	$("#selectedSummaryTable")[0].appendChild(row);
 }
-
-function preprocessItemMods(items) {
-	for (var itemId in items) {
-		var item = items[itemId];
-		item.mods = {};
-		moveToModsAttribute(item, item.implicitMods);
-		moveToModsAttribute(item, item.explicitMods);
-	}
-}
-
-function moveToModsAttribute(item, otherMods) {
-	for (var modName in otherMods) {
-		var values = otherMods[modName].values;
-		if (resistTypesComboConversion[modName]) {
-			flattenComboModForItem(item, modName, values);
-		} else {
-			addValuesForMods(item, modName, values);
-		}
-	}
-}
-
-function flattenComboModForItem(item, comboModName, comboModValue) {
-	var comboModList = resistTypesComboConversion[comboModName];
-
-	for (var i = 0; i < comboModList.length; i++) {
-		var modName = comboModList[i];
-		addValuesForMods(item, modName, comboModValue);
-	}
-}
-
-function addValuesForMods(item, modName, values) {
-	if (item.mods[modName]) {
-		values = mergeValuesArrays(values, item.mods[modName]);
-	}
-	item.mods[modName] = values;
-}
-
-var coldResistance = 		"+#% to Cold Resistance";
-var lightningResistance = 	"+#% to Lightning Resistance";
-var fireResistance = 		"+#% to Fire Resistance";
-var chaosResistance = 		"+#% to Chaos Resistance";
-
-var resistTypesComboConversion = {
-		"+#% to all Elemental Resistances" : [coldResistance, lightningResistance, fireResistance],
-		"+#% to Cold and Lightning Resistances" : [coldResistance, lightningResistance],
-		"+#% to Fire and Cold Resistances" : [fireResistance, coldResistance],
-		"+#% to Fire and Lightning Resistances" : [fireResistance, lightningResistance]
-};

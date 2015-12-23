@@ -6,6 +6,7 @@ function main(baseURL) {
         .done(function() {
             require([
                     BASE_URL+"/scripts/ajax.js?_v="+timestamp,
+                    BASE_URL+"/scripts/prepareItems.js?_v="+timestamp,
                     BASE_URL+"/scripts/jungle.js?_v="+timestamp,
                     BASE_URL+"/scripts/currency.js?_v="+timestamp,
                     BASE_URL+"/scripts/tableInteractions.js?_v="+timestamp,
