@@ -41,3 +41,15 @@ function addNameToList(name) {
 		itemNames[name] = count;
 	}
 }
+
+function showCurrencyValue() {
+	var totalValueInChaos = 0;
+	for (var itemName in currency) {
+		var quantity = currency[itemName].totalQuantity;
+		var rate = currencyToChaosMap[itemName];
+		if (rate) {
+			totalValueInChaos += quantity * rate;
+		}
+	}
+    $("#infoBox").append("<div id='currencyValue'>Currency value estimate in chaos: " + totalValueInChaos.toFixed(0) + "</div>");
+}

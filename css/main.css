@@ -78,6 +78,7 @@ h1, h2 {
 }
 
 #infoBox #capacityUsed { color: #a38d6d; }
+#infoBox #currencyValue { color: #8da36d; }
 
 #showSelected {
 	cursor: pointer;

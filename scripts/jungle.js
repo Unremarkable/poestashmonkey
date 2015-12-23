@@ -169,7 +169,8 @@ function receiveStashDataFinished() {
 	showTableForSelectedTab();
 
     showCapacityUsed();
-	showAnyItemNameRepeats();
+    showCurrencyValue();
+    showAnyItemNameRepeats();
 }
 
 function addCurrency(item) {
@@ -229,7 +230,7 @@ var basicColumns = ["+", "Icon", "Name", "Level"];
 var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist", "AffixRating"]);
 var accesoriesColumnsWithDamage = accesoriesColumns.concat(["eDMG", "Rarity"]);
 var advancedColumns = ["Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AffixRating"];
-var gearColumns =  advancedColumns.concat(["AR", "EV", "ES", "tResist", "eDMG", "Rarity"]);
+var gearColumns =  basicColumns.concat(advancedColumns).concat(["AR", "EV", "ES", "tResist", "eDMG", "Rarity"]);
 
 var tables = {
 	"currency": {
