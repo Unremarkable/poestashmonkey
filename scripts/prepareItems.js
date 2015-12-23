@@ -80,7 +80,7 @@ function parseMods(descriptions) {
 function moveToStats(item, otherMods) {
 	for (var modName in otherMods) {
 		var values = otherMods[modName].values;
-		if (resistTypesComboConversion[modName]) {
+		if (modTypesComboConversion[modName]) {
 			flattenComboModForItem(item, modName, values);
 		} else {
 			addValuesForMods(item, modName, values);
@@ -89,7 +89,7 @@ function moveToStats(item, otherMods) {
 }
 
 function flattenComboModForItem(item, comboModName, comboModValue) {
-	var comboModList = resistTypesComboConversion[comboModName];
+	var comboModList = modTypesComboConversion[comboModName];
 
 	for (var i = 0; i < comboModList.length; i++) {
 		var modName = comboModList[i];
@@ -121,16 +121,33 @@ var damageTypes = [
   		"Adds #-# Fire Damage"
   ];
 
+var intelligence =			"+# to Intelligence";
+var strength =				"+# to Strength";
+var dexterity = 			"+# to Dexterity";
+
 var coldResistance = 		"+#% to Cold Resistance";
 var lightningResistance = 	"+#% to Lightning Resistance";
 var fireResistance = 		"+#% to Fire Resistance";
 var chaosResistance = 		"+#% to Chaos Resistance";
 
-var resistTypesComboConversion = {
+var increasedArmour =		"#% increased Armour";
+var increasedEvasion =		"#% increased Evasion Rating";
+var increasedEnergyShield =	"#% increased Energy Shield";
+
+var modTypesComboConversion = {
 		"+#% to all Elemental Resistances" : [coldResistance, lightningResistance, fireResistance],
 		"+#% to Cold and Lightning Resistances" : [coldResistance, lightningResistance],
 		"+#% to Fire and Cold Resistances" : [fireResistance, coldResistance],
-		"+#% to Fire and Lightning Resistances" : [fireResistance, lightningResistance]
+		"+#% to Fire and Lightning Resistances" : [fireResistance, lightningResistance],
+
+		"+# to Strength and Dexterity" : [strength, dexterity],
+		"+# to Strength and Intelligence" : [strength, intelligence],
+		"+# to Dexterity and Intelligence" : [dexterity, intelligence],
+		"+# to all Attributes" : [strength, dexterity, intelligence],
+
+		"#% increased Armour and Evasion" : [increasedArmour, increasedEvasion],
+		"#% increased Armour and Energy Shield" : [increasedArmour, increasedEnergyShield],
+		"#% increased Evasion and Energy Shield" : [increasedEvasion, increasedEnergyShield]
 };
 
 // remove once this is part of the precomputed item stats
