@@ -652,7 +652,7 @@ function getCurrencyTitle(item) {
 }
 
 function createQuantityCell(row, item) {
-	appendNewCellWithTextAndClass(row, item.totalQuantity, "quantity", item.quantity);
+	appendNewCellWithTextAndClass(row, item.totalQuantity, "quantity", item.totalQuantity);
 }
 
 function createModsCell(row, item) {
