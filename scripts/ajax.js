@@ -186,7 +186,7 @@ function receiveStashData(league, tab, data) {
 
 	stashData[league][tab] = data;
 
-	localStorage.setItem(getLocalStorageKey(tab, league), JSON.stringify(data.items)); // save
+	storeDataForKey(data.items, getLocalStorageKey(tab, league));
 	receiveItemData(data.items);
 }
 
@@ -225,9 +225,8 @@ function receiveCharacterData(league, name, data) {
 	for (var i = 0; i < data.items.length; ++i) {
 		data.items[i].inventoryId = name + "'s " + data.items[i].inventoryId;
 	}
-	setCharacterCache(name, data);
 
-	localStorage.setItem(getLocalStorageKey(name), JSON.stringify(data.items)); // save
+	storeDataForKey(data.items, getLocalStorageKey(name));
 	receiveItemData(data.items);
 }
 
@@ -237,6 +236,15 @@ function getLocalStorageKey(keyName, league) {
 		return "POEStashTab-" + league + "-" + keyName;
 	} else {
 		return "POECharacter-" + keyName;
+	}
+}
+
+// Attempts to store the provided data at the given key. Does not block on failure.
+function storeDataForKey(data, key) {
+	try {
+		localStorage.setItem(key, JSON.stringify(data)); // save
+	} catch(e) {
+		console.log("Failed to store data for key " + key + " in local storage due to exception ", e);
 	}
 }
 
