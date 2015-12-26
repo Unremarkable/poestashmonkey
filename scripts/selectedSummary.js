@@ -50,7 +50,13 @@ function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
 }
 
 function renderValuesArray(values) {
-	return values ? values.join("-") : "";
+	if (values != null) {
+		if (values.constructor === Array){
+			return values.join("-");
+		}
+		return values; // might be a single value
+	}
+	return "";
 }
 
 function addStatsToSummaryMap(statsMap, stats) {

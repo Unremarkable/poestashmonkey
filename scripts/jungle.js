@@ -457,7 +457,7 @@ function addItemQuality(row, item) {
 }
 
 function addTotalResistances(row, item) {
-	var tResist = getTotalResistances(item);
+	var tResist = item.stats["Total Resistance"];
 	appendNewCellWithTextAndClass(row, tResist + "%", "tresist", tResist);
 }
 
