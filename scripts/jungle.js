@@ -102,54 +102,65 @@ function receiveItemData(items) {
 		itemStoreIdCounter++;
 		itemStore.push(item);
 
-		var itemType = item.frameType;
-		var name = item.typeLine;
 		addNameToList(item.name);
 
-		if (itemType == 6 && item.properties["Stack Size"]) {
-			// type 6 is also in game green items like "Sewer Keys", but those wouldn't have a stack size
-			createRowFor(item, tables["cards"]);
-		} else if (itemType == 5) {
+		var itemType = getItemType(item);
+
+		if (itemType == "currency") {
 			addCurrency(item);
-		} else if (itemType == 4) {
-			createRowFor(item, tables["gems"]);
 		} else {
-			if (isFlask(name)) {
-				createRowFor(item, tables["flasks"]);
-			} else if (isRing(name)) {
-				createRowFor(item, tables["rings"]);
-			} else if (isAmulet(name)) {
-				createRowFor(item, tables["amulets"]);
-			} else if (isTalisman(name)) {
-				createRowFor(item, tables["talismans"]);
-			} else if (isMap(item)) {
-				createRowFor(item, tables["maps"]);
-			} else if (isSacrifice(name)) {
-				addStackSizeToProperties(item, 1, 50);
-				addCurrency(item);
-			} else if (isBelt(name)) {
-				createRowFor(item, tables["belts"]);
-			} else if (isQuiver(name)) {
-				createRowFor(item, tables["quivers"]);
-			} else if (isBoots(name)) {
-				createRowFor(item, tables["boots"]);
-			} else if (isGloves(name)) {
-				createRowFor(item, tables["gloves"]);
-			} else if (isHelmet(name)) {
-				createRowFor(item, tables["helmets"]);
-			} else if (isShield(item)) {
-				createRowFor(item, tables["shields"]);
-			} else if (isArmour(item)) {
-				createRowFor(item, tables["armour"]);
-			} else if (isWeapon(item)) {
-				item.weaponInfo = getWeaponInfo(item);	// HACK
-				createRowFor(item, tables["weapons"]);
-			} else if (isJewel(name)) {
-				createRowFor(item, tables["jewels"]);
-			} else {
-				createRowFor(item, tables["uncategorized"]);
+			if (itemType == "uncategorized") {
 				console.log("Uncategorized Item", item);
 			}
+			createRowFor(item, tables[itemType]);
+		}
+	}
+}
+
+function getItemType(item) {
+	var itemType = item.frameType;
+	var name = item.typeLine;
+
+	if (itemType == 6 && item.properties["Stack Size"]) {
+		// type 6 is also in game green items like "Sewer Keys", but those wouldn't have a stack size
+		return "cards";
+	} else if (itemType == 5) {
+		return "currency";
+	} else if (itemType == 4) {
+		return "gems";
+	} else {
+		if (isFlask(name)) {
+			return "flasks";
+		} else if (isRing(name)) {
+			return "rings";
+		} else if (isAmulet(name)) {
+			return "amulets";
+		} else if (isTalisman(name)) {
+			return "talismans";
+		} else if (isMap(item)) {
+			return "maps";
+		} else if (isSacrifice(name)) {
+			return "currency";
+		} else if (isBelt(name)) {
+			return "belts";
+		} else if (isQuiver(name)) {
+			return "quivers";
+		} else if (isBoots(name)) {
+			return "boots";
+		} else if (isGloves(name)) {
+			return "gloves";
+		} else if (isHelmet(name)) {
+			return "helmets";
+		} else if (isShield(item)) {
+			return "shields";
+		} else if (isArmour(item)) {
+			return "armour";
+		} else if (isWeapon(item)) {
+			return "weapons";
+		} else if (isJewel(name)) {
+			return "jewels";
+		} else {
+			return "uncategorized";
 		}
 	}
 }

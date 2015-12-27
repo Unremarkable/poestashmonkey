@@ -45,7 +45,15 @@ function prepareItems(items) {
                 items.push(socketedItem);
             }
         }
-        
+
+        if (isWeapon(item)) {
+           item.weaponInfo = getWeaponInfo(item);
+        }
+
+        if (isSacrifice(item.typeLine)) {
+            addStackSizeToProperties(item, 1, 50);
+        }
+
         item.stats = {};
         moveToStats(item, item.implicitMods);
         moveToStats(item, item.explicitMods);
