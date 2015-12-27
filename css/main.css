@@ -54,6 +54,43 @@ h1, h2 {
 	margin: 15px;
 }
 
+#overlay {
+	background-color: black;
+	bottom: 0px;
+	display: none;
+	left: 0px;
+	opacity: 0.8;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+}
+
+.dialogBox {
+	background-color: #1a1812;
+	border: 2px double #0f0f0f;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	/*box-shadow: 0 0 10px #332f24;*/
+	display: none;
+	height: 600px;
+	left: 10%;
+	right: 10%;
+	padding: 20px;
+	position: absolute;
+	top: 60px;
+	width: 80%;
+}
+
+.dialogBox .closeDialogBox {
+    color: #a38d6d;
+    cursor: pointer;
+    font-size: 16px;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+
 #infoBox {
 	color:#4D632D;
 	font-size: 10px;
@@ -87,11 +124,35 @@ h1, h2 {
 	text-decoratoin: underline;
 }
 
-#showSelected {
+#filterMenuButton {
 	cursor: pointer;
 	position: absolute;
 	right: 510px;
 	top: 15px;
+}
+
+#showSelected {
+	border-right: 1px solid #a38d6d;
+	cursor: pointer;
+	padding-right: 20px;
+	position: absolute;
+	right: 560px;
+	top: 15px;
+}
+
+#showSelected:hover,
+#filterMenuButton:hover,
+.dialogBox .closeDialogBox:hover {
+	color: #dfcf99;
+}
+
+#filterBox {
+
+}
+
+#filterBox h2 {
+	margin: 0px;
+	margin-bottom: 20px;
 }
 
 #searchBoxContainer {

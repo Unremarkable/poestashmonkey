@@ -3,6 +3,21 @@ function attachHandlers() {
     handleTabSwitching();
     handleSorting();
     handleSelectedItems();
+    handleFilters();
+
+    attachCloseDialogBoxHandler();
+}
+
+function showDialogBoxWithId(id) {
+	$("#overlay").show();
+	$("#" + id).show();
+}
+
+function attachCloseDialogBoxHandler() {
+	$(".closeDialogBox").click(function() {
+		$(this).parents(".dialogBox").hide();
+		$("#overlay").hide();
+	});
 }
 
 function handleTabSwitching() {
@@ -238,6 +253,18 @@ function getSortValue(row, col) {
 }
 
 /* ----------------- STAT SEARCH ----------------- */
+
+function handleFilters() {
+	var filterBox = $("<div id='filterBox' class='dialogBox'></div>");
+	filterBox.append("<div class='closeDialogBox'>x</div>");
+	filterBox.append("<h2>Filters</h2>");
+	filterBox.append("<div>Coming soon!</div>");
+	$("body").append(filterBox);
+
+	$("#filterMenuButton").click(function() {
+		showDialogBoxWithId("filterBox");
+	});
+}
 
 // for now filtering only supports available stats and requirements
 var sampleStatSearch = {"Level" : [50, 52], "+# to maximum Life" : [80,100]};

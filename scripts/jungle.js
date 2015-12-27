@@ -720,9 +720,11 @@ function newCell() {
 function buildPage() {
     var title = "<h1>Stash Inventory</h1>";
     var showSelected = "<div id='showSelected'>show selected</div>";
+    var filter = "<div id='filterMenuButton'>filter</div>";
     var searchBox = "<div id='searchBoxContainer'><input id='searchBox' type='text' placeholder='Search...' autofocus /><div id='clearSearch'>x</div></div>";
     var infoBox = "<div id='infoBox'></div>";
-    $("body").html("<div id='interactions'>" + title + showSelected + searchBox + infoBox + "</div>");
+    var overlay = "<div id='overlay'></div>"; // background for dialog boxes
+    $("body").html("<div id='interactions'>" + title + showSelected + filter + searchBox + infoBox + overlay + "</div>");
 
     $("body").keypress(function(e) {
         if (!$("#searchBox").is(":focus")) {
