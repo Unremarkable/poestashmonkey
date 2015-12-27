@@ -33,7 +33,6 @@ function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
 	addCellWithContentAndClass($totalsRow, "TOTALS");
 
 	var sortedStatMap = getOrderedListForStats(statsMap);
-	console.log("STATS MAP", sortedStatMap);
 	for (var statName in sortedStatMap) {
 		var className = sortedStatMap[statName].className;
 		addHeaderCell($headerRow, statName, className);

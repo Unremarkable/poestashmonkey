@@ -200,10 +200,7 @@ function handleSorting() {
 
         rows.sort(function(a, b) {
             var value1 = getSortValue(a, col);
-            value1 = parseInt(value1) || value1;
-
             var value2 = getSortValue(b, col);
-            value2 = parseInt(value2) || value2;
 
             if (value1 > value2) {
                 if (sortDescending) return 1;
@@ -223,5 +220,10 @@ function handleSorting() {
 }
 
 function getSortValue(row, col) {
-    return $(row).find("td." + col).attr("data-sortValue") || 0;
+    var value = $(row).find("td." + col).attr("data-sortValue");
+    if (value) {
+        var number = parseFloat(value);
+        return number ? number : value;
+    }
+    return 0;
 }
