@@ -30,22 +30,52 @@ function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
 
 	$totalsRow = $("<tr></tr>").addClass("totalsRow");
 	$table.append($totalsRow);
-	addCellWithValue($totalsRow, "TOTALS");
+	addCellWithContentAndClass($totalsRow, "TOTALS");
 
-	var sortedStatNames = Object.keys(statsMap).sort();
-	for (var i = 0; i < sortedStatNames.length; i++) {
-		var statName = sortedStatNames[i];
-		addHeaderCell($headerRow, statName);
+	var sortedStatMap = getOrderedListForStats(statsMap);
+	console.log("STATS MAP", sortedStatMap);
+	for (var statName in sortedStatMap) {
+		var className = sortedStatMap[statName].className;
+		addHeaderCell($headerRow, statName, className);
 
 		for (var itemId in rows) {
 			var item = selectedItemsMap[itemId];
 			var displayText = renderValuesArray(item.stats[statName]);
 			var $row = rows[itemId];
-			addCellWithValue($row, displayText);
+			addCellWithContentAndClass($row, displayText, className);
 		}
 
-		var totalsText = renderValuesArray(statsMap[statName]);
-		addCellWithValue($totalsRow, totalsText);
+		var totalsText = renderValuesArray(sortedStatMap[statName].values);
+		addCellWithContentAndClass($totalsRow, totalsText, className);
+	}
+}
+
+function getOrderedListForStats(statsMapOriginal) {
+	var statsMap = JSON.parse(JSON.stringify(statsMapOriginal)); // COPY
+
+	var orderedMap = {};
+	moveStatsFromListToOrderedMap(statsMap, orderedMap, resistances.concat(totalResistance), "resist");
+	moveStatsFromListToOrderedMap(statsMap, orderedMap, defenseStats, "defense");
+	moveStatsFromListToOrderedMap(statsMap, orderedMap, defenseProperties, "defense");
+	moveStatsFromListToOrderedMap(statsMap, orderedMap, attributes, "attribute");
+	moveStatsFromListToOrderedMap(statsMap, orderedMap, damageTypes, "damage");
+
+	// copy over remainder of stats
+	for (var stat in statsMap) {
+		orderedMap[stat] = statsMap[stat];
+	}
+
+	return orderedMap;
+}
+
+function moveStatsFromListToOrderedMap(statsMap, orderedMap, list, className) {
+	for (var i = 0; i < list.length; i++) {
+		var stat = list[i];
+		if (statsMap[stat]) {
+			orderedMap[stat] = statsMap[stat];
+			delete statsMap[stat];
+			orderedMap[stat]["className"] = className;
+		}
 	}
 }
 
@@ -63,23 +93,27 @@ function addStatsToSummaryMap(statsMap, stats) {
 	for (var statName in stats) {
 		var values = stats[statName];
 		if (statsMap[statName]) {
-			values = mergeValuesArrays(values, statsMap[statName]);
+			values = mergeValuesArrays(values, statsMap[statName].values);
 		}
-		statsMap[statName] = values;
+		statsMap[statName] = {"values" : values};
 	}
 }
 
 function mergeValuesArrays(first, second) {
-	if (!first) return second;
-	if (!second) return first;
+	if (first == null) return second;
+	if (second == null) return first;
 
-	var sumArray = [];
-	// assuming these are the same length since they should be the same stat type
-	for (var i = 0; i < first.length; i++) {
-		var sum = parseInt(first[i]) + parseInt(second[i]);
-		sumArray.push(sum);
+	if (first.constructor === Array && second.constructor === Array) {
+		var sumArray = [];
+		// assuming these are the same length since they should be the same stat type
+		for (var i = 0; i < first.length; i++) {
+			var sum = first[i] + second[i];
+			sumArray.push(sum);
+		}
+		return sumArray;
+	} else {
+		return first + second;
 	}
-	return sumArray;
 }
 
 function addHeaderCell($row, value) {
@@ -88,9 +122,12 @@ function addHeaderCell($row, value) {
 	$row.append(cell);
 }
 
-function addCellWithValue($row, value) {
+function addCellWithContentAndClass($row, content, className) {
 	var cell = document.createElement("td");
-	cell.innerHTML = value;
+	if (className) {
+		cell.className = className;
+	}
+	cell.innerHTML = content;
 	$row.append(cell);
 }
 
@@ -100,9 +137,9 @@ function addSummaryRowForItem(item) {
 	createImageCell(row, item);
 	createTitleCell(row, item);
 
-	addCellWithValue(row, 0);
-	addCellWithValue(row, 0);
-	addCellWithValue(row, 0);
+	addCellWithContentAndClass(row, 0);
+	addCellWithContentAndClass(row, 0);
+	addCellWithContentAndClass(row, 0);
 
 	$("#selectedSummaryTable")[0].appendChild(row);
 }

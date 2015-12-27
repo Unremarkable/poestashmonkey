@@ -252,3 +252,8 @@ li[href='#uncategorized'] { display: none; }
 	background-color: #26231B;
 	font-size: 16px;
 }
+
+#selectedSummary .defense { color: #719e13; }
+#selectedSummary .resist { color: #415161;; }
+#selectedSummary .attribute { color: #416151; }
+#selectedSummary .damage { color: #960000; }

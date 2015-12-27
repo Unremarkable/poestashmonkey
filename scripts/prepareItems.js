@@ -100,9 +100,26 @@ function flattenComboModForItem(item, comboModName, comboModValue) {
 }
 
 function addValuesForMods(item, modName, values) {
+	if (values) {
+		if (values.constructor === Array) {
+			var parsedValues = [];
+			for (var i = 0; i < values.length; i++) {
+				parsedValues.push(parseInt(values[i]));
+			}
+			if (parsedValues.length == 1) {
+				values = parsedValues[0];
+			} else {
+				values = parsedValues;
+			}
+		} else {
+			values = parseInt(values);
+		}
+	}
+
 	if (item.stats[modName]) {
 		values = mergeValuesArrays(values, item.stats[modName]);
 	}
+
 	item.stats[modName] = values;
 }
 
@@ -111,22 +128,41 @@ function sumResistanceStats(item) {
 	for (var i = 0; i < resistances.length; i++) {
 		var resistance = resistances[i];
 		if (item.stats[resistance]) {
-			total += parseInt(item.stats[resistance][0]);
+			total += item.stats[resistance];
 		}
 	}
 	item.stats[totalResistance] = total;
 }
 
 function handleDefenseStats(item) {
+	var containedDefenseProperty = false;
 	for (var i = 0; i < defenseProperties.length; i++) {
 		var propertyName = defenseProperties[i];
 		var property = item.properties[propertyName];
 		if (property) {
 			// if the item has the property then any mods are local and will already be computed into it
 			// this copy the property value into stats and remove the local stats that modify it
-			item.stats[propertyName] = property.values[0][0];
-			removeStatsFromItem(item, defenseStats);
+			item.stats[propertyName] = parseInt(property.values[0][0]);
+			containedDefenseProperty = true;
 		}
+	}
+	if (containedDefenseProperty) {
+		removeStatsFromItem(item, defenseStats);
+	}
+
+	var containedDefenseAddedStat = false;
+	for (var i = 0; i < defenseAddedStats.length; i++) {
+		var statName = defenseAddedStats[i];
+		var stat = item.stats[statName];
+		if (stat) {
+			// moving base stats to be represented as computed stats for items that don't have that stat as property
+			var statNameToAdd = defenseBaseStatToComputedStatConversion[statName];
+			item.stats[statNameToAdd] = stat;
+			containedDefenseAddedStat = true;
+		}
+	}
+	if (containedDefenseAddedStat) {
+		removeStatsFromItem(item, defenseAddedStats);
 	}
 }
 
@@ -140,11 +176,11 @@ function removeStatsFromItem(item, statsToRemove) {
 }
 
 // ----------------------------------------------------------------- DAMAGE STATS
-var addsPhysicalDamage =	"Adds #-# Physical Damage";
-var addsColdDamage = 		"Adds #-# Cold Damage";
-var addsLightningDamage =   "Adds #-# Lightning Damage";
-var addsFireDamage =		"Adds #-# Fire Damage";
-var addsChaosDamage = 		"Adds #-# Chaos Damage";
+var addsPhysicalDamage =	"Adds #-# Physical Damage to Attacks";
+var addsColdDamage = 		"Adds #-# Cold Damage to Attacks";
+var addsLightningDamage =	"Adds #-# Lightning Damage to Attacks";
+var addsFireDamage =		"Adds #-# Fire Damage to Attacks";
+var addsChaosDamage = 		"Adds #-# Chaos Damage to Attacks";
 
 var damageTypes = [
     addsPhysicalDamage,
@@ -155,28 +191,43 @@ var damageTypes = [
 ];
 
 // ----------------------------------------------------------------- DEFENSE STATS
+var addedArmour = 			"+# to Armour";
+var addedEvasionRating =	"+# to Evasion Rating";
+var addedEnergyShield = 	"+# to Energy Shield";
+
+var defenseAddedStats = [
+    addedArmour,
+    addedEvasionRating,
+    addedEnergyShield
+];
+
 var increasedArmour =		"#% increased Armour";
 var increasedEvasion =		"#% increased Evasion Rating";
 var increasedEnergyShield =	"#% increased Energy Shield";
-
-var addedArmour = 			"+# to Armour";
-var addedEvasion = 			"+# to Evasion Rating";
-var addedEnergyShield = 	"+# to Energy Shield";
-
-var defenseProperties = [
-    "Armour",
-    "Evasion Rating",
-    "Energy Shielf"
-];
 
 var defenseStats = [
 	increasedArmour,
 	increasedEvasion,
 	increasedEnergyShield,
 	addedArmour,
-	addedEvasion,
+	addedEvasionRating,
 	addedEnergyShield
 ];
+
+var computedArmour = 		"Armour";
+var computedEvasionRating = "Evasion Rating";
+var computedEnergyShield = 	"Energy Shield";
+
+var defenseProperties = [
+    computedArmour,
+    computedEvasionRating,
+    computedEnergyShield
+];
+
+var defenseBaseStatToComputedStatConversion = {};
+defenseBaseStatToComputedStatConversion[addedArmour]  = computedArmour;
+defenseBaseStatToComputedStatConversion[addedEvasionRating]  = computedEvasionRating;
+defenseBaseStatToComputedStatConversion[addedEnergyShield]  = computedEnergyShield;
 
 // ----------------------------------------------------------------- ATTRIBUTE STATS
 var intelligence =			"+# to Intelligence";
