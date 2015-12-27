@@ -34,13 +34,8 @@ function ready() {
 
     $("body").html("<h2>Loading...</h2>");
 
-	var league = getParameterByName("league") || "Standard";
-
 	buildPage();
 	preload_main();
-
-    // does not work yet
-    // fetchCurrencyConversionTable();
 };
 
 function createRowFor(item, table) {
@@ -104,63 +99,13 @@ function receiveItemData(items) {
 
 		addNameToList(item.name);
 
-		var itemType = getItemType(item);
-
-		if (itemType == "currency") {
+		if (item.type == "currency") {
 			addCurrency(item);
 		} else {
-			if (itemType == "uncategorized") {
+			if (item.type == "uncategorized") {
 				console.log("Uncategorized Item", item);
 			}
-			createRowFor(item, tables[itemType]);
-		}
-	}
-}
-
-function getItemType(item) {
-	var itemType = item.frameType;
-	var name = item.typeLine;
-
-	if (itemType == 6 && item.properties["Stack Size"]) {
-		// type 6 is also in game green items like "Sewer Keys", but those wouldn't have a stack size
-		return "cards";
-	} else if (itemType == 5) {
-		return "currency";
-	} else if (itemType == 4) {
-		return "gems";
-	} else {
-		if (isFlask(name)) {
-			return "flasks";
-		} else if (isRing(name)) {
-			return "rings";
-		} else if (isAmulet(name)) {
-			return "amulets";
-		} else if (isTalisman(name)) {
-			return "talismans";
-		} else if (isMap(item)) {
-			return "maps";
-		} else if (isSacrifice(name)) {
-			return "currency";
-		} else if (isBelt(name)) {
-			return "belts";
-		} else if (isQuiver(name)) {
-			return "quivers";
-		} else if (isBoots(name)) {
-			return "boots";
-		} else if (isGloves(name)) {
-			return "gloves";
-		} else if (isHelmet(name)) {
-			return "helmets";
-		} else if (isShield(item)) {
-			return "shields";
-		} else if (isArmour(item)) {
-			return "armour";
-		} else if (isWeapon(item)) {
-			return "weapons";
-		} else if (isJewel(name)) {
-			return "jewels";
-		} else {
-			return "uncategorized";
+			createRowFor(item, tables[item.type]);
 		}
 	}
 }
@@ -335,36 +280,6 @@ var tables = {
 		"columns": ["Icon", "Name", "Mods"]
 	}
 };
-
-var rings = ["Iron Ring", "Coral Ring", "Paua Ring", "Gold Ring", "Ruby Ring", "Sapphire Ring", "Topaz Ring", "Diamond Ring", "Moonstone Ring", "Prismatic Ring", "Amethyst Ring", "Two-Stone Ring", "Unset Ring"];
-var amulets = ["Paua Amulet", "Coral Amulet", "Amber Amulet", "Jade Amulet", "Lapis Amulet", "Gold Amulet", "Onyx Amulet", "Agate Amulet", "Turquoise Amulet", "Citrine Amulet"];
-
-var weaponTypes = ["Bow", "Claw", "Dagger", "One Handed Axe", "One Handed Mace", "One Handed Sword", "Staff", "Two Handed Axe", "Two Handed Mace", "Two Handed Sword", "Wand"];
-
-function isFlask(name) { return name.match(/Flask/) != null; }
-
-function isRing(name)   { return getItemBaseName(name, rings); }
-function isAmulet(name) { return getItemBaseName(name, amulets); }
-
-function isQuiver(name) { return name.match(/Quiver/) != null; }
-function isBelt(name) { return name.match(/Belt|Sash/) != null; }
-
-function isJewel(name) { return name.match(/Jewel/) != null; }
-function isTalisman(name) { return name.match(/Talisman/) != null; }
-
-function isGloves(name) { return name.match(/Mitts|Gloves|Gauntlets/) != null; }
-function isBoots(name) { return name.match(/Boots|Slippers|Shoes|Greaves/) != null; }
-function isHelmet(name) { return name.match(/Cage|Mask|Helmet|Sallet|Hood|Tricorne|Helm|Circlet|Cap|Pelt|Burgonet|Bascinet|Crown|Coif|Hat/) != null; }
-
-function isArmour(item) { return (item.properties["Evasion Rating"] || item.properties["Armour"] || item.properties["Energy Shield"] || item.name === "Tabula Rasa"); }
-
-function isWeapon(item) { return (item.properties["Physical Damage"] || item.properties["Elemental Damage"]); }
-
-function isShield(item) { return (item.properties["Chance to Block"]); }
-
-function isMap(item) { return (item.properties["Map Tier"]); }
-function isSacrifice(name) { return name.match(/Sacrifice at/) != null; }
-
 
 function getElementalDamage(item) {
 	var eDMG = [0, 0];

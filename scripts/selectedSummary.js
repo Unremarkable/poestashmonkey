@@ -9,7 +9,7 @@ function handleSelectedSummary() {
 }
 
 function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
-	var selectedItemsMap = JSON.parse(JSON.stringify(selectedItemsMapOriginal)); // COPY
+	var selectedItemsMap = cloneItem(selectedItemsMapOriginal);
 	var $table = $("#selectedSummaryTable");
 
 	var $headerRow = $("<tr></tr>").addClass("headerRow");
@@ -50,7 +50,7 @@ function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
 }
 
 function getOrderedListForStats(statsMapOriginal) {
-	var statsMap = JSON.parse(JSON.stringify(statsMapOriginal)); // COPY
+	var statsMap = cloneItem(statsMapOriginal);
 
 	var orderedMap = {};
 	moveStatsFromListToOrderedMap(statsMap, orderedMap, resistances.concat(totalResistance), "resist");
