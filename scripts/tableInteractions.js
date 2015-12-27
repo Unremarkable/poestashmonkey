@@ -83,6 +83,15 @@ function postFilter() {
     tablesWithRowsInSearch.find(".headerRow").show();
 }
 
+function displayItems(items) {
+	preFilter();
+	for (var i = 0; i < items.length; i++) {
+		var item = items[i];
+		$("#tabView #" + item.id).show();
+	}
+	postFilter();
+}
+
 function search(searchString) {
 	preFilter();
     removeTermHighlighting();
@@ -226,4 +235,41 @@ function getSortValue(row, col) {
         return number ? number : value;
     }
     return 0;
+}
+
+/* ----------------- STAT SEARCH ----------------- */
+
+// for now filtering only supports available stats and requirements
+var sampleStatSearch = {"Level" : [50, 52], "+# to maximum Life" : [80,100]};
+
+function performStatFilter(filters) {
+	var results = itemStore;
+	// perform multiple filters that each thin down the list to items that match all filters
+	for (var filterName in filters) {
+		var filter = filters[filterName];
+		results = filterForStat(results, filterName, filter[0], filter[1]);
+	}
+
+	displayItems(results);
+}
+
+function filterForStat(list, statName, minValue, maxValue) {
+	minValue = minValue || 0;
+	console.log("Searching for " + statName + " with minimum " + minValue + " and maximum " + maxValue);
+
+	var results = [];
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+
+		// could be a stat or a requirement
+		var stat = item.stats[statName];
+		var requirement = getRequirement(item, statName);
+
+		var value = stat ? stat : requirement ? parseInt(requirement) : null;
+
+		if (value && value >= minValue && (!maxValue || value <= maxValue)) {
+			results.push(item);
+		}
+	}
+	return results;
 }

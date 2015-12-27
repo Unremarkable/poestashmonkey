@@ -142,7 +142,19 @@ function getItemType(item) {
 var rings = ["Iron Ring", "Coral Ring", "Paua Ring", "Gold Ring", "Ruby Ring", "Sapphire Ring", "Topaz Ring", "Diamond Ring", "Moonstone Ring", "Prismatic Ring", "Amethyst Ring", "Two-Stone Ring", "Unset Ring"];
 var amulets = ["Paua Amulet", "Coral Amulet", "Amber Amulet", "Jade Amulet", "Lapis Amulet", "Gold Amulet", "Onyx Amulet", "Agate Amulet", "Turquoise Amulet", "Citrine Amulet"];
 
-var weaponTypes = ["Bow", "Claw", "Dagger", "One Handed Axe", "One Handed Mace", "One Handed Sword", "Staff", "Two Handed Axe", "Two Handed Mace", "Two Handed Sword", "Wand"];
+var weaponTypes = [
+    "Bow",
+    "Claw",
+    "Dagger",
+    "One Handed Axe",
+    "One Handed Mace",
+    "One Handed Sword",
+    "Staff",
+    "Two Handed Axe",
+    "Two Handed Mace",
+    "Two Handed Sword",
+    "Wand"
+];
 
 function isFlask(name) { return name.match(/Flask/) != null; }
 
