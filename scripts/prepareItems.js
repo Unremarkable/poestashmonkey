@@ -60,7 +60,8 @@ function prepareItems(items) {
         moveToStats(item, item.implicitMods);
         moveToStats(item, item.explicitMods);
 
-        addToRankings(item);
+        // comment out for now since it's not used in the UI and the additional computation may cause latency
+        // addToRankings(item);
     }
 }
 

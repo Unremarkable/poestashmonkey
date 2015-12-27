@@ -13,6 +13,11 @@ function showDialogBoxWithId(id) {
 	$("#" + id).show();
 }
 
+function closeDialogBoxes() {
+	$(".dialogBox").hide();
+	$("#overlay").hide();
+}
+
 function attachCloseDialogBoxHandler() {
 	$(".closeDialogBox").click(function() {
 		$(this).parents(".dialogBox").hide();
@@ -257,32 +262,105 @@ function getSortValue(row, col) {
 function handleFilters() {
 	var filterBox = $("<div id='filterBox' class='dialogBox'></div>");
 	filterBox.append("<div class='closeDialogBox'>x</div>");
-	filterBox.append("<h2>Filters</h2>");
-	filterBox.append("<div>Coming soon!</div>");
+	filterBox.append("<input id='runFilterButton' type='button' value='Run Filter'>");
+	filterBox.append("<form id='filterList'></form>");
 	$("body").append(filterBox);
+
+	addFilterGroup("Requirements", ["Level", "Str", "Int", "Dex"]);
+	addFilterGroup("Attributes", attributes);
+	addFilterGroup("Defense Properties", defenseProperties);
+	addFilterGroup("Resistances", resistances.concat(totalResistance));
 
 	$("#filterMenuButton").click(function() {
 		showDialogBoxWithId("filterBox");
 	});
+
+	handleFilterSearch();
+}
+
+function addFilterGroup(groupName, filterNames) {
+	var filterList = $("#filterList");
+
+	var filterGroup = $("<div class='filterGroup'></div>");
+	filterList.append(filterGroup);
+
+	var groupNameLabel = $("<h4>" + groupName + "</h4>");
+	filterGroup.append(groupNameLabel);
+
+	for (var i = 0; i < filterNames.length; i++) {
+		var filterName = filterNames[i];
+		filterGroup.append(createFilter(filterName));
+	}
+}
+
+function createFilter(filterName) {
+	var labelName = $("<span class='filterName'></span>");
+	labelName.html(filterName.replace("+#% to ", "").replace("+# to ", "") + ":");
+
+	var filterLine = $("<div class='filter'></div>");
+	filterLine.append(labelName);
+
+	filterLine.append(createInputEntry("min", filterName + "|min", 2));
+	filterLine.append(createInputEntry("max", filterName + "|max", 2));
+
+	return filterLine;
+}
+
+function createInputEntry(labelText, name, size) {
+	var label = $("<label>" + labelText + "</label>");
+
+	var input = $("<input />");
+	input.attr("name", name);
+	input.attr("size", size);
+
+	var span = $("<span></span>");
+	span.append(label);
+	span.append(input);
+
+	return span;
+}
+
+function handleFilterSearch() {
+    $("#runFilterButton").click(function() {
+        closeDialogBoxes();
+        performStatFilter(getFiltersFromForm());
+    });
+}
+
+function getFiltersFromForm() {
+    var filters = {};
+    $("#filterList").serializeArray().filter(function(x) {
+        if (x.value) {
+	        var parts = x.name.split("|");
+	        var stat = parts[0];
+	        var valueObject = {};
+	        if (filters[stat]) {
+	            valueObject = filters[stat];
+	        }
+	        valueObject[parts[1]] = parseInt(x.value);
+	        filters[stat] = valueObject;
+        }
+    });
+    return filters;
 }
 
 // for now filtering only supports available stats and requirements
-var sampleStatSearch = {"Level" : [50, 52], "+# to maximum Life" : [80,100]};
+var sampleStatSearch = {"Level" : {"min": 50, "max": 52}, "+# to maximum Life" : {"min": 80, "max": 100}};
 
 function performStatFilter(filters) {
 	var results = itemStore;
 	// perform multiple filters that each thin down the list to items that match all filters
 	for (var filterName in filters) {
 		var filter = filters[filterName];
-		results = filterForStat(results, filterName, filter[0], filter[1]);
+		results = filterForStat(results, filterName, filter);
 	}
 
 	displayItems(results);
 }
 
-function filterForStat(list, statName, minValue, maxValue) {
-	minValue = minValue || 0;
-	console.log("Searching for " + statName + " with minimum " + minValue + " and maximum " + maxValue);
+function filterForStat(list, statName, filter) {
+	filter.min = filter.min || 0;
+	console.log("Searching for " + statName + " with minimum " + filter.min + " and maximum " + filter.max);
 
 	var results = [];
 	for (var i = 0; i < list.length; i++) {
@@ -294,7 +372,7 @@ function filterForStat(list, statName, minValue, maxValue) {
 
 		var value = stat ? stat : requirement ? parseInt(requirement) : null;
 
-		if (value && value >= minValue && (!maxValue || value <= maxValue)) {
+		if (value && value >= filter.min && (!filter.max || value <= filter.max)) {
 			results.push(item);
 		}
 	}

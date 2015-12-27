@@ -71,10 +71,10 @@ h1, h2 {
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
-	/*box-shadow: 0 0 10px #332f24;*/
 	display: none;
-	height: 600px;
+	min-height: 50%;
 	left: 10%;
+	overflow: auto;
 	right: 10%;
 	padding: 20px;
 	position: absolute;
@@ -146,13 +146,38 @@ h1, h2 {
 	color: #dfcf99;
 }
 
-#filterBox {
-
-}
-
 #filterBox h2 {
 	margin: 0px;
 	margin-bottom: 20px;
+}
+
+#filterBox .filterGroup {
+	display: inline-block;
+	vertical-align: top;
+	width: 300px;
+}
+
+#filterBox .filter {
+	font-size: 12px;
+	margin-bottom: 10px;
+}
+
+#filterBox .filter .filterName {
+	display: inline-block;
+	margin-right: 10px;
+	text-align: right;
+	vertical-align: middle;
+	width: 80px;
+}
+
+#filterBox .filter label {
+	margin: 5px;
+}
+
+#filterBox #runFilterButton {
+	color: #1a1812;
+	cursor: pointer;
+	font-size: 20px;
 }
 
 #searchBoxContainer {

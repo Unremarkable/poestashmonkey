@@ -726,7 +726,7 @@ function buildPage() {
     var overlay = "<div id='overlay'></div>"; // background for dialog boxes
     $("body").html("<div id='interactions'>" + title + showSelected + filter + searchBox + infoBox + overlay + "</div>");
 
-    $("body").keypress(function(e) {
+    $("#tabView").keypress(function(e) {
         if (!$("#searchBox").is(":focus")) {
             $("#searchBox").focus();
         }
