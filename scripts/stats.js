@@ -27,8 +27,31 @@ function showAnyItemNameRepeats() {
 		}
 	}
 	if (duplicates.length > 0) {
-		$("#infoBox").append("<div id='duplicates'>Item name repeats: " + duplicates + "</div>");
+		var duplicatesBox = $("<div id='duplicates'></div>");
+
+		var toggleDuplicatesButton = $("<div id='toggleDuplicatesButton'>show item name repeats -></div>");
+		var duplicatesContent = $("<div id='duplicatesContent'>" + duplicates + "</div>");
+		duplicatesBox.append(toggleDuplicatesButton);
+		duplicatesBox.append(duplicatesContent);
+
+		$("#infoBox").append(duplicatesBox);
 	}
+
+	$("#toggleDuplicatesButton").click(function() {
+		var toggleButton = $(this);
+		console.log("toggleButton", toggleButton);
+		var content = $("#duplicatesContent");
+		console.log("content", content);
+		if (content.is(":visible")) {
+			console.log("should hide");
+			content.hide();
+			toggleButton.html("show item name repeats ->");
+		} else {
+			console.log("should show");
+			content.show();
+			toggleButton.html("hide item name repeats ->");
+		}
+	});
 }
 
 var itemNames = [];
