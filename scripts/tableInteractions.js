@@ -472,6 +472,7 @@ function addRankingsToBox(rankBox, statName, stat, rankingsForStat) {
 	}
 
 	statDiv.html("[" + statText + "] " + cleanStatName(statName) + " (" + rank + "/" + rankingsForStat.length + ")");
+	statDiv.attr("title", rankingsForStat.join(", "));
 
 	var className = "";
 	if (rank == 1) {
