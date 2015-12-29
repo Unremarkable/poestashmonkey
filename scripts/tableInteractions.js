@@ -410,7 +410,7 @@ function sortStatRankings() {
 		var rankingsMap = statRankings[rankTypeName];
 		for (var statName in rankingsMap) {
 			var rankList = rankingsMap[statName];
-			if (rankList && rankList[0]) {
+			if (rankList && rankList[0] != null) {
 				// sort highest to lowest
 				rankList.sort(function(a, b) {
 					if (a.constructor === Array) {
