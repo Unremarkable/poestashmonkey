@@ -68,7 +68,7 @@ function createRowFor(item, table) {
 			"CritChance": addCritChanceCell,
 			"Type": addWeaponTypeCell,
 			"Rarity":  addIncreasedRarity,
-            "AffixRating": addAffixRating,
+            "Rating": addAffixRating,
             "MapTier": addMapTier,
             "StackSize": createStackSizeCell,
             "Description": addDescription,
@@ -86,8 +86,11 @@ function createRowFor(item, table) {
 var itemStore = [];
 var itemStoreIdCounter = 0;
 
+var renderItemsDuration = 0;
+
 function receiveItemData(items) {
 	prepareItems(items);
+	var start = new Date().getTime();
 
 	for (var i = 0; i < items.length; ++i) {
 		var item = items[i];
@@ -108,11 +111,16 @@ function receiveItemData(items) {
 			createRowFor(item, tables[item.type]);
 		}
 	}
+	var end = new Date().getTime();
+	renderItemsDuration += end - start;
 }
 
 var currency = [];
 
 function receiveStashDataFinished() {
+    console.log("Time to render items: " + renderItemsDuration + " miliseconds");
+    console.log("Time to prepare items: " + prepareItemsDuration + " miliseconds");
+
 	for (var item in currency) {
 		createRowFor(currency[item], tables["currency"]);
 	}
@@ -183,9 +191,9 @@ function changeImageStackSize(imgLink, n) {
 */
 
 var basicColumns = ["+", "Icon", "Name", "Level"];
-var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist", "AffixRating"]);
+var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist", "Rating"]);
 var accesoriesColumnsWithDamage = accesoriesColumns.concat(["eDMG", "Rarity"]);
-var advancedColumns = ["Str", "Int", "Dex", "Quality", "Sockets", "Mods", "AffixRating"];
+var advancedColumns = ["Str", "Int", "Dex", "Quality", "Sockets", "Mods", "Rating"];
 var gearColumns =  basicColumns.concat(advancedColumns).concat(["AR", "EV", "ES", "tResist", "eDMG", "Rarity"]);
 
 var tables = {
@@ -202,7 +210,7 @@ var tables = {
 	"jewels": {
 		"name":    "Jewels",
 		"idName":  "jewels",
-		"columns": ["+", "Icon", "Name", "Mods"]
+		"columns": ["+", "Icon", "Name", "Mods", "Rating"]
 	},
 	"flasks": {
 		"name":    "Flasks",
@@ -331,6 +339,8 @@ function addIncreasedRarity(row, item) {
 }
 
 function addAffixRating(row, item) {
+	var rankingDiv = "</div><div class='statRanking'></div>";
+
     if (item.affixes && item.affixes.length > 0) {
         var average = (item.affixes.reduce(function (sum, affix) {
             return sum + affix.level;
@@ -367,9 +377,9 @@ function addAffixRating(row, item) {
             return val;
         }).join("")+"</ul>";
 
-        appendNewCellWithTextAndClass(row, text, "AffixRating", average);
+        appendNewCellWithTextAndClass(row, text + rankingDiv, "rating", average);
     } else {
-        appendNewCellWithTextAndClass(row, "", "AffixRating", -9999);
+        appendNewCellWithTextAndClass(row, rankingDiv, "rating", -9999);
     }
 }
 
@@ -718,13 +728,28 @@ function newCell() {
 }
 
 function buildPage() {
-    var title = "<h1>Stash Inventory</h1>";
-    var showSelected = "<div id='showSelected'>show selected</div>";
-    var filter = "<div id='filterMenuButton'>filter</div>";
-    var searchBox = "<div id='searchBoxContainer'><input id='searchBox' type='text' placeholder='Search...' autofocus /><div id='clearSearch'>x</div></div>";
-    var infoBox = "<div id='infoBox'></div>";
-    var overlay = "<div id='overlay'></div>"; // background for dialog boxes
-    $("body").html("<div id='interactions'>" + title + showSelected + filter + searchBox + infoBox + overlay + "</div>");
+    var title = $("<h1>Stash Inventory</h1>");
+
+    var addStatRankings = $("<div id='addStatRankings'>add stat rankings</div>");
+    var showSelected = $("<div id='showSelected'>show selected</div>");
+    var filter = $("<div id='filterMenuButton'>filter</div>");
+    var actions = $("<div id='actions'></div>");
+    actions.append(addStatRankings);
+    actions.append(showSelected);
+    actions.append(filter);
+
+    var searchBox = $("<div id='searchBoxContainer'><input id='searchBox' type='text' placeholder='Search...' autofocus /><div id='clearSearch'>x</div></div>");
+    var infoBox = $("<div id='infoBox'></div>");
+    var overlay = $("<div id='overlay'></div>"); // background for dialog boxes
+
+    var interactions = $("<div id='interactions'></div>");
+    interactions.append(title);
+    interactions.append(actions);
+    interactions.append(searchBox);
+    interactions.append(infoBox);
+    interactions.append(overlay);
+
+    $("body").html(interactions);
 
     $("#tabView").keypress(function(e) {
         if (!$("#searchBox").is(":focus")) {

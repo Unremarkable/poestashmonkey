@@ -4,6 +4,7 @@ function attachHandlers() {
     handleSorting();
     handleSelectedItems();
     handleFilters();
+    handleStatRankings();
 
     attachCloseDialogBoxHandler();
 }
@@ -295,7 +296,7 @@ function addFilterGroup(groupName, filterNames) {
 
 function createFilter(filterName) {
 	var labelName = $("<span class='filterName'></span>");
-	labelName.html(filterName.replace("+#% to ", "").replace("+# to ", "") + ":");
+	labelName.html(cleanStatName(filterName) + ":");
 
 	var filterLine = $("<div class='filter'></div>");
 	filterLine.append(labelName);
@@ -377,4 +378,108 @@ function filterForStat(list, statName, filter) {
 		}
 	}
 	return results;
+}
+
+/* ----------------- STAT RANKINGS ----------------- */
+var statRankings = {};
+
+function handleStatRankings() {
+	$("#addStatRankings").click(function() {
+		computeStatRankings();
+		displayStatRankings();
+		$(this).hide(); // hide button since rankings cannot be shown again
+	});
+}
+
+function computeStatRankings() {
+	var start = new Date().getTime();
+
+	for (var i = 0; i < itemStore.length; i++) {
+		var item = itemStore[i];
+		addToRankings(item);
+	}
+
+	sortStatRankings();
+
+	var end = new Date().getTime();
+	console.log("Ranking stat computation took " + (end - start) + " miliseconds");
+}
+
+function sortStatRankings() {
+	for (var rankTypeName in statRankings) {
+		var rankingsMap = statRankings[rankTypeName];
+		for (var statName in rankingsMap) {
+			var rankList = rankingsMap[statName];
+			if (rankList && rankList[0]) {
+				// sort highest to lowest
+				rankList.sort(function(a, b) {
+					if (a.constructor === Array) {
+						return (b[0] + b[1]) - (a[0] + a[1]); // essentially sorting by average
+					} else {
+						return b - a;
+					}
+				});
+			}
+		}
+	}
+}
+
+function addToRankings(item) {
+	var rankingsForType = {};
+	if (statRankings[item.type]) {
+		rankingsForType = statRankings[item.type];
+	}
+	for (var statName in item.stats) {
+		var rankingsList = [];
+		var itemStat = item.stats[statName];
+
+		if (rankingsForType[statName]) {
+			rankingsList = rankingsForType[statName];
+		}
+
+		rankingsList.push(itemStat);
+		rankingsForType[statName] = rankingsList;
+	}
+	statRankings[item.type] = rankingsForType;
+}
+
+function displayStatRankings() {
+	$(".statRanking").each(function() {
+		var rankBox = $(this);
+		var itemId = rankBox.parents("tr.itemRow").attr("id");
+		var item = itemStore[itemId];
+
+		var rankingsForGroup = statRankings[item.type];
+		for (var statName in item.stats) {
+			var stat = item.stats[statName];
+			var rankingsForStat = rankingsForGroup[statName];
+
+			if (stat && rankingsForStat) {
+				addRankingsToBox(rankBox, statName, stat, rankingsForStat);
+			}
+		}
+	});
+}
+
+function addRankingsToBox(rankBox, statName, stat, rankingsForStat) {
+	var rank = rankingsForStat.indexOf(stat) + 1;
+
+	var statDiv = $("<div></div>");
+
+	var statText = stat;
+	if (stat.constructor === Array) {
+		statText = stat.join("-");
+	}
+
+	statDiv.html("[" + statText + "] " + cleanStatName(statName) + " (" + rank + "/" + rankingsForStat.length + ")");
+
+	var className = "";
+	if (rank == 1) {
+		className = "rankFirst";
+	} else if (rank <= rankingsForStat.length * 0.1) { // top ten percent
+		className = "rankTop";
+	}
+	statDiv.attr("class", className);
+
+	rankBox.append(statDiv).show();
 }

@@ -1,5 +1,9 @@
 // all of the code needed for pre-processing items before they go to be rendered
+var prepareItemsDuration = 0;
+
 function prepareItems(items) {
+	var start = new Date().getTime();
+
     for (var i = 0; i < items.length; ++i) {
         var item = items[i];
 
@@ -59,10 +63,10 @@ function prepareItems(items) {
         item.stats = {};
         moveToStats(item, item.implicitMods);
         moveToStats(item, item.explicitMods);
-
-        // comment out for now since it's not used in the UI and the additional computation may cause latency
-        // addToRankings(item);
     }
+
+    var end = new Date().getTime();
+    prepareItemsDuration += end - start;
 }
 
 function removeStrangeCharacters(text) {
@@ -185,12 +189,15 @@ function isSacrifice(name) { return name.match(/Sacrifice at/) != null; }
 function moveToStats(item, otherMods) {
 	for (var modName in otherMods) {
 		var values = otherMods[modName].values;
+
 		if (modTypesComboConversion[modName]) {
 			flattenComboModForItem(item, modName, values);
 		} else {
 			addValuesForMods(item, modName, values);
 		}
 	}
+
+	removeStatsFromItem(item, statsToIgnore);
 	sumResistanceStats(item);
 	handleDefenseStats(item);
 }
@@ -206,10 +213,15 @@ function flattenComboModForItem(item, comboModName, comboModValue) {
 
 function addValuesForMods(item, modName, values) {
 	if (values) {
+		if (modName.startsWith("#.#")) {
+			// turn into single float
+			values = values[0] + values[1] / 100.0;
+		}
+
 		if (values.constructor === Array) {
 			var parsedValues = [];
 			for (var i = 0; i < values.length; i++) {
-				parsedValues.push(parseInt(values[i]));
+				parsedValues.push(parseFloat(values[i]));
 			}
 			if (parsedValues.length == 1) {
 				values = parsedValues[0];
@@ -217,7 +229,7 @@ function addValuesForMods(item, modName, values) {
 				values = parsedValues;
 			}
 		} else {
-			values = parseInt(values);
+			values = parseFloat(values);
 		}
 	}
 
@@ -279,6 +291,20 @@ function removeStatsFromItem(item, statsToRemove) {
 		}
 	}
 }
+
+// improves readability
+function cleanStatName(statName) {
+	return statName
+		.replace("+#% to ", "")
+		.replace("+# to ", "")
+		.replace("+# ", "")
+		.replace("#.#% of ", "")
+		.replace("#% of ", "")
+		.replace("#% ", "")
+		.replace("# ", "");
+}
+
+var statsToIgnore = ["Extra gore"];
 
 // ----------------------------------------------------------------- DAMAGE STATS
 var addsPhysicalDamage =	"Adds #-# Physical Damage to Attacks";
@@ -375,35 +401,3 @@ var modTypesComboConversion = {
 		"#% increased Armour and Energy Shield" : [increasedArmour, increasedEnergyShield],
 		"#% increased Evasion and Energy Shield" : [increasedEvasion, increasedEnergyShield]
 };
-
-/* ----------------- STAT RANKINGS ----------------- */
-var topStatRankings = {};
-
-function addToRankings(item) {
-	var topRankingsForType = {};
-	if (topStatRankings[item.type]) {
-		topRankingsForType = topStatRankings[item.type];
-	}
-	for (var statName in item.stats) {
-		var topStat = 0;
-		var itemStat = item.stats[statName];
-
-		if (topRankingsForType[statName]) {
-			topStat = topRankingsForType[statName];
-			if (itemStat.constructor === Array) {
-				if (itemStat[1] > topStat[1]) {
-					topStat = itemStat;
-				}
-			} else {
-				if (itemStat > topStat) {
-					topStat = itemStat;
-				}
-			}
-		} else {
-			topStat = itemStat;
-		}
-
-		topRankingsForType[statName] = topStat;
-	}
-	topStatRankings[item.type] = topRankingsForType;
-}
