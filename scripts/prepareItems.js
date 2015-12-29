@@ -324,7 +324,7 @@ var damageTypes = [
 // ----------------------------------------------------------------- DEFENSE STATS
 var addedArmour = 			"+# to Armour";
 var addedEvasionRating =	"+# to Evasion Rating";
-var addedEnergyShield = 	"+# to Energy Shield";
+var addedEnergyShield = 	"+# to maximum Energy Shield";
 
 var defenseAddedStats = [
     addedArmour,
