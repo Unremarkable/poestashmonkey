@@ -275,6 +275,7 @@ function handleDefenseStats(item) {
 		var property = item.properties[propertyName];
 		if (property) {
 			item.stats[propertyName] = parseInt(property.values[0][0]);
+			scaleStatForMaxQuality(item, propertyName);
 			containedDefenseProperty = true;
 		}
 	}
@@ -326,6 +327,7 @@ function handleLocalDamageStats(item) {
 
 	if (containsDamageProperty) {
 		removeStatsFromItem(item, damageStats);
+		scaleStatForMaxQuality(item, computedPhysicalDamage);
 	}
 }
 
@@ -376,6 +378,28 @@ function getDpsForDamageStat(item, stat) {
 }
 
 // -------------------------------------------------------------------------------
+
+function scaleStatForMaxQuality(item, statName) {
+    var stat = item.stats[statName];
+    if (stat) {
+        var qualityProperty = item.properties[computedQuality];
+        var currentQuality = qualityProperty ? parseInt(qualityProperty.values[0][0]) : 0;
+        var currentQualityMultiplier = currentQuality / 100 + 1;
+
+        if (stat.constructor === Array) {
+            for (var i = 0; i < stat.length; i++) {
+                stat[i] = scaleValueToMaxQuality(stat[i], currentQualityMultiplier);
+            }
+        } else {
+            item.stats[statName] = scaleValueToMaxQuality(stat, currentQualityMultiplier);
+        }
+    }
+}
+
+function scaleValueToMaxQuality(currentValue, currentQualityMultiplier) {
+    var result = currentValue / currentQualityMultiplier * 1.2;
+    return Math.round(result);
+}
 
 function removeStatsFromItem(item, statsToRemove) {
 	for (var i = 0; i < statsToRemove.length; i++) {
@@ -535,6 +559,8 @@ var modTypesComboConversion = {
 
 // -------------------------------------------------------------------- OTHER
 var statsToIgnore = ["Extra gore"];
+
+var computedQuality = "Quality";
 
 var importantStats = [
     totalResistance,
