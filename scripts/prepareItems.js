@@ -1,11 +1,19 @@
 // all of the code needed for pre-processing items before they go to be rendered
 var prepareItemsDuration = 0;
 
+var itemStore = [];
+var itemStoreIdCounter = 0;
+
 function prepareItems(items) {
 	var start = new Date().getTime();
 
     for (var i = 0; i < items.length; ++i) {
         var item = items[i];
+
+		// store items in structure for later referencing and processing
+		item.id = itemStoreIdCounter;
+		itemStoreIdCounter++;
+		itemStore.push(item);
 
         if (item.prepared) {
             return;
@@ -198,8 +206,13 @@ function moveToStats(item, otherMods) {
 	}
 
 	removeStatsFromItem(item, statsToIgnore);
-	sumResistanceStats(item);
+	sumStats(item, resistances, totalResistance);
+	sumStats(item, attributes, totalAttributes);
+
+	// if the item has the property then any mods are local and will already be computed into it
+	// this copy the property value into stats and remove the local stats that modify it
 	handleDefenseStats(item);
+	handleDamageStats(item);
 }
 
 function flattenComboModForItem(item, comboModName, comboModValue) {
@@ -216,6 +229,10 @@ function addValuesForMods(item, modName, values) {
 		if (modName.startsWith("#.#")) {
 			// turn into single float
 			values = values[0] + values[1] / 100.0;
+			modName = modName.replace("#.#", "#");
+		}
+		if (modName.endsWith("Damage to Attacks")) {
+			modName = modName.replace(" to Attacks", "");
 		}
 
 		if (values.constructor === Array) {
@@ -240,15 +257,15 @@ function addValuesForMods(item, modName, values) {
 	item.stats[modName] = values;
 }
 
-function sumResistanceStats(item) {
+function sumStats(item, statsToSum, statToStoreAs) {
 	var total = 0;
-	for (var i = 0; i < resistances.length; i++) {
-		var resistance = resistances[i];
-		if (item.stats[resistance]) {
-			total += item.stats[resistance];
+	for (var i = 0; i < statsToSum.length; i++) {
+		var stat = statsToSum[i];
+		if (item.stats[stat]) {
+			total += item.stats[stat];
 		}
 	}
-	item.stats[totalResistance] = total;
+	item.stats[statToStoreAs] = total;
 }
 
 function handleDefenseStats(item) {
@@ -257,8 +274,6 @@ function handleDefenseStats(item) {
 		var propertyName = defenseProperties[i];
 		var property = item.properties[propertyName];
 		if (property) {
-			// if the item has the property then any mods are local and will already be computed into it
-			// this copy the property value into stats and remove the local stats that modify it
 			item.stats[propertyName] = parseInt(property.values[0][0]);
 			containedDefenseProperty = true;
 		}
@@ -283,6 +298,85 @@ function handleDefenseStats(item) {
 	}
 }
 
+function handleDamageStats(item) {
+	handleLocalDamageStats(item);
+	handleGlobalDamageStats(item);
+	addDPSToAttackItem(item);
+}
+
+function handleLocalDamageStats(item) {
+	var containsDamageProperty = false;
+	for (var i = 0; i < damageProperties.length; i++) {
+		var propertyName = damageProperties[i];
+		var property = item.properties[propertyName];
+		if (property) {
+			// elemental damage can have multiple entries
+			var totals = [0, 0];
+			for (var j = 0; j < property.values.length; j++) {
+				// [0] because [1] a number denoting the type of damage, which we don't have a use for
+				var value = property.values[j][0];
+				var parts = value.split("-");
+				totals[0] += parseInt(parts[0]);
+				totals[1] += parseInt(parts[1]);
+			}
+			item.stats[propertyName] = totals;
+			containsDamageProperty = true;
+		}
+	}
+
+	if (containsDamageProperty) {
+		removeStatsFromItem(item, damageStats);
+	}
+}
+
+function handleGlobalDamageStats(item) {
+	var containsDamageAddedStat = false;
+	for (var i = 0; i < damageAddedStats.length; i++) {
+		var statName = damageAddedStats[i];
+		var stat = item.stats[statName];
+
+		var statNameToAdd = damageBaseStatToComputedStatConversion[statName];
+		var currentValue = item.stats[statNameToAdd];
+
+		if (stat) {
+			if (currentValue) {
+				// merge current and new
+				stat[0] += currentValue[0];
+				stat[1] += currentValue[1];
+			}
+			item.stats[statNameToAdd] = stat;
+			containsDamageAddedStat = true;
+		}
+	}
+
+	if (containsDamageAddedStat) {
+		removeStatsFromItem(item, damageAddedStats);
+	}
+}
+
+function addDPSToAttackItem(item) {
+	if (item.properties[computedAttacksPerSecond]) {
+		var totalDPS = getDpsForDamageStat(item, computedPhysicalDamage) +
+					   getDpsForDamageStat(item, computedElementalDamage);
+		item.stats[computedDPS] = totalDPS.toFixed(1);
+		removeStatsFromItem(item, [computedAttacksPerSecond]);
+	}
+}
+
+function getDpsForDamageStat(item, stat) {
+	var damageValue = item.stats[stat];
+	var aps = parseFloat(item.properties[computedAttacksPerSecond].values[0][0]);
+
+	if (damageValue) {
+		var damageAverage = (damageValue[0] + damageValue[1]) / 2.0;
+		var dps = aps * damageAverage;
+		return dps;
+	}
+	return 0;
+}
+
+// -------------------------------------------------------------------------------
+
 function removeStatsFromItem(item, statsToRemove) {
 	for (var i = 0; i < statsToRemove.length; i++) {
 		var statName = statsToRemove[i];
@@ -304,22 +398,57 @@ function cleanStatName(statName) {
 		.replace("# ", "");
 }
 
-var statsToIgnore = ["Extra gore"];
-
 // ----------------------------------------------------------------- DAMAGE STATS
-var addsPhysicalDamage =	"Adds #-# Physical Damage to Attacks";
-var addsColdDamage = 		"Adds #-# Cold Damage to Attacks";
-var addsLightningDamage =	"Adds #-# Lightning Damage to Attacks";
-var addsFireDamage =		"Adds #-# Fire Damage to Attacks";
-var addsChaosDamage = 		"Adds #-# Chaos Damage to Attacks";
+var addsPhysicalDamage =	"Adds #-# Physical Damage";
+var addsColdDamage = 		"Adds #-# Cold Damage";
+var addsLightningDamage =	"Adds #-# Lightning Damage";
+var addsFireDamage =		"Adds #-# Fire Damage";
+var addsChaosDamage = 		"Adds #-# Chaos Damage";
 
-var damageTypes = [
+var damageAddedStats = [
     addsPhysicalDamage,
     addsColdDamage,
     addsLightningDamage,
     addsFireDamage,
     addsChaosDamage
 ];
+
+var increasedPhysicalDamage =	"#% increased Physical Damage";
+var increasedElementalDamage =	"#% increased Elemental Damage";
+var increasedColdDamage =		"#% increased Cold Damage";
+var increasedLightningDamage =	"#% increased Lightning Damage";
+var increasedFireDamage =		"#% increased Fire Damage";
+var increasedChaosDamage =		"#% increased Chaos Damage";
+
+var increasedDamageStats = [
+    increasedPhysicalDamage,
+    increasedElementalDamage,
+    increasedColdDamage,
+    increasedLightningDamage,
+    increasedFireDamage,
+    increasedChaosDamage
+];
+
+var damageStats = damageAddedStats.concat(increasedDamageStats);
+
+var computedPhysicalDamage = 	"Physical Damage";
+var computedElementalDamage = 	"Elemental Damage";
+
+var damageProperties = [
+    computedPhysicalDamage,
+    computedElementalDamage
+];
+
+var damageBaseStatToComputedStatConversion = {};
+damageBaseStatToComputedStatConversion[addsPhysicalDamage] = computedPhysicalDamage;
+damageBaseStatToComputedStatConversion[addsColdDamage] = computedElementalDamage;
+damageBaseStatToComputedStatConversion[addsLightningDamage] = computedElementalDamage;
+damageBaseStatToComputedStatConversion[addsFireDamage] = computedElementalDamage;
+damageBaseStatToComputedStatConversion[addsChaosDamage] = computedElementalDamage;
+
+var computedCriticalStrikeChance = "Critical Strike Chance";
+var computedAttacksPerSecond = "Attacks per Second";
+var computedDPS = "DPS";
 
 // ----------------------------------------------------------------- DEFENSE STATS
 var addedArmour = 			"+# to Armour";
@@ -371,6 +500,8 @@ var attributes = [
 	dexterity
 ];
 
+var totalAttributes = "Total Attributes";
+
 // ----------------------------------------------------------------- RESISTANCE STATS
 var coldResistance = 		"+#% to Cold Resistance";
 var lightningResistance = 	"+#% to Lightning Resistance";
@@ -401,3 +532,17 @@ var modTypesComboConversion = {
 		"#% increased Armour and Energy Shield" : [increasedArmour, increasedEnergyShield],
 		"#% increased Evasion and Energy Shield" : [increasedEvasion, increasedEnergyShield]
 };
+
+// -------------------------------------------------------------------- OTHER
+var statsToIgnore = ["Extra gore"];
+
+var importantStats = [
+    totalResistance,
+    totalAttributes,
+    computedDPS,
+    computedPhysicalDamage,
+    computedElementalDamage,
+    computedArmour,
+    computedEvasionRating,
+    computedEnergyShield
+];

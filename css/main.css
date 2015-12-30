@@ -300,6 +300,11 @@ table.stash .statRanking {
 table.stash .statRanking .rankFirst { color: #3d933d; }
 table.stash .statRanking .rankTop { color: #7d930d; }
 
+table.stash .statRanking .importantStat {
+	font-size: 13px;
+	background-color: #3b382c;
+}
+
 #tabNames li {
 	color: #A38D6D;
 	background-color: #26231B;

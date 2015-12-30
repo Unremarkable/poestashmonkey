@@ -450,7 +450,10 @@ function displayStatRankings() {
 		var item = itemStore[itemId];
 
 		var rankingsForGroup = statRankings[item.type];
-		for (var statName in item.stats) {
+		var orderedStats = getOrderedStats(item.stats);
+
+		for (var i = 0; i < orderedStats.length; i++) {
+			var statName = orderedStats[i];
 			var stat = item.stats[statName];
 			var rankingsForStat = rankingsForGroup[statName];
 
@@ -459,6 +462,19 @@ function displayStatRankings() {
 			}
 		}
 	});
+}
+
+function getOrderedStats(stats) {
+	var importantList = [];
+	var othersList = [];
+	for (var statName in stats) {
+		if (importantStats.indexOf(statName) >= 0) {
+			importantList.push(statName);
+		} else {
+			othersList.push(statName);
+		}
+	}
+	return importantList.concat(othersList.sort());
 }
 
 function addRankingsToBox(rankBox, statName, stat, rankingsForStat) {
@@ -477,8 +493,11 @@ function addRankingsToBox(rankBox, statName, stat, rankingsForStat) {
 	var className = "";
 	if (rank == 1) {
 		className = "rankFirst";
-	} else if (rank <= rankingsForStat.length * 0.1) { // top ten percent
+	} else if (rank <= rankingsForStat.length * 0.1 || rank <= 3) { // top ten percent or top 3
 		className = "rankTop";
+	}
+	if (importantStats.indexOf(statName) >= 0) {
+		className += " importantStat";
 	}
 	statDiv.attr("class", className);
 

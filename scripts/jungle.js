@@ -83,9 +83,6 @@ function createRowFor(item, table) {
 	table.dom.appendChild(row);
 }
 
-var itemStore = [];
-var itemStoreIdCounter = 0;
-
 var renderItemsDuration = 0;
 
 function receiveItemData(items) {
@@ -94,11 +91,6 @@ function receiveItemData(items) {
 
 	for (var i = 0; i < items.length; ++i) {
 		var item = items[i];
-
-		// store items in structure for later referencing and processing
-		item.id = itemStoreIdCounter;
-		itemStoreIdCounter++;
-		itemStore.push(item);
 
 		addNameToList(item.name);
 
@@ -292,8 +284,8 @@ var tables = {
 function getElementalDamage(item) {
 	var eDMG = [0, 0];
 
-	for (var type in damageTypes) {
-		var mod = item.explicitMods[damageTypes[type]];
+	for (var type in damageAddedStats) {
+		var mod = item.explicitMods[damageAddedStats[type]];
 		if (mod) {
 			eDMG[0] += parseInt(mod.values[0]);
 			eDMG[1] += parseInt(mod.values[1]);
