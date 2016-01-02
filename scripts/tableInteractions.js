@@ -258,6 +258,47 @@ function getSortValue(row, col) {
     return 0;
 }
 
+/* ----------------- STAT SORT ------------------- */
+function handleStatSort() {
+    $("table.stash .statRanking > div").click(function() {
+        var stat = $(this);
+        var statName = stat.attr("data-name");
+        var table = stat.parents("table.stash");
+
+        var rows = table.find("td.rating").parents("tr");
+        rows.sort(function(row1, row2) {
+            var value1 = getSortValueForStat(row1, statName);
+            var value2 = getSortValueForStat(row2, statName);
+
+            if (value1 > value2) {
+                return 1;
+            }
+            if (value2 > value1) {
+                return -1;
+            }
+            return 0;
+        });
+
+        for (var i = 0; i < rows.length; ++i) {
+            table.prepend(rows[i]);
+        }
+    });
+}
+
+function getSortValueForStat(row, statName) {
+    var id = $(row).attr("id");
+    var item = itemStore[id];
+    var stat = item.stats[statName];
+    if (stat != null) {
+        if (stat.constructor === Array) {
+            return (stat[0] + stat[1]) / 2;
+        } else {
+            return stat;
+        }
+    }
+    return 0;
+}
+
 /* ----------------- STAT SEARCH ----------------- */
 
 function handleFilters() {
@@ -462,6 +503,8 @@ function displayStatRankings() {
 			}
 		}
 	});
+
+	handleStatSort();
 }
 
 function getOrderedStats(stats) {
@@ -481,6 +524,7 @@ function addRankingsToBox(rankBox, statName, stat, rankingsForStat) {
 	var rank = rankingsForStat.indexOf(stat) + 1;
 
 	var statDiv = $("<div></div>");
+	statDiv.attr("data-name", statName);
 
 	var statText = stat;
 	if (stat.constructor === Array) {

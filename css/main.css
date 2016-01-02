@@ -297,6 +297,14 @@ table.stash .statRanking {
     padding: 4px;
 }
 
+table.stash .statRanking > div {
+	cursor: pointer;
+}
+
+table.stash .statRanking > div:hover {
+	text-decoration: underline;
+}
+
 table.stash .statRanking .rankFirst { color: #3d933d; }
 table.stash .statRanking .rankTop { color: #7d930d; }
 
