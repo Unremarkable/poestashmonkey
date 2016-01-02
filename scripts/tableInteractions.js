@@ -290,11 +290,7 @@ function getSortValueForStat(row, statName) {
     var item = itemStore[id];
     var stat = item.stats[statName];
     if (stat != null) {
-        if (stat.constructor === Array) {
-            return (stat[0] + stat[1]) / 2;
-        } else {
-            return stat;
-        }
+        return getValueForStat(stat);
     }
     return 0;
 }
@@ -312,6 +308,7 @@ function handleFilters() {
 	addFilterGroup("Attributes", attributes);
 	addFilterGroup("Defense Properties", defenseProperties);
 	addFilterGroup("Resistances", resistances.concat(totalResistance));
+	addFilterGroup("Damage", damageProperties.concat(computedDPS));
 
 	$("#filterMenuButton").click(function() {
 		showDialogBoxWithId("filterBox");
@@ -412,7 +409,8 @@ function filterForStat(list, statName, filter) {
 		var stat = item.stats[statName];
 		var requirement = getRequirement(item, statName);
 
-		var value = stat ? stat : requirement ? parseInt(requirement) : null;
+		var value = stat ? getValueForStat(stat) : requirement ? parseInt(requirement) : null;
+
 
 		if (value && value >= filter.min && (!filter.max || value <= filter.max)) {
 			results.push(item);

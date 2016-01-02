@@ -422,6 +422,15 @@ function cleanStatName(statName) {
 		.replace("# ", "");
 }
 
+// some stats are a range stored in an array, in which case we just average the two values
+function getValueForStat(stat) {
+	if (stat.constructor === Array) {
+		return (stat[0] + stat[1]) / 2;
+	}
+	return stat;
+}
+
+
 // ----------------------------------------------------------------- DAMAGE STATS
 var addsPhysicalDamage =	"Adds #-# Physical Damage";
 var addsColdDamage = 		"Adds #-# Cold Damage";
