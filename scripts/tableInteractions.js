@@ -5,8 +5,32 @@ function attachHandlers() {
     handleSelectedItems();
     handleFilters();
     handleStatRankings();
+}
 
-    attachCloseDialogBoxHandler();
+/* -------------------- DIALOG BOX -------------------- */
+function buildDialogBox(name, actionName) {
+	var dialogBox = $("<div class='dialogBox'></div>");
+	dialogBox.append("<div class='closeDialogBox'>x</div>");
+	dialogBox.attr("id", name + "Box");
+
+	var actionButton = $("<input class='dialogActionButton' type='button'>");
+	actionButton.attr("id", name + "Button");
+	actionButton.val(actionName);
+	dialogBox.append(actionButton);
+
+	var form = $("<form></form>");
+	form.attr("id", name + "Form");
+	dialogBox.append(form);
+
+	$("body").append(dialogBox);
+
+	attachCloseDialogBoxHandler(dialogBox);
+
+	$("#" + name + "MenuButton").click(function() {
+		showDialogBoxWithId(dialogBox.attr("id"));
+	});
+
+	return dialogBox;
 }
 
 function showDialogBoxWithId(id) {
@@ -19,12 +43,14 @@ function closeDialogBoxes() {
 	$("#overlay").hide();
 }
 
-function attachCloseDialogBoxHandler() {
-	$(".closeDialogBox").click(function() {
+function attachCloseDialogBoxHandler(dialogBox) {
+	dialogBox.find(".closeDialogBox").click(function() {
 		$(this).parents(".dialogBox").hide();
 		$("#overlay").hide();
 	});
 }
+
+/* ---------------------------------------------------- */
 
 function handleTabSwitching() {
     $("#tabNames li").click(function() {
@@ -295,30 +321,51 @@ function getSortValueForStat(row, statName) {
     return 0;
 }
 
+/* ----------------- INVENTORY VIEW ----------------- */
+
+function handleInventoryView() {
+    var dialogBox = buildDialogBox("inventoryView", "Show Inventory Tabs");
+
+    var form = dialogBox.find("form");
+    for (var inventoryTab in inventoryTabs) {
+        var option = $("<div class='inventoryOption'></div>");
+        option.append(createCheckboxEntry(inventoryTab, inventoryTab, 0));
+        form.append(option);
+    }
+
+    handleInventoryViewDisplay();
+}
+
+function handleInventoryViewDisplay() {
+    $("#inventoryViewButton").click(function() {
+        closeDialogBoxes();
+        var itemsToShow = [];
+        $("#inventoryViewForm").serializeArray().filter(function(x) {
+            if (x.name && inventoryTabs[x.name]) {
+                var items = inventoryTabs[x.name];
+                itemsToShow = itemsToShow.concat(items);
+            }
+        });
+        displayItems(itemsToShow);
+    });
+}
+
 /* ----------------- STAT SEARCH ----------------- */
 
 function handleFilters() {
-	var filterBox = $("<div id='filterBox' class='dialogBox'></div>");
-	filterBox.append("<div class='closeDialogBox'>x</div>");
-	filterBox.append("<input id='runFilterButton' type='button' value='Run Filter'>");
-	filterBox.append("<form id='filterList'></form>");
-	$("body").append(filterBox);
+	var dialogBox = buildDialogBox("filter", "Run Filter");
 
-	addFilterGroup("Requirements", ["Level", "Str", "Int", "Dex"]);
-	addFilterGroup("Attributes", attributes);
-	addFilterGroup("Defense Properties", defenseProperties);
-	addFilterGroup("Resistances", resistances.concat(totalResistance));
-	addFilterGroup("Damage", damageProperties.concat(computedDPS));
-
-	$("#filterMenuButton").click(function() {
-		showDialogBoxWithId("filterBox");
-	});
+	addFilterGroup(dialogBox, "Requirements", ["Level", "Str", "Int", "Dex"]);
+	addFilterGroup(dialogBox, "Attributes", attributes);
+	addFilterGroup(dialogBox, "Defense Properties", defenseProperties);
+	addFilterGroup(dialogBox, "Resistances", resistances.concat(totalResistance));
+	addFilterGroup(dialogBox, "Damage", damageProperties.concat(computedDPS));
 
 	handleFilterSearch();
 }
 
-function addFilterGroup(groupName, filterNames) {
-	var filterList = $("#filterList");
+function addFilterGroup(dialogBox, groupName, filterNames) {
+	var filterList = dialogBox.find("form");
 
 	var filterGroup = $("<div class='filterGroup'></div>");
 	filterList.append(filterGroup);
@@ -328,11 +375,11 @@ function addFilterGroup(groupName, filterNames) {
 
 	for (var i = 0; i < filterNames.length; i++) {
 		var filterName = filterNames[i];
-		filterGroup.append(createFilter(filterName));
+		filterGroup.append(createRangeFilter(filterName));
 	}
 }
 
-function createFilter(filterName) {
+function createRangeFilter(filterName) {
 	var labelName = $("<span class='filterName'></span>");
 	labelName.html(cleanStatName(filterName) + ":");
 
@@ -359,8 +406,22 @@ function createInputEntry(labelText, name, size) {
 	return span;
 }
 
+function createCheckboxEntry(labelText, name) {
+	var span = $("<span>" + labelText + "</span>");
+
+	var input = $("<input />");
+	input.attr("name", name);
+	input.attr("type", "checkbox");
+
+	var label = $("<label></label>");
+	label.append(input);
+	label.append(span);
+
+	return label;
+}
+
 function handleFilterSearch() {
-    $("#runFilterButton").click(function() {
+    $("#filterButton").click(function() {
         closeDialogBoxes();
         performStatFilter(getFiltersFromForm());
     });
@@ -368,7 +429,7 @@ function handleFilterSearch() {
 
 function getFiltersFromForm() {
     var filters = {};
-    $("#filterList").serializeArray().filter(function(x) {
+    $("#filterForm").serializeArray().filter(function(x) {
         if (x.value) {
 	        var parts = x.name.split("|");
 	        var stat = parts[0];

@@ -60,7 +60,7 @@ h1, h2 {
 	display: none;
 	left: 0px;
 	opacity: 0.8;
-	position: absolute;
+	position: fixed;
 	right: 0px;
 	top: 0px;
 }
@@ -89,6 +89,12 @@ h1, h2 {
     position: absolute;
     right: 15px;
     top: 10px;
+}
+
+.dialogBox .dialogActionButton {
+	color: #1a1812;
+	cursor: pointer;
+	font-size: 20px;
 }
 
 #infoBox {
@@ -175,10 +181,16 @@ h1, h2 {
 	margin: 5px;
 }
 
-#filterBox #runFilterButton {
-	color: #1a1812;
-	cursor: pointer;
-	font-size: 20px;
+#inventoryViewBox .inventoryOption {
+	display: inline-block;
+	font-size: 14px;
+	margin-top: 10px;
+	width: 25%;
+}
+
+#inventoryViewBox .inventoryOption [type='checkbox'] {
+	margin-right: 10px;
+	vertical-align: middle;
 }
 
 #searchBoxContainer {

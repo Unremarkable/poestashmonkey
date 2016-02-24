@@ -93,6 +93,7 @@ function receiveItemData(items) {
 		var item = items[i];
 
 		addNameToList(item.name);
+		addToTabList(item);
 
 		if (item.type == "currency") {
 			addCurrency(item);
@@ -105,6 +106,23 @@ function receiveItemData(items) {
 	}
 	var end = new Date().getTime();
 	renderItemsDuration += end - start;
+}
+
+var inventoryTabs = {};
+
+function addToTabList(item) {
+	var itemsForTab = [];
+	var tabId = item.inventoryId;
+	if (tabId.match(/'s /)) {
+		tabId = "CHARACTER";
+	}
+
+	if (inventoryTabs[tabId]) {
+		itemsForTab = inventoryTabs[tabId];
+	}
+
+	itemsForTab.push(item);
+	inventoryTabs[tabId] = itemsForTab;
 }
 
 var currency = [];
@@ -127,6 +145,7 @@ function receiveStashDataFinished() {
     showCapacityUsed();
     showCurrencyValue();
     showAnyItemNameRepeats();
+    handleInventoryView();
 }
 
 function addCurrency(item) {
@@ -723,10 +742,12 @@ function buildPage() {
     var title = $("<h1>Stash Inventory</h1>");
 
     var addStatRankings = $("<div id='addStatRankings'>add stat rankings</div>");
+    var inventoryView = $("<div id='inventoryViewMenuButton'>inventory view</div>");
     var showSelected = $("<div id='showSelected'>show selected</div>");
     var filter = $("<div id='filterMenuButton'>filter</div>");
     var actions = $("<div id='actions'></div>");
     actions.append(addStatRankings);
+    actions.append(inventoryView);
     actions.append(showSelected);
     actions.append(filter);
 
