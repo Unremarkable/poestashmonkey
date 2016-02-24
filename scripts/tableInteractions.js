@@ -357,7 +357,7 @@ function handleFilters() {
 
 	addFilterGroup(dialogBox, "Requirements", ["Level", "Str", "Int", "Dex"]);
 	addFilterGroup(dialogBox, "Attributes", attributes);
-	addFilterGroup(dialogBox, "Defense Properties", defenseProperties);
+	addFilterGroup(dialogBox, "Defense Properties", defenseProperties.concat(totalDefense));
 	addFilterGroup(dialogBox, "Resistances", resistances.concat(totalResistance));
 	addFilterGroup(dialogBox, "Damage", damageProperties.concat(computedDPS));
 

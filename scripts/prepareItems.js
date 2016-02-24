@@ -208,6 +208,7 @@ function moveToStats(item, otherMods) {
 	removeStatsFromItem(item, statsToIgnore);
 	sumStats(item, resistances, totalResistance);
 	sumStats(item, attributes, totalAttributes);
+	sumStats(item, defenseProperties, totalDefense);
 
 	// if the item has the property then any mods are local and will already be computed into it
 	// this copy the property value into stats and remove the local stats that modify it
@@ -262,7 +263,11 @@ function sumStats(item, statsToSum, statToStoreAs) {
 	for (var i = 0; i < statsToSum.length; i++) {
 		var stat = statsToSum[i];
 		if (item.stats[stat]) {
-			total += item.stats[stat];
+			var sumWeight = 1;
+			if (modTypesSumWeight[stat]) {
+				sumWeight = modTypesSumWeight[stat];
+			}
+			total += item.stats[stat] * sumWeight;
 		}
 	}
 	item.stats[statToStoreAs] = total;
@@ -360,7 +365,7 @@ function addDPSToAttackItem(item) {
 	if (item.properties[computedAttacksPerSecond]) {
 		var totalDPS = getDpsForDamageStat(item, computedPhysicalDamage) +
 					   getDpsForDamageStat(item, computedElementalDamage);
-		item.stats[computedDPS] = totalDPS.toFixed(1);
+		item.stats[computedDPS] = parseFloat(totalDPS.toFixed(1));
 		removeStatsFromItem(item, [computedAttacksPerSecond]);
 	}
 }
@@ -517,6 +522,8 @@ var defenseProperties = [
     computedEnergyShield
 ];
 
+var totalDefense = "Total Defense";
+
 var defenseBaseStatToComputedStatConversion = {};
 defenseBaseStatToComputedStatConversion[addedArmour]  = computedArmour;
 defenseBaseStatToComputedStatConversion[addedEvasionRating]  = computedEvasionRating;
@@ -566,6 +573,9 @@ var modTypesComboConversion = {
 		"#% increased Evasion and Energy Shield" : [increasedEvasion, increasedEnergyShield]
 };
 
+var modTypesSumWeight = {};
+modTypesSumWeight[computedEnergyShield] = 2.0;
+
 // -------------------------------------------------------------------- OTHER
 var statsToIgnore = ["Extra gore"];
 
@@ -573,6 +583,7 @@ var computedQuality = "Quality";
 
 var importantStats = [
     totalResistance,
+    totalDefense,
     totalAttributes,
     computedDPS,
     computedPhysicalDamage,

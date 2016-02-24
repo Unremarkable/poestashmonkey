@@ -33,6 +33,7 @@ function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
 	addCellWithContentAndClass($totalsRow, "TOTALS");
 
 	var sortedStatMap = getOrderedListForStats(statsMap);
+
 	for (var statName in sortedStatMap) {
 		var className = sortedStatMap[statName].className;
 		addHeaderCell($headerRow, statName, className);
@@ -54,10 +55,10 @@ function getOrderedListForStats(statsMapOriginal) {
 
 	var orderedMap = {};
 	moveStatsFromListToOrderedMap(statsMap, orderedMap, resistances.concat(totalResistance), "resist");
-	moveStatsFromListToOrderedMap(statsMap, orderedMap, defenseStats, "defense");
+	moveStatsFromListToOrderedMap(statsMap, orderedMap, defenseStats.concat(totalDefense), "defense");
 	moveStatsFromListToOrderedMap(statsMap, orderedMap, defenseProperties, "defense");
 	moveStatsFromListToOrderedMap(statsMap, orderedMap, attributes, "attribute");
-	moveStatsFromListToOrderedMap(statsMap, orderedMap, damageTypes, "damage");
+	moveStatsFromListToOrderedMap(statsMap, orderedMap, damageStats, "damage");
 
 	// copy over remainder of stats
 	for (var stat in statsMap) {
