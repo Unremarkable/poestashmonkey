@@ -16,12 +16,9 @@ function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
 	$table.append($headerRow);
 	addHeaderCell($headerRow, "");
 
-	var statsMap = {};
 	var rows = {};
 	for (var itemId in selectedItemsMap) {
 		var item = selectedItemsMap[itemId];
-		addStatsToSummaryMap(statsMap, item.stats);
-
 		var $row = $("<tr></tr>").attr("data-item-id", item.id);
 		$table.append($row);
 		createTitleCell($row[0], item);
@@ -32,6 +29,7 @@ function showSelectedItemsSummaryTable(selectedItemsMapOriginal) {
 	$table.append($totalsRow);
 	addCellWithContentAndClass($totalsRow, "TOTALS");
 
+	var statsMap = buildStatsMap(selectedItemsMap);
 	var sortedStatMap = getOrderedListForStats(statsMap);
 
 	for (var statName in sortedStatMap) {
@@ -87,6 +85,15 @@ function renderValuesArray(values) {
 		return values; // might be a single value
 	}
 	return "";
+}
+
+function buildStatsMap(itemsMap) {
+	var statsMap = {};
+	for (var itemId in itemsMap) {
+		var item = itemsMap[itemId];
+		addStatsToSummaryMap(statsMap, item.stats);
+	}
+	return statsMap;
 }
 
 function addStatsToSummaryMap(statsMap, stats) {

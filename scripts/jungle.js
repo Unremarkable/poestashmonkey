@@ -48,6 +48,7 @@ function createRowFor(item, table) {
 			"Name":    createTitleCell,
 			"Quantity":createQuantityCell,
 			"Level":   createLevelCell,
+			"iLevel":  createItemLevelCell,
 			"Str":     createStrCell,
 			"Int":     createIntCell,
 			"Dex":     createDexCell,
@@ -201,7 +202,7 @@ function changeImageStackSize(imgLink, n) {
 }
 */
 
-var basicColumns = ["+", "Icon", "Name", "Level"];
+var basicColumns = ["+", "Icon", "Name", "Level", "iLevel"];
 var accesoriesColumns  =  basicColumns.concat(["Mods", "tResist", "Rating"]);
 var accesoriesColumnsWithDamage = accesoriesColumns.concat(["eDMG", "Rarity"]);
 var advancedColumns = ["Str", "Int", "Dex", "Quality", "Sockets", "Mods", "Rating"];
@@ -705,6 +706,10 @@ function createLevelCell(row, item) {
 //    if (req != old && req && old && item.frameType != 3 && old.indexOf("(gem)") == -1)
 //        console.log("cmp", item, req, old, mistake_count++);
 //    appendNewCellWithTextAndClass(row, req, "level", req);
+}
+
+function createItemLevelCell(row, item) {
+	appendNewCellWithTextAndClass(row, item.ilvl, "iLevel", item.ilvl);
 }
 
 var mistake_count = 0;

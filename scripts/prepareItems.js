@@ -4,6 +4,8 @@ var prepareItemsDuration = 0;
 var itemStore = [];
 var itemStoreIdCounter = 0;
 
+var itemsByTypeMap = {};
+
 function prepareItems(items) {
 	var start = new Date().getTime();
 
@@ -67,6 +69,7 @@ function prepareItems(items) {
         }
 
         item.type = getItemType(item);
+        addItemToItemsByTypeMap(item);
 
         item.stats = {};
         moveToStats(item, item.implicitMods);
@@ -75,6 +78,12 @@ function prepareItems(items) {
 
     var end = new Date().getTime();
     prepareItemsDuration += end - start;
+}
+
+function addItemToItemsByTypeMap(item) {
+    var list = itemsByTypeMap[item.type] || [];
+    list.push(item);
+    itemsByTypeMap[item.type] = list;
 }
 
 function removeStrangeCharacters(text) {
@@ -580,6 +589,8 @@ modTypesSumWeight[computedEnergyShield] = 2.0;
 var statsToIgnore = ["Extra gore"];
 
 var computedQuality = "Quality";
+
+var increasedRarity = "#% increased Rarity of Items found";
 
 var importantStats = [
     totalResistance,
