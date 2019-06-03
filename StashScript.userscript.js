@@ -2,13 +2,15 @@
 // @name        StashScript
 // @namespace   www.pathofexile.com
 // @description Script to see more things on the PoE Stash
-// @include     https://www.pathofexile.com/character-window/*
-// @require     http://code.jquery.com/jquery-1.10.2.min.js
+// @include     https://www.pathofexile.com/account/view-profile/*/stashes
+// @require     http://code.jquery.com/jquery-1.12.4.min.js
 // @version     1
 // @grant       none
 // ==/UserScript==
 
-var BASE_URL = "https://rawgithub.com/Unremarkable/poestashmonkey/master";
+//var BASE_URL = "http://localhost:8080/poestashmonkey";
+var BASE_URL = "https://rawcdn.githack.com/Unremarkable/poestashmonkey/283fa1f5e94673a3c9aa9020ac221bf6cf41c4a7";
+
 
 $.getScript(BASE_URL+"/scripts/main.js", function() {
     main(BASE_URL);

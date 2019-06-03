@@ -1,21 +1,21 @@
 function main(baseURL) {
+    console.log(baseURL);
     window.BASE_URL = baseURL || "https://raw.github.com/Unremarkable/poestashmonkey/master";
     var timestamp = new Date().getTime();
-
-    $.getScript("https://rawgit.com/Unremarkable/poestashmonkey/master/scripts/require.js")
+    $.getScript(window.BASE_URL + "/scripts/require.js")
         .done(function() {
             require([
-                    BASE_URL+"/scripts/ajax.js?_v="+timestamp,
-                    BASE_URL+"/scripts/prepareItems.js?_v="+timestamp,
-                    BASE_URL+"/scripts/jungle.js?_v="+timestamp,
-                    BASE_URL+"/scripts/currency.js?_v="+timestamp,
-                    BASE_URL+"/scripts/tableInteractions.js?_v="+timestamp,
-                    BASE_URL+"/scripts/selectedSummary.js?_v="+timestamp,
-                    BASE_URL+"/scripts/stats.js?_v="+timestamp,
-                    BASE_URL+"/scripts/weaponInfo.js?_v="+timestamp,
-                    BASE_URL+"/scripts/data/affixes.js?_v="+timestamp,
-                    BASE_URL+"/scripts/data/baseWeapons.js?_v="+timestamp,
-                    BASE_URL+"/scripts/data/baseEquipment.js?_v="+timestamp
+                    window.BASE_URL+"/scripts/ajax.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/prepareItems.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/jungle.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/currency.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/tableInteractions.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/selectedSummary.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/stats.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/weaponInfo.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/data/affixes.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/data/baseWeapons.js?_v="+timestamp,
+                    window.BASE_URL+"/scripts/data/baseEquipment.js?_v="+timestamp
             ], function() {
                 ready();
             });

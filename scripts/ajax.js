@@ -6,6 +6,13 @@ var URL_GET_ITEMS = 		"https://www.pathofexile.com/character-window/get-items";
 var URL_GET_STASH_ITEMS = 	"https://www.pathofexile.com/character-window/get-stash-items";
 var URL_GET_CHARACTERS = 	"https://www.pathofexile.com/character-window/get-characters";
 
+var ajaxables = [];
+
+setInterval(function () {
+    ajaxable = ajaxables.pop();
+    ajaxable.call();
+}, 1333 );
+
 var Ajaxable = function(text, ajax, callback) {
 	var self = this;
 	
@@ -27,9 +34,13 @@ var Ajaxable = function(text, ajax, callback) {
 	self.timeout = 1000;
 	
 	self.request = function() {
+	    ajaxables.unshift(self.make_call);
+    };
+
+	self.make_call = function () {
 		if (self.state == "idle" || self.state == "error") {
 			self.setState("pending");
-			$.ajax(ajax)
+			$.ajax(self.ajax)
 				.done(function(result) {
 					if (result.error) {
 						self.setState("error");
@@ -47,15 +58,16 @@ var Ajaxable = function(text, ajax, callback) {
 					}
 				})*/
 				.fail(function() {
-				//	Shouldn't fail.  Something messed up!
+				    self.retry();
+				    self.setState("error");
 				});
 		}
 	};
 	
 	self.retry = function() {
-		console.log("Will retry in " + self.timeout + "ms.");
-		setTimeout(self.request, self.timeout);
-		self.timeout = Math.min(self.timeout * 2, 32000);
+	    ajaxables.push(self.make_call);
+	    ajaxables.push(function(){/*no-op*/});
+	    ajaxables.push(function(){console.log("Waiting for rate limit...")});
 	};
 };
 
