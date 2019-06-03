@@ -9,7 +9,7 @@
 // ==/UserScript==
 
 //var BASE_URL = "http://localhost:8080/poestashmonkey";
-var BASE_URL = "https://rawcdn.githack.com/Unremarkable/poestashmonkey/283fa1f5e94673a3c9aa9020ac221bf6cf41c4a7";
+var BASE_URL = "https://raw.githack.com/Unremarkable/poestashmonkey/master/scripts/main.js";
 
 
 $.getScript(BASE_URL+"/scripts/main.js", function() {
