@@ -110,6 +110,10 @@ var PoEData = (function() {
 		data.ajax.character_data = new Array(metadata.length);
 		for (var i = 0; i < metadata.length; ++i) {
 			var name = metadata[i].name;
+			
+			if (metadata[i].expired) {
+				continue;
+			}
 
 			if (typeof data.ajax.character_data[i] === "undefined")
 				data.ajax.character_data[i] = new Ajaxable(name, { "url": URL_GET_ITEMS, "data" : { "character" : name, "accountName" : accountName } }, (function(k) { return function (r) { data.receive_character_data(r, k); }; })(name));
